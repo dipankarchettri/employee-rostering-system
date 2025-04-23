@@ -1,0 +1,78 @@
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div class="login-container">
+    <div class="header">
+      <ion-img src="assets/icon/logo.svg" class="logo" alt="App Logo"></ion-img>
+      <h1>Welcome Back</h1>
+      <p>Please sign in to continue</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="mail-outline"></ion-icon>
+        <ion-input 
+          formControlName="email" 
+          type="email" 
+          placeholder="Email"
+          autocapitalize="off"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="loginForm.get('email')?.errors && loginForm.get('email')?.touched" class="error-message">
+        Please enter a valid email
+      </div>
+
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+        <ion-input 
+          formControlName="password" 
+          [type]="passwordVisible ? 'text' : 'password'" 
+          placeholder="Password"
+        ></ion-input>
+        <ion-icon 
+          slot="end" 
+          [name]="passwordVisible ? 'eye-off-outline' : 'eye-outline'" 
+          (click)="togglePasswordVisibility()"
+        ></ion-icon>
+      </ion-item>
+      <div *ngIf="loginForm.get('password')?.errors && loginForm.get('password')?.touched" class="error-message">
+        Password must be at least 6 characters
+      </div>
+
+      <div class="remember-forgot">
+        <ion-checkbox formControlName="rememberMe" labelPlacement="end">
+          Remember me
+        </ion-checkbox>
+        <a href="#" class="forgot-password">Forgot password?</a>
+      </div>
+
+      <ion-button 
+        type="submit" 
+        expand="block" 
+        shape="round" 
+        class="login-button"
+        [disabled]="!loginForm.valid"
+      >
+        Sign In
+      </ion-button>
+    </form>
+
+    <div class="divider">
+      <span>or continue with</span>
+    </div>
+
+    <div class="social-login">
+      <ion-button fill="clear" class="social-button">
+        <ion-icon slot="icon-only" name="logo-google"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" class="social-button">
+        <ion-icon slot="icon-only" name="logo-facebook"></ion-icon>
+      </ion-button>
+      <ion-button fill="clear" class="social-button">
+        <ion-icon slot="icon-only" name="logo-apple"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="signup-link">
+      Don't have an account? <a href="#">Sign up</a>
+    </div>
+  </div>
+</ion-content>

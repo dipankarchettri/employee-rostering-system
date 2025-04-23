@@ -1,2 +1,62 @@
-// For information on how to create your own theme, please see:
-// http://ionicframework.com/docs/theming/
+/* Ionic default variables with improvements */
+:root {
+    /* Font Family */
+    --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+    
+    /* Primary Colors */
+    --ion-color-primary: #3880ff;
+    --ion-color-primary-rgb: 56, 128, 255;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #3171e0;
+    --ion-color-primary-tint: #4c8dff;
+  
+    /* Secondary Colors */
+    --ion-color-secondary: #3dc2ff;
+    --ion-color-secondary-rgb: 61, 194, 255;
+    --ion-color-secondary-contrast: #ffffff;
+    --ion-color-secondary-contrast-rgb: 255, 255, 255;
+    --ion-color-secondary-shade: #36abe0;
+    --ion-color-secondary-tint: #50c8ff;
+  
+    /* Text Colors */
+    --ion-text-color: #2c3e50;
+    --ion-text-color-rgb: 44, 62, 80;
+    --ion-text-color-step-400: #666666;
+    
+    /* Background Colors */
+    --ion-background-color: #f8f9fa;
+    --ion-background-color-rgb: 248, 249, 250;
+    
+    /* Card Colors */
+    --ion-card-background: #ffffff;
+    
+    /* Basic Sizing */
+    --ion-border-radius: 8px;
+    --ion-padding: 16px;
+    --ion-margin: 16px;
+  }
+  
+  /* Dark mode preferences (optional) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ion-text-color: #f8f9fa;
+      --ion-background-color: #2c3e50;
+      --ion-card-background: #1a2a3a;
+    }
+  }
+  
+  /* Base HTML styles */
+  html {
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: var(--ion-font-family);
+    color: var(--ion-text-color);
+    background-color: var(--ion-background-color);
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+  }

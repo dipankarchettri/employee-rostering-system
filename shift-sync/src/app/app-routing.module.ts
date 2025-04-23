@@ -10,7 +10,17 @@ const routes: Routes = [
   {
     path: 'folder/:id',
     loadChildren: () => import('./folder/folder.module').then( m => m.FolderPageModule)
+  },
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
+  },
+
+  {
+    path: 'company-register',
+    loadComponent: () => import('./pages/company-register/company-register.page').then(m => m.CompanyRegisterPage)
   }
+
 ];
 
 @NgModule({

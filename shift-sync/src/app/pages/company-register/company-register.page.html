@@ -1,0 +1,114 @@
+<ion-content class="ion-padding" [fullscreen]="true">
+  <div class="login-container">
+    <div class="header">
+      <ion-img src="assets/icon/logo.svg" class="logo" alt="App Logo"></ion-img>
+      <h1>Create Your Company</h1>
+      <p>Set up your organization's account</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="registerCompany()">
+      <!-- Company Name -->
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="business-outline"></ion-icon>
+        <ion-input 
+          formControlName="companyName"
+          type="text" 
+          placeholder="Company Name"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="registerForm.get('companyName')?.errors && registerForm.get('companyName')?.touched" class="error-message">
+        Company name must be at least 3 characters
+      </div>
+
+      <!-- Industry -->
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="briefcase-outline"></ion-icon>
+        <ion-select 
+          formControlName="industry"
+          placeholder="Select Industry"
+          interface="popover">
+          <ion-select-option value="retail">Retail</ion-select-option>
+          <ion-select-option value="healthcare">Healthcare</ion-select-option>
+          <ion-select-option value="technology">Technology</ion-select-option>
+          <ion-select-option value="manufacturing">Manufacturing</ion-select-option>
+          <ion-select-option value="other">Other</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Admin Email -->
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="mail-outline"></ion-icon>
+        <ion-input 
+          formControlName="adminEmail"
+          type="email" 
+          placeholder="Admin Email"
+        ></ion-input>
+      </ion-item>
+      <div *ngIf="registerForm.get('adminEmail')?.errors && registerForm.get('adminEmail')?.touched" class="error-message">
+        Please enter a valid email
+      </div>
+
+      <!-- Password -->
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+        <ion-input 
+          formControlName="adminPassword"
+          [type]="passwordVisible ? 'text' : 'password'" 
+          placeholder="Password"
+        ></ion-input>
+        <ion-icon 
+          slot="end" 
+          [name]="passwordVisible ? 'eye-off-outline' : 'eye-outline'" 
+          (click)="togglePasswordVisibility()"
+        ></ion-icon>
+      </ion-item>
+      <div *ngIf="registerForm.get('adminPassword')?.errors && registerForm.get('adminPassword')?.touched" class="error-message">
+        Password must be at least 8 characters
+      </div>
+
+      <!-- Confirm Password -->
+      <ion-item lines="none" class="input-field">
+        <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+        <ion-input 
+          formControlName="confirmPassword"
+          [type]="confirmPasswordVisible ? 'text' : 'password'" 
+          placeholder="Confirm Password"
+        ></ion-input>
+        <ion-icon 
+          slot="end" 
+          [name]="confirmPasswordVisible ? 'eye-off-outline' : 'eye-outline'" 
+          (click)="toggleConfirmPasswordVisibility()"
+        ></ion-icon>
+      </ion-item>
+      <div *ngIf="registerForm.hasError('mismatch')" class="error-message">
+        Passwords do not match
+      </div>
+
+      <!-- Terms Checkbox -->
+      <div class="remember-forgot">
+        <ion-checkbox formControlName="termsAccepted" labelPlacement="end">
+          I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+        </ion-checkbox>
+      </div>
+
+      <!-- Submit Button -->
+      <ion-button 
+        type="submit" 
+        expand="block" 
+        shape="round" 
+        class="login-button"
+        [disabled]="!registerForm.valid"
+      >
+        Register Company
+      </ion-button>
+    </form>
+
+    <div class="divider">
+      <span>or</span>
+    </div>
+
+    <div class="signup-link">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </div>
+  </div>
+</ion-content>
