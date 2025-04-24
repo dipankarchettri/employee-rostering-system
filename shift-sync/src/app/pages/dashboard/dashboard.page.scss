@@ -1,265 +1,549 @@
 :root {
-  --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
-  --ion-color-primary: #3880ff;
-  --ion-color-secondary: #3dc2ff;
-  --ion-background-color: #18191b;
-  --ion-card-background: #232326;
-  --ion-text-color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
+    --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+    --ion-color-primary: #3880ff;
+    --ion-color-secondary: #3dc2ff;
     --ion-background-color: #18191b;
     --ion-card-background: #232326;
     --ion-text-color: #fff;
   }
-}
+  
+  body, .dashboard-content {
+    background: var(--ion-background-color);
+    color: var(--ion-text-color);
+    min-height: 100vh;
+  }
+  
+  .dashboard-content {
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+  
+  /* ===== Layout Containers ===== */
+  .stats-container,
+  .dashboard-main {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  
+  .welcome-section {
+    padding: 16px 0;
+    margin-bottom: 16px;
+  }
+  
+  .welcome-section h1 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+  }
+  
+  .welcome-section .subtitle {
+    margin: 0;
+    color: #aaa;
+    font-size: 1rem;
+  }
+  
+  /* ===== Grid Fixes ===== */
+  ion-grid {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
+  ion-row {
+    display: flex;
+    margin: 0 0 16px 0;
+    width: 100%;
+  }
+  
+  ion-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  ion-col {
+    padding: 0 !important;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Make Quick Actions and Leave Requests the same height and add spacing */
+  ion-row:nth-child(2) {
+    gap: 16px; /* Add horizontal spacing between columns */
+  }
+  
+  ion-row:nth-child(2) ion-col {
+    display: flex;
+    flex: 1; /* Make both columns take equal width */
+  }
+  
+  ion-row:nth-child(2) .dashboard-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%; /* Ensure cards take full width of their container */
+  }
+  
+  /* ===== Stats Cards ===== */
+  .stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .stats-card {
+    flex: 1;
+    min-width: 200px;
+    background: var(--ion-card-background);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+  }
+  
+  .stats-icon {
+    font-size: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .employees-icon { background: #3880ff22; color: #3880ff; }
+  .shifts-icon { background: #3dc2ff22; color: #3dc2ff; }
+  .pending-icon { background: #ffd60022; color: #ffd600; }
+  .coverage-icon { background: #00b86b22; color: #00b86b; }
+  
+  .stats-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .stats-label {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+  
+  /* Update the combined row to take full width */
+  .combined-row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 16px;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+  }
+  
+  /* Roster Card - 2/3 width */
+  .roster-card {
+    flex: 3.3;
+    min-width: 0;
+  }
+  
+  /* Notifications Card - 1/3 width */
+  .notifications-card {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .dashboard-card {
+    background: var(--ion-card-background);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .card-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  
+  /* ===== Roster Overview ===== */
+  .roster-progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .progress-circle {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+  }
+  
+  .circle-bg {
+    fill: none;
+    stroke: #333;
+    stroke-width: 3;
+  }
+  
+  .circle {
+    fill: none;
+    stroke: var(--ion-color-primary);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  
+  .percentage {
+    fill: var(--ion-text-color);
+    font-size: 8px;
+    text-anchor: middle;
+    font-weight: bold;
+  }
+  
+  .progress-details h3 {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+  }
+  
+  .progress-details p {
+    margin: 0 0 12px 0;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  
+  .assign-button {
+    --background: var(--ion-color-primary);
+    --color: white;
+  }
+  
+  .week-summary {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  
+  .day-item {
+    text-align: center;
+    color: #aaa;
+    padding: 6px 0;
+    flex: 1;
+  }
+  
+  .day-item.active {
+    background: #3880ff33;
+    color: #fff;
+    border-radius: 6px;
+  }
+  
+  .day-name {
+    display: block;
+    font-size: 0.8rem;
+  }
+  
+  .day-value {
+    display: block;
+    font-weight: bold;
+  }
+  
+  /* ===== Notifications ===== */
+  .notifications-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .notification-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #333;
+  }
+  
+  .notification-item:last-child {
+    border-bottom: none;
+  }
+  
+  .notification-icon ion-icon {
+    color: var(--ion-color-primary);
+    font-size: 1.2rem;
+  }
+  
+  .notification-item.unread {
+    background: #23232699;
+    margin: 0 -16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+  
+  .notification-content p {
+    margin: 0 0 4px 0;
+    font-size: 0.95rem;
+  }
+  
+  .notification-time {
+    color: #aaa;
+    font-size: 0.8rem;
+  }
+  
+  /* ===== Quick Actions ===== */
+  .quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1; /* Take up available space */
+    justify-content: space-between; /* Distribute space evenly */
+  }
+  
+  .action-button {
+    --background: #2f3033;
+    --color: white;
+    height: 44px;
+    font-size: 0.9rem;
+  }
+  
+  .action-button ion-icon {
+    margin-right: 8px;
+  }
+  
+  .generate-button {
+    --background: var(--ion-color-primary);
+  }
+  
+  /* ===== Leave Requests ===== */
+  .leave-requests {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Take up available space */
+  }
+  
+  .request-item {
+    display: flex;
+    align-items: center;
+    padding: 11px 0; /* Adjusted to make total height match quick actions */
+    border-bottom: 1px solid #333;
+  }
+  
+  .request-item:last-child {
+    border-bottom: none;
+  }
+  
+  ion-avatar {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+  }
+  
+  .request-details {
+    flex: 1;
+  }
+  
+  .request-details h3 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .request-details p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  
+  .request-actions {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .request-actions ion-button {
+    --padding-start: 6px;
+    --padding-end: 6px;
+  }
+  
+  /* ===== Department Overview ===== */
+  .departments-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .department-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #333;
+  }
+  
+  .department-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .department-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 1rem;
+  }
+  
+  .department-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  
+  .department-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  
+  .progress-bar {
+    width: 120px;
+    height: 6px;
+    background: #333;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .progress {
+    height: 100%;
+    background: var(--ion-color-primary);
+    border-radius: 3px;
+  }
+  
+  .department-stats span {
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  
+  /* Additional padding inside the main content area */
+  .dashboard-main {
+    padding-bottom: 24px;
+  }
+  
+  /* Add space between department items */
+  .departments-overview .department-item {
+    padding: 12px 0;
+  }
+  
+  /* ===== Responsive ===== */
+  .mobile-notifications {
+    display: none;
+  }
+  
+  @media (max-width: 992px) {
+    .combined-row {
+      flex-direction: column;
+    }
+  
+    .desktop-notifications {
+      display: none;
+    }
+  
+    .mobile-notifications {
+      display: block;
+      margin-top: 16px;
+    }
+  
+    .stats-card {
+      min-width: calc(50% - 8px);
+    }
+    
+    /* FIXED: Keep Quick Actions and Leave Requests in a single row */
+    ion-row:nth-child(2) {
+      gap: 16px; /* Maintain horizontal spacing */
+      flex-wrap: nowrap; /* Prevent wrapping to ensure single row */
+    }
+    
+    /* FIXED: Remove the margin that was pushing the second column down */
+    ion-row:nth-child(2) ion-col + ion-col {
+      margin-top: 0;
+    }
+    
+    /* Ensure proper spacing on mobile */
+    .dashboard-card {
+      margin-bottom: px;
+      margin-right: 16px;
+      
+    }
+    
+    ion-row:last-child .dashboard-card:last-child {
+      margin-bottom: 0;
+     
+    }
+  }
+  
+  /* Create a separate breakpoint for very small screens */
+/* This is the part that controls the Quick Actions and Leave Requests row */
 
-body, .dashboard-content {
-  background: var(--ion-background-color) !important;
-  color: var(--ion-text-color);
-  min-height: 100vh;
-}
-
-.full-width-grid {
-  max-width: 100vw !important;
-  width: 100vw !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  margin: 0 !important;
-}
-
-.dashboard-main {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.stats-container,
-.dashboard-main {
-  width: 100vw;
-  margin: 0 auto;
-}
-
-.stats-card, .dashboard-card {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-  color: var(--ion-text-color);
-}
-
-.stats-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  min-height: 120px;
-}
-
-.stats-icon {
-  font-size: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 12px;
-}
-.employees-icon { background: #3880ff22; color: #3880ff; }
-.shifts-icon { background: #3dc2ff22; color: #3dc2ff; }
-.pending-icon { background: #ffd60022; color: #ffd600; }
-.coverage-icon { background: #00b86b22; color: #00b86b; }
-
-.stats-value {
-  font-size: 2rem;
-  font-weight: bold;
-  margin: 0;
-}
-.stats-label {
-  margin: 0;
-  font-size: 1rem;
-  color: #aaa;
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.roster-overview {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.roster-progress {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.progress-circle {
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.progress-circle svg {
-  width: 80px;
-  height: 80px;
-}
-.circle-bg {
-  fill: none;
-  stroke: #222;
-  stroke-width: 3.8;
-}
-.circle {
-  fill: none;
-  stroke: #3880ff;
-  stroke-width: 3.8;
-  stroke-linecap: round;
-  transition: stroke-dasharray 0.3s;
-}
-.percentage {
-  fill: #fff;
-  font-size: 1.2em;
-  text-anchor: middle;
-  dominant-baseline: middle;
-}
-
-.progress-details h3 {
-  margin: 0 0 4px 0;
-}
-.progress-details p {
-  margin: 0 0 12px 0;
-  color: #aaa;
-}
-
-.assign-button {
-  --background: #3880ff;
-  --color: #fff;
-  margin-top: 8px;
-}
-
-.week-summary {
-  display: flex;
-  gap: 12px;
-  justify-content: space-between;
-}
-.day-item {
-  text-align: center;
-  color: #aaa;
-  padding: 4px 8px;
-  border-radius: 8px;
-}
-.day-item.active {
-  background: #3880ff33;
-  color: #fff;
-}
-.day-name {
-  display: block;
-  font-weight: 500;
-}
-.day-value {
-  display: block;
-  font-size: 1.1em;
-  font-weight: bold;
-}
-
-.departments-overview {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-.department-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.department-info h3 {
-  margin: 0 0 2px 0;
-}
-.department-info p {
-  margin: 0;
-  color: #aaa;
-  font-size: 0.95em;
-}
-.department-stats {
-  text-align: right;
-}
-.progress-bar {
-  width: 120px;
-  height: 8px;
-  background: #333;
-  border-radius: 4px;
-  margin-bottom: 4px;
-  overflow: hidden;
-}
-.progress {
-  height: 100%;
-  background: #3880ff;
-  border-radius: 4px;
-}
-
-.quick-actions .action-button {
-  margin-bottom: 12px;
-  --background: #232326;
-  --color: #3880ff;
-  --border-radius: 8px;
-  --box-shadow: none;
-  font-weight: 500;
-}
-.quick-actions .generate-button {
-  --background: #3880ff;
-  --color: #fff;
-}
-
-.leave-requests .request-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #222;
-}
-.leave-requests .request-details h3 {
-  margin: 0 0 2px 0;
-}
-.leave-requests .request-details p {
-  margin: 0;
-  color: #aaa;
-  font-size: 0.95em;
-}
-.request-actions ion-button {
-  margin-left: 2px;
-}
-
-.notifications-list .notification-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #222;
-}
-.notifications-list .notification-item:last-child {
-  border-bottom: none;
-}
-.notification-icon ion-icon {
-  font-size: 1.5em;
-  color: #3880ff;
-}
-.notification-item.unread {
-  background: #23232699;
-  border-radius: 8px;
-}
-.notification-content p {
-  margin: 0 0 2px 0;
-}
-.notification-time {
-  color: #aaa;
-  font-size: 0.9em;
-}
+/* Force the row to use flexbox display and stay in a single row */
+ion-row:nth-child(2) {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 16px;
+    width: 100%;
+  }
+  
+  /* Make each column take half the space minus the gap */
+  ion-row:nth-child(2) ion-col {
+    flex: 0 0 calc(50% - 16px);
+    max-width: calc(50% - 16px);
+    width: calc(50% - 16px);
+  }
+  
+  /* Ensure cards expand to fill their containers */
+  ion-row:nth-child(2) .dashboard-card {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Only stack them on small screens */
+  @media (max-width: 768px) {
+    ion-row:nth-child(2) {
+      flex-direction: column;
+    }
+    
+    ion-row:nth-child(2) ion-col {
+      flex: 0 0 100%;
+      max-width: 100%;
+      width: 100%;
+    }
+    
+    ion-row:nth-child(2) ion-col + ion-col {
+      margin-top: 16px;
+    }
+  
+    
+    .department-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .department-stats {
+      width: 100%;
+      align-items: flex-start;
+    }
+    
+    .progress-bar {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .stats-card {
+      min-width: 100%;
+    }
+  
+    .roster-progress {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
