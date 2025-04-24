@@ -1,22 +1,358 @@
 <ion-app>
   <app-main-menu></app-main-menu>
   
-  <ion-router-outlet id="main-content"></ion-router-outlet>
-  
-  <ion-header>
-    <ion-toolbar color="primary">
-      <ion-buttons slot="start">
-        <ion-menu-button autoHide="false"></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Dashboard</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  
-  
-  <ion-content>
-    <!-- Your dashboard content here -->
-    <div class="ion-padding">
-      <h1>Welcome to Rostering System</h1>
-    </div>
-  </ion-content>
+  <div class="ion-page" id="main-content">
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Dashboard</ion-title>
+        <ion-buttons slot="end">
+          <ion-button>
+            <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="dashboard-content">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1>Employee Rostering Dashboard</h1>
+        <p class="subtitle">Welcome back, John! Here's your overview for this week.</p>
+      </div>
+
+      <!-- Stats Cards Row -->
+      <div class="stats-container">
+        <ion-grid>
+          <ion-row>
+            <!-- Employee Stats Card -->
+            <ion-col size="12" size-md="6" size-lg="3">
+              <div class="stats-card">
+                <div class="stats-icon employees-icon">
+                  <ion-icon name="people"></ion-icon>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-value">250</h3>
+                  <p class="stats-label">Total Employees</p>
+                </div>
+              </div>
+            </ion-col>
+
+            <!-- Shifts Assigned Card -->
+            <ion-col size="12" size-md="6" size-lg="3">
+              <div class="stats-card">
+                <div class="stats-icon shifts-icon">
+                  <ion-icon name="calendar"></ion-icon>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-value">180</h3>
+                  <p class="stats-label">Shifts This Week</p>
+                </div>
+              </div>
+            </ion-col>
+
+            <!-- Pending Shifts Card -->
+            <ion-col size="12" size-md="6" size-lg="3">
+              <div class="stats-card">
+                <div class="stats-icon pending-icon">
+                  <ion-icon name="time"></ion-icon>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-value">50</h3>
+                  <p class="stats-label">Pending Assignments</p>
+                </div>
+              </div>
+            </ion-col>
+
+            <!-- Coverage Card -->
+            <ion-col size="12" size-md="6" size-lg="3">
+              <div class="stats-card">
+                <div class="stats-icon coverage-icon">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-value">90%</h3>
+                  <p class="stats-label">Shift Coverage</p>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+
+      <!-- Main Dashboard Content -->
+      <div class="dashboard-main">
+        <ion-grid>
+          <ion-row>
+            <!-- Left Column -->
+            <ion-col size="12" size-lg="8">
+              <!-- Weekly Roster Overview -->
+              <div class="dashboard-card">
+                <div class="card-header">
+                  <h2>Weekly Roster Overview</h2>
+                  <ion-button fill="clear" size="small" routerLink="/roster">
+                    View All
+                    <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  </ion-button>
+                </div>
+                <div class="roster-overview">
+                  <div class="roster-progress">
+                    <div class="progress-circle">
+                      <svg viewBox="0 0 36 36">
+                        <path class="circle-bg"
+                          d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <path class="circle"
+                          stroke-dasharray="85, 100"
+                          d="M18 2.0845
+                            a 15.9155 15.9155 0 0 1 0 31.831
+                            a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <text x="18" y="20.35" class="percentage">85%</text>
+                      </svg>
+                    </div>
+                    <div class="progress-details">
+                      <h3>Shifts Assigned</h3>
+                      <p>180 out of 210 shifts assigned for this week</p>
+                      <ion-button expand="block" class="assign-button">
+                        Assign Remaining Shifts
+                      </ion-button>
+                    </div>
+                  </div>
+                  
+                  <div class="week-summary">
+                    <div class="day-item">
+                      <span class="day-name">Mon</span>
+                      <span class="day-value">98%</span>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-name">Tue</span>
+                      <span class="day-value">95%</span>
+                    </div>
+                    <div class="day-item active">
+                      <span class="day-name">Wed</span>
+                      <span class="day-value">85%</span>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-name">Thu</span>
+                      <span class="day-value">80%</span>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-name">Fri</span>
+                      <span class="day-value">75%</span>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-name">Sat</span>
+                      <span class="day-value">65%</span>
+                    </div>
+                    <div class="day-item">
+                      <span class="day-name">Sun</span>
+                      <span class="day-value">60%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Department Overview -->
+              <div class="dashboard-card">
+                <div class="card-header">
+                  <h2>Department Overview</h2>
+                  <ion-button fill="clear" size="small" routerLink="/departments">
+                    View Details
+                    <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  </ion-button>
+                </div>
+                <div class="departments-overview">
+                  <div class="department-item">
+                    <div class="department-info">
+                      <h3>HR Department</h3>
+                      <p>45 employees · 35 shifts</p>
+                    </div>
+                    <div class="department-stats">
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 92%"></div>
+                      </div>
+                      <span>92% Coverage</span>
+                    </div>
+                  </div>
+                  
+                  <div class="department-item">
+                    <div class="department-info">
+                      <h3>IT Support</h3>
+                      <p>32 employees · 28 shifts</p>
+                    </div>
+                    <div class="department-stats">
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 88%"></div>
+                      </div>
+                      <span>88% Coverage</span>
+                    </div>
+                  </div>
+                  
+                  <div class="department-item">
+                    <div class="department-info">
+                      <h3>Operations</h3>
+                      <p>78 employees · 65 shifts</p>
+                    </div>
+                    <div class="department-stats">
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 85%"></div>
+                      </div>
+                      <span>85% Coverage</span>
+                    </div>
+                  </div>
+                  
+                  <div class="department-item">
+                    <div class="department-info">
+                      <h3>Customer Service</h3>
+                      <p>95 employees · 52 shifts</p>
+                    </div>
+                    <div class="department-stats">
+                      <div class="progress-bar">
+                        <div class="progress" style="width: 78%"></div>
+                      </div>
+                      <span>78% Coverage</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ion-col>
+            
+            <!-- Right Column -->
+            <ion-col size="12" size-lg="4">
+              <!-- Quick Actions -->
+              <div class="dashboard-card">
+                <div class="card-header">
+                  <h2>Quick Actions</h2>
+                </div>
+                <div class="quick-actions">
+                  <ion-button expand="block" class="action-button generate-button">
+                    <ion-icon name="calendar" slot="start"></ion-icon>
+                    Generate Weekly Roster
+                  </ion-button>
+                  
+                  <ion-button expand="block" class="action-button">
+                    <ion-icon name="person-add" slot="start"></ion-icon>
+                    Add New Employee
+                  </ion-button>
+                  
+                  <ion-button expand="block" class="action-button">
+                    <ion-icon name="swap-horizontal" slot="start"></ion-icon>
+                    Manage Shift Swaps
+                  </ion-button>
+                  
+                  <ion-button expand="block" class="action-button">
+                    <ion-icon name="create" slot="start"></ion-icon>
+                    Edit Shift Templates
+                  </ion-button>
+                </div>
+              </div>
+              
+              <!-- Leave Requests Card -->
+              <div class="dashboard-card">
+                <div class="card-header">
+                  <h2>Leave Requests</h2>
+                  <ion-button fill="clear" size="small" routerLink="/leave-requests">
+                    View All
+                    <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  </ion-button>
+                </div>
+                <div class="leave-requests">
+                  <div class="request-item">
+                    <ion-avatar>
+                      <img src="assets/avatars/user1.jpg" alt="User Avatar">
+                    </ion-avatar>
+                    <div class="request-details">
+                      <h3>Sarah Johnson</h3>
+                      <p>Apr 25 - Apr 28 · Annual Leave</p>
+                    </div>
+                    <div class="request-actions">
+                      <ion-button fill="clear" color="success" size="small">
+                        <ion-icon name="checkmark"></ion-icon>
+                      </ion-button>
+                      <ion-button fill="clear" color="danger" size="small">
+                        <ion-icon name="close"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </div>
+                  
+                  <div class="request-item">
+                    <ion-avatar>
+                      <img src="assets/avatars/user2.jpg" alt="User Avatar">
+                    </ion-avatar>
+                    <div class="request-details">
+                      <h3>Michael Chen</h3>
+                      <p>Apr 30 · Sick Leave</p>
+                    </div>
+                    <div class="request-actions">
+                      <ion-button fill="clear" color="success" size="small">
+                        <ion-icon name="checkmark"></ion-icon>
+                      </ion-button>
+                      <ion-button fill="clear" color="danger" size="small">
+                        <ion-icon name="close"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </div>
+                  
+                  <div class="request-item">
+                    <ion-avatar>
+                      <img src="assets/avatars/user3.jpg" alt="User Avatar">
+                    </ion-avatar>
+                    <div class="request-details">
+                      <h3>Lisa Rodriguez</h3>
+                      <p>May 2 - May 5 · Personal Leave</p>
+                    </div>
+                    <div class="request-actions">
+                      <ion-button fill="clear" color="success" size="small">
+                        <ion-icon name="checkmark"></ion-icon>
+                      </ion-button>
+                      <ion-button fill="clear" color="danger" size="small">
+                        <ion-icon name="close"></ion-icon>
+                      </ion-button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Notifications -->
+              <div class="dashboard-card">
+                <div class="card-header">
+                  <h2>Notifications</h2>
+                  <ion-button fill="clear" size="small" routerLink="/notifications">
+                    View All
+                    <ion-icon slot="end" name="arrow-forward"></ion-icon>
+                  </ion-button>
+                </div>
+                <div class="notifications-list">
+                  <div class="notification-item unread">
+                    <div class="notification-icon">
+                      <ion-icon name="alert-circle"></ion-icon>
+                    </div>
+                    <div class="notification-content">
+                      <p>IT Support department is understaffed for the weekend shift</p>
+                      <span class="notification-time">2 hours ago</span>
+                    </div>
+                  </div>
+                  
+                  <div class="notification-item">
+                    <div class="notification-icon">
+                      <ion-icon name="checkmark-circle"></ion-icon>
+                    </div>
+                    <div class="notification-content">
+                      <p>Weekly roster has been successfully generated</p>
+                      <span class="notification-time">Yesterday</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </ion-content>
+  </div>
 </ion-app>
