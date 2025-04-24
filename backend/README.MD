@@ -45,7 +45,9 @@ pip install -r requirements.txt
   - Log into the MySQL shell
   - Then, create the database:
 
-```  CREATE DATABASE roster;```
+```  
+ CREATE DATABASE roster;
+```
 - **Create a MySQL user (optional):**
 
 ```
