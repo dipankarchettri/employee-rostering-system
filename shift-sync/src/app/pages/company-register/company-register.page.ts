@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { MenuController } from '@ionic/angular';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { IonicModule, MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-company-register',
@@ -11,14 +10,14 @@ import { MenuController } from '@ionic/angular';
   styleUrls: ['./company-register.page.scss'],
   standalone: true,
   imports: [
-    IonicModule,
     CommonModule,
-    ReactiveFormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    IonicModule
   ]
 })
-export class CompanyRegisterPage implements OnInit {
+export class CompanyRegisterPage implements OnInit, OnDestroy {
   registerForm: FormGroup;
-  isLoading = false;
   passwordVisible = false;
   confirmPasswordVisible = false;
 
@@ -38,11 +37,19 @@ export class CompanyRegisterPage implements OnInit {
   }
 
   ngOnInit() {
-    this.menuCtrl.enable(false); // Disable menu when page loads
+    this.menuCtrl.enable(false);
   }
 
-  ionViewWillLeave() {
-    this.menuCtrl.enable(true); // Re-enable menu when leaving page
+  ngOnDestroy() {
+    this.menuCtrl.enable(true);
+  }
+
+  // ... rest of your methods
+
+  passwordMatchValidator(formGroup: FormGroup) {
+    const password = formGroup.get('adminPassword')?.value;
+    const confirmPassword = formGroup.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { mismatch: true };
   }
 
   togglePasswordVisibility() {
@@ -53,22 +60,11 @@ export class CompanyRegisterPage implements OnInit {
     this.confirmPasswordVisible = !this.confirmPasswordVisible;
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    return form.get('adminPassword')?.value === form.get('confirmPassword')?.value 
-      ? null 
-      : { mismatch: true };
-  }
-
   registerCompany() {
-    if (this.registerForm.valid && !this.isLoading) {
-      this.isLoading = true;
-      
-      console.log('Registering company:', this.registerForm.value);
-      
-      setTimeout(() => {
-        this.isLoading = false;
-        this.router.navigate(['/company-select']);
-      }, 1500);
+    if (this.registerForm.valid) {
+      // Implement registration logic
+      console.log('Form submitted', this.registerForm.value);
+      this.router.navigate(['/dashboard']);
     }
   }
 }

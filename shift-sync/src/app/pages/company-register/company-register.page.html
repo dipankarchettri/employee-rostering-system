@@ -1,5 +1,5 @@
 <ion-content class="ion-padding" [fullscreen]="true">
-  <div class="login-container">
+  <div class="login-container company-registration">
     <div class="header">
       <ion-img src="assets/icon/logo.svg" class="logo" alt="App Logo"></ion-img>
       <h1>Create Your Company</h1>
@@ -85,10 +85,9 @@
       </div>
 
       <!-- Terms Checkbox -->
-      <div class="remember-forgot">
-        <ion-checkbox formControlName="termsAccepted" labelPlacement="end">
-          I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
-        </ion-checkbox>
+      <div class="terms-accept">
+        <ion-checkbox formControlName="termsAccepted"></ion-checkbox>
+        <ion-label>I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></ion-label>
       </div>
 
       <!-- Submit Button -->
@@ -108,7 +107,7 @@
     </div>
 
     <div class="signup-link">
-      Already have an account? <a routerLink="/login">Sign in</a>
+      Already have an account? <a href="/login">Sign in</a>
     </div>
   </div>
 </ion-content>

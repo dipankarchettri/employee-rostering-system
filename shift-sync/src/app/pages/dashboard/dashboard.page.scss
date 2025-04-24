@@ -1,0 +1,46 @@
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  
+  .stat-card {
+    text-align: center;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    
+    ion-card-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      
+      h2 {
+        font-size: 2.5rem;
+        margin: 10px 0;
+        color: var(--ion-color-primary);
+      }
+      
+      ion-icon {
+        font-size: 2.5rem;
+        align-self: center;
+      }
+    }
+  }
+  
+  .full-width {
+    grid-column: 1 / -1;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+      min-height: 120px;
+    }
+  }
