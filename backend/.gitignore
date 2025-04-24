@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+**/migrations/*.py
+!**/migrations/__init__.py
+**/migrations/__pycache__/
+
+# Environment files
+.env
+*.env
+
+# SQLite database (ignore if you're using it only for local development)
+db.sqlite3
+
+# VSCode or IDE settings
+.vscode/
+.idea/
+
+# Python virtual environment
+venv/
+.roster/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+
+
+# Git metadata
+*.log
+
+# Pytest cache
+.pytest_cache/
+
+# Git ignore file for backend/
+backend/__pycache__/
+backend/.gitignore
