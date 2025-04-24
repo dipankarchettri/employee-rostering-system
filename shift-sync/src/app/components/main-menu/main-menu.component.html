@@ -1,0 +1,60 @@
+<!-- Sidebar Menu Component -->
+<ion-menu contentId="main-content" type="overlay">
+  <!-- Header with user profile -->
+  <div class="sidebar-header">
+    <div class="user-profile">
+      <ion-avatar>
+        <img src="assets/avatar.png" alt="User Profile" />
+      </ion-avatar>
+      <div class="user-info">
+        <h2>John Doe</h2>
+        <p>Admin</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <ion-content>
+    <div class="menu-container">
+      <!-- Main Navigation -->
+      <div class="menu-section">
+        <ion-list lines="none">
+          <ion-item button detail="false" routerLink="/dashboard" routerLinkActive="active-item">
+            <ion-icon slot="start" name="home"></ion-icon>
+            <ion-label>Dashboard</ion-label>
+          </ion-item>
+
+          <ion-item button detail="false" routerLink="/roster" routerLinkActive="active-item">
+            <ion-icon slot="start" name="calendar"></ion-icon>
+            <ion-label>Roster</ion-label>
+          </ion-item>
+
+          <ion-item button detail="false" routerLink="/employees" routerLinkActive="active-item">
+            <ion-icon slot="start" name="people"></ion-icon>
+            <ion-label>Employees</ion-label>
+          </ion-item>
+
+          <ion-item button detail="false" routerLink="/shifts" routerLinkActive="active-item">
+            <ion-icon slot="start" name="time"></ion-icon>
+            <ion-label>Shifts</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Footer Navigation -->
+      <div class="menu-footer">
+        <ion-list lines="none">
+          <ion-item button detail="false" routerLink="/settings" routerLinkActive="active-item">
+            <ion-icon slot="start" name="settings"></ion-icon>
+            <ion-label>Settings</ion-label>
+          </ion-item>
+
+          <ion-item button detail="false" class="logout-item">
+            <ion-icon slot="start" name="log-out"></ion-icon>
+            <ion-label>Logout</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </ion-content>
+</ion-menu>

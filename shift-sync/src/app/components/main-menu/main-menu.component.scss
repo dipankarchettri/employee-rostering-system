@@ -1,0 +1,118 @@
+/* Modern Sidebar Menu Styling */
+
+/* Menu container */
+ion-menu {
+    --width: 280px;
+    --background: var(--ion-card-background);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Header styling */
+  .sidebar-header {
+    padding: 24px 16px;
+    background: linear-gradient(135deg, var(--ion-color-primary), var(--ion-color-primary-shade));
+    position: relative;
+  }
+  
+  /* User profile section */
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .user-profile ion-avatar {
+    width: 56px;
+    height: 56px;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-info {
+    color: white;
+  }
+  
+  .user-info h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .user-info p {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+  
+  /* Menu content */
+  .menu-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 16px 8px;
+  }
+  
+  /* Menu sections */
+  .menu-section {
+    margin-bottom: 16px;
+  }
+  
+  /* Footer section - pushed to bottom */
+  .menu-footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(var(--ion-text-color-rgb), 0.08);
+    padding-top: 16px;
+  }
+  
+  /* List items styling */
+  ion-list {
+    background: transparent;
+    padding: 0;
+  }
+  
+  ion-item {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 52px;
+    margin: 4px 0;
+    --background: transparent;
+    --background-hover: rgba(var(--ion-color-primary-rgb), 0.06);
+    --background-activated: rgba(var(--ion-color-primary-rgb), 0.1);
+    --border-radius: 12px;
+    font-weight: 500;
+  }
+  
+  /* Item active state */
+  .active-item {
+    --background: rgba(var(--ion-color-primary-rgb), 0.1);
+    color: var(--ion-color-primary);
+    font-weight: 600;
+  }
+  
+  .active-item ion-icon {
+    color: var(--ion-color-primary);
+  }
+  
+  /* Icon styling */
+  ion-item ion-icon {
+    font-size: 20px;
+    margin-right: 16px;
+    color: var(--ion-text-color-step-400);
+  }
+  
+  /* Logout styling */
+  .logout-item {
+    --color: var(--ion-color-danger);
+  }
+  
+  .logout-item ion-icon {
+    color: var(--ion-color-danger);
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    ion-menu {
+      --width: 260px;
+    }
+  }

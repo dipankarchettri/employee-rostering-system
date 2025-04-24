@@ -1,19 +1,17 @@
 import { Component } from '@angular/core';
+import { MainMenuComponent } from './components/main-menu/main-menu.component';
+import { IonicModule } from '@ionic/angular';
+
 @Component({
   selector: 'app-root',
-  templateUrl: 'app.component.html',
-  styleUrls: ['app.component.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [
+    IonicModule,
+    MainMenuComponent
+  ],
+  template: `
+    <app-main-menu></app-main-menu>
+    <ion-router-outlet></ion-router-outlet>
+  `
 })
-export class AppComponent {
-  public appPages = [
-    { title: 'Inbox', url: '/folder/inbox', icon: 'mail' },
-    { title: 'Outbox', url: '/folder/outbox', icon: 'paper-plane' },
-    { title: 'Favorites', url: '/folder/favorites', icon: 'heart' },
-    { title: 'Archived', url: '/folder/archived', icon: 'archive' },
-    { title: 'Trash', url: '/folder/trash', icon: 'trash' },
-    { title: 'Spam', url: '/folder/spam', icon: 'warning' },
-  ];
-  public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  constructor() {}
-}
+export class AppComponent {}
