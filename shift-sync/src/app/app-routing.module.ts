@@ -19,7 +19,17 @@ export const routes: Routes = [
     path: 'dashboard',
     loadComponent: () => import('./pages/dashboard/dashboard.page').then(m => m.DashboardPage)
   },
-];
+  { 
+    path: 'departments',
+    loadComponent: () => import('./pages/departments/departments.page').then(m => m.DepartmentsPage)
+   },
+   { 
+    path: 'shifts',
+    loadComponent: () => import('./pages/shifts/shifts.page').then(m => m.ShiftsPage)
+   },
+ ];
+
+
 
 // Keep this if you need the NgModule for other features
 @NgModule({
