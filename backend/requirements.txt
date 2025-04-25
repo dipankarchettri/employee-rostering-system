@@ -1,20 +1,21 @@
-asgiref
-Django
+asgiref @ file:///home/conda/feedstock_root/build_artifacts/asgiref_1733215607532/work
+Django @ file:///home/conda/feedstock_root/build_artifacts/django_1743676933224/work
 django-filter==25.1
+django-rest-framework-nested==0.0.1
 djangorestframework==3.16.0
 drf-yasg==1.21.10
 Faker==37.1.0
-inflection
+inflection @ file:///home/conda/feedstock_root/build_artifacts/inflection_1734732140003/work
 Markdown==3.8
 mysqlclient==2.2.7
-packaging
+packaging @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_packaging_1745345660/work
 PyMySQL==1.1.1
 python-dotenv==1.1.0
-pytz
-PyYAML
+pytz @ file:///home/conda/feedstock_root/build_artifacts/pytz_1742920838005/work
+PyYAML @ file:///home/conda/feedstock_root/build_artifacts/pyyaml_1737454647378/work
 setuptools==75.8.0
-sqlparse
-typing_extensions
+sqlparse @ file:///home/conda/feedstock_root/build_artifacts/sqlparse_1734007102193/work
+typing_extensions @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_typing_extensions_1744302253/work
 tzdata==2025.2
-uritemplate
+uritemplate @ file:///home/conda/feedstock_root/build_artifacts/uritemplate_1733927878495/work
 wheel==0.45.1
