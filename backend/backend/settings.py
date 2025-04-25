@@ -91,7 +91,11 @@ DATABASES = {
     }
 }
 
-
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:8100', 
+    
+]
 
 
 # Password validation
