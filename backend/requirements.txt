@@ -1,6 +1,7 @@
 asgiref
 Django
 django-filter==25.1
+django-rest-framework-nested==0.0.1
 djangorestframework==3.16.0
 drf-yasg==1.21.10
 Faker==37.1.0
