@@ -1,0 +1,134 @@
+:root {
+  --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+  --ion-color-primary: #3880ff;
+  --ion-color-secondary: #3dc2ff;
+  --ion-background-color: #f8f9fa; // Lighten background for better contrast
+  --ion-card-background: #ffffff; // Lighten card background for better contrast
+  --ion-text-color: #333; // Darken text for better readability
+}
+
+body, .departments-container {
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+  min-height: 100vh;
+}
+
+.departments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 16px;
+}
+
+.departments-search input {
+  background: #f1f3f5;
+  color: var(--ion-text-color);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  width: 100%;
+}
+
+.add-department-btn {
+  background: var(--ion-color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.departments-table-wrapper {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+
+.departments-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+.departments-table th, .departments-table td {
+  padding: 12px;
+  text-align: left;
+  color: var(--ion-text-color);
+  border-bottom: 1px solid #ddd;
+}
+
+.departments-table th {
+  background: #333;
+  font-weight: bold;
+  color: #fff;
+}
+
+.edit-btn, .delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ion-color-primary);
+}
+
+.department-modal {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.department-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--ion-text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-cancel, .modal-save {
+  background: var(--ion-color-primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.modal-cancel {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  .departments-header, .departments-table-wrapper {
+    padding: 8px;
+  }
+
+  .departments-table th, .departments-table td {
+    padding: 8px;
+  }
+
+  .department-modal {
+    padding: 8px;
+  }
+}

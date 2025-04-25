@@ -1,0 +1,63 @@
+<div class="departments-container">
+  <div class="departments-header">
+    <h2>Departments</h2>
+    <button class="add-department-btn" (click)="openAddModal()">
+      + Add Department
+    </button>
+  </div>
+
+  <div class="departments-search">
+    <input type="text" placeholder="Filter departments..." [(ngModel)]="searchTerm" />
+  </div>
+
+  <div class="departments-table-wrapper">
+    <table class="departments-table">
+      <thead>
+        <tr>
+          <th>Department Name</th>
+          <th>Description</th>
+          <th>Employees</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let department of filteredDepartments()">
+          <td>{{ department.name }}</td>
+          <td>{{ department.description }}</td>
+          <td>{{ department.numEmployees }}</td>
+          <td>
+            <button class="edit-btn" (click)="editDepartment(department)">
+              <i class="icon-edit"></i>
+            </button>
+            <button class="delete-btn" (click)="deleteDepartment(department)">
+              <i class="icon-delete"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add Department Modal -->
+  <div class="modal-backdrop" *ngIf="addModalOpen"></div>
+  <div class="department-modal" *ngIf="addModalOpen">
+    <div class="department-modal-content">
+      <button class="modal-close" (click)="closeAddModal()">&times;</button>
+      <h3>Add New Department</h3>
+      <form (ngSubmit)="submitDepartment()">
+        <label>
+          Department Name
+          <input type="text" [(ngModel)]="newDepartment.name" name="departmentName" required />
+        </label>
+        <label>
+          Description
+          <textarea [(ngModel)]="newDepartment.description" name="departmentDescription" required></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="modal-cancel" (click)="closeAddModal()">Cancel</button>
+          <button type="submit" class="modal-save">Save Department</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
