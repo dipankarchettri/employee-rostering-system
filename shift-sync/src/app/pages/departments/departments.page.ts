@@ -1,78 +1,170 @@
 import { Component } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common'; // ✅ Corrected
+import { 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonList, 
+  IonItem, IonLabel, IonButton, IonIcon, IonBadge,
+  IonItemSliding, IonItemOptions, IonItemOption, IonModal,
+  IonInput, IonTextarea, IonSearchbar, IonButtons
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { 
+  addOutline, createOutline, trashOutline, 
+  businessOutline, closeOutline, peopleOutline
+} from 'ionicons/icons';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ API support
+import { HttpClient } from '@angular/common/http';
+
+interface Department {
+  id?: number;
+  name: string;
+  description: string;
+  numEmployees: number;
+}
 
 @Component({
   selector: 'app-departments',
   templateUrl: './departments.page.html',
   styleUrls: ['./departments.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HttpClientModule] // ✅ Include HttpClientModule
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonList, IonItem, IonLabel, IonButton, IonIcon,
+    IonBadge, IonItemSliding, IonItemOptions, IonItemOption,
+    IonModal, IonInput, IonTextarea, IonSearchbar, IonButtons
+  ]
 })
 export class DepartmentsPage {
-  departments: any[] = [];
+  departments: Department[] = [
+    {
+      id: 1,
+      name: 'Human Resources',
+      description: 'Handles recruitment, employee relations, and benefits',
+      numEmployees: 8
+    },
+    {
+      id: 2,
+      name: 'Engineering',
+      description: 'Software development and product engineering',
+      numEmployees: 24
+    },
+    {
+      id: 3,
+      name: 'Marketing',
+      description: 'Brand management and digital marketing',
+      numEmployees: 12
+    },
+    {
+      id: 4,
+      name: 'Sales',
+      description: 'Customer acquisition and revenue generation',
+      numEmployees: 18
+    },
+    {
+      id: 5,
+      name: 'Customer Support',
+      description: 'Client assistance and issue resolution',
+      numEmployees: 15
+    },
+    {
+      id: 6,
+      name: 'Finance',
+      description: 'Accounting, budgeting and financial planning',
+      numEmployees: 6
+    },
+    {
+      id: 7,
+      name: 'Operations',
+      description: 'Business processes and logistics',
+      numEmployees: 10
+    }
+  ];
+  
   searchTerm = '';
   addModalOpen = false;
-  newDepartment = { name: '', description: '' };
+  editingDepartment = false;
+  currentDepartmentId: number | null = null;
+  newDepartment: Department = {
+    name: '',
+    description: '',
+    numEmployees: 0
+  };
 
   constructor(private http: HttpClient) {
-    this.loadDepartments();
+    addIcons({
+      addOutline,
+      createOutline,
+      trashOutline,
+      businessOutline,
+      closeOutline,
+      peopleOutline
+    });
+    // Comment out the API call if using dummy data
+    // this.loadDepartments();
   }
 
-  loadDepartments() {
-    const companyId = 1;
-    this.http.get<any[]>(`http://localhost:8000/api/departments/?company=${companyId}`)
-      .subscribe({
-        next: (data) => {
-          this.departments = data.map(d => ({
-            ...d,
-            numEmployees: 0 // or fetch from another endpoint if needed
-          }));
-        },
-        error: (err) => {
-          console.error('Failed to load departments:', err);
-        }
-      });
-  }
-
+  // ... rest of the methods remain the same ...
   filteredDepartments() {
     if (!this.searchTerm) return this.departments;
     const term = this.searchTerm.toLowerCase();
     return this.departments.filter(dep =>
       dep.name.toLowerCase().includes(term) ||
-      dep.description?.toLowerCase().includes(term)
+      (dep.description && dep.description.toLowerCase().includes(term))
     );
   }
 
   openAddModal() {
     this.addModalOpen = true;
-    this.newDepartment = { name: '', description: '' };
+    this.editingDepartment = false;
+    this.currentDepartmentId = null;
+    this.resetForm();
+  }
+
+  editDepartment(department: Department) {
+    this.addModalOpen = true;
+    this.editingDepartment = true;
+    this.currentDepartmentId = department.id || null;
+    this.newDepartment = { ...department };
+  }
+
+  deleteDepartment(department: Department) {
+    if (confirm(`Delete department "${department.name}"?`)) {
+      this.departments = this.departments.filter(d => d.id !== department.id);
+    }
   }
 
   closeAddModal() {
     this.addModalOpen = false;
+    this.resetForm();
   }
 
   submitDepartment() {
-    if (this.newDepartment.name.trim()) {
+    if (this.editingDepartment && this.currentDepartmentId) {
+      // Update existing department
+      const index = this.departments.findIndex(d => d.id === this.currentDepartmentId);
+      if (index !== -1) {
+        this.departments[index] = {
+          ...this.departments[index],
+          ...this.newDepartment
+        };
+      }
+    } else {
+      // Create new department
+      const newId = Math.max(...this.departments.map(d => d.id || 0), 0) + 1;
       this.departments.push({
-        name: this.newDepartment.name,
-        description: this.newDepartment.description,
-        numEmployees: 0
+        ...this.newDepartment,
+        id: newId
       });
-      this.closeAddModal();
     }
+    this.closeAddModal();
   }
 
-  editDepartment(dep: any) {
-    alert('Edit department: ' + dep.name);
-  }
-
-  deleteDepartment(dep: any) {
-    if (confirm(`Delete department "${dep.name}"?`)) {
-      this.departments = this.departments.filter(d => d !== dep);
-    }
+  private resetForm() {
+    this.newDepartment = {
+      name: '',
+      description: '',
+      numEmployees: 0
+    };
   }
 }

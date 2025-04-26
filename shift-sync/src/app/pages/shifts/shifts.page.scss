@@ -1,150 +1,108 @@
-:root {
-  --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
-  --ion-color-primary: #3880ff;
-  --ion-color-secondary: #3dc2ff;
-  --ion-background-color: #18191b;
-  --ion-card-background: #232326;
-  --ion-text-color: #fff;
+/* Shift Management Page Styles */
+ion-content {
+  --background: var(--ion-background-color);
 }
 
-body, .shift-management-container {
-  background: var(--ion-background-color);
-  color: var(--ion-text-color);
-  min-height: 100vh;
-}
-
-.shift-management-header {
+.filter-controls {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+  gap: 16px;
   margin-bottom: 16px;
 }
 
-.shift-management-filters select {
-  background: var(--ion-card-background);
-  color: var(--ion-text-color);
-  border: none;
-  border-radius: 8px;
-  padding: 8px;
-  margin-right: 8px;
+.filter-controls ion-item {
+  flex: 1;
 }
 
-.add-shift-btn {
-  background: var(--ion-color-primary);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-weight: bold;
+.shift-list {
+  background: transparent;
 }
 
-.shift-table-wrapper {
-  background: var(--ion-card-background);
+.shift-list ion-item {
+  --background: var(--ion-card-background);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-  overflow-x: auto;
+  margin-bottom: 8px;
+  --padding-start: 16px;
+  --padding-end: 16px;
 }
 
-.shift-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+.shift-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.shift-table th, .shift-table td {
-  padding: 12px;
-  text-align: left;
-  color: var(--ion-text-color);
+.shift-info h2 {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
 }
 
-.shift-table th {
-  background: #333;
-  font-weight: bold;
-  color: #fff
+.shift-info p {
+  color: var(--ion-color-medium);
+  font-size: 14px;
 }
 
 .employee-avatars {
   display: flex;
-  gap: 4px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
-.employee-avatar {
+.employee-avatars ion-avatar {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
 }
 
-.edit-btn, .delete-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
+.shift-time {
   color: var(--ion-color-primary);
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-.shift-modal {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.shift-modal-content {
+.empty-state {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 60vh;
+  padding: 16px;
+}
+
+.empty-state ion-icon {
+  font-size: 48px;
+  color: var(--ion-color-medium);
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: var(--ion-color-medium);
+  margin-bottom: 16px;
+}
+
+.time-inputs {
+  display: flex;
   gap: 16px;
 }
 
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--ion-text-color);
-  font-size: 1.5rem;
-  cursor: pointer;
-  align-self: flex-end;
+.time-inputs ion-item {
+  flex: 1;
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.modal-cancel, .modal-save {
-  background: var(--ion-color-primary);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.modal-cancel {
-  background: #555;
-}
-
-.assign-employees-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .shift-management-header, .shift-table-wrapper {
-    padding: 8px;
+  .filter-controls {
+    flex-direction: column;
+    gap: 8px;
   }
 
-  .shift-table th, .shift-table td {
-    padding: 8px;
-  }
-
-  .shift-modal {
-    padding: 8px;
+  .time-inputs {
+    flex-direction: column;
+    gap: 8px;
   }
 }

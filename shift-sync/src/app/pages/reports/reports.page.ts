@@ -15,7 +15,10 @@ import {
   IonItem,
   IonLabel,
   IonSelect,
-  IonSelectOption
+  IonSelectOption,
+  IonDatetimeButton,  // Add this import
+  IonModal,          // Add this import
+  IonDatetime 
 } from '@ionic/angular/standalone';
 import { MainMenuComponent } from '../../components/main-menu/main-menu.component';
 import { addIcons } from 'ionicons';
@@ -58,7 +61,10 @@ interface ReportItem {
     IonItem,
     IonLabel,
     IonSelect,
-    IonSelectOption
+    IonSelectOption,
+    IonDatetimeButton,  // Add to imports
+    IonModal,          // Add to imports
+    IonDatetime  
   ]
 })
 export class ReportsPage implements OnInit {

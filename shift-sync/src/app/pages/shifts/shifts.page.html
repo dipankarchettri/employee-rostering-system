@@ -1,100 +1,138 @@
-<div class="shift-management-container">
-  <div class="shift-management-header">
-    <h2>Shift Management</h2>
-    <div class="shift-management-filters">
-      <select [(ngModel)]="selectedDepartment">
-        <option value="">All Departments</option>
-        <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-      </select>
-      <select [(ngModel)]="selectedDay">
-        <option value="">All Days</option>
-        <option *ngFor="let day of days" [value]="day">{{ day }}</option>
-      </select>
-      <button class="add-shift-btn" (click)="openAddShiftModal()">
-        <span>+ Add Shift</span>
-      </button>
-    </div>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Shift Management</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openAddShiftModal()">
+        <ion-icon slot="start" name="add"></ion-icon>
+        Add Shift
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Filter Controls -->
+  <div class="filter-controls">
+    <ion-item>
+      <ion-label>Department</ion-label>
+      <ion-select [(ngModel)]="selectedDepartment" interface="popover">
+        <ion-select-option value="">All Departments</ion-select-option>
+        <ion-select-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Day</ion-label>
+      <ion-select [(ngModel)]="selectedDay" interface="popover">
+        <ion-select-option value="">All Days</ion-select-option>
+        <ion-select-option *ngFor="let day of days" [value]="day">{{ day }}</ion-select-option>
+      </ion-select>
+    </ion-item>
   </div>
 
-  <div class="shift-table-wrapper">
-    <table class="shift-table">
-      <thead>
-        <tr>
-          <th>Shift Name</th>
-          <th>Department</th>
-          <th>Assigned Employees</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let shift of filteredShifts()">
-          <td>{{ shift.name }}</td>
-          <td>{{ shift.department }}</td>
-          <td>
-            <div class="employee-avatars">
-              <img *ngFor="let emp of shift.employees" [src]="emp.avatar" [alt]="emp.name" class="employee-avatar" />
-            </div>
-          </td>
-          <td>
-            <button class="edit-btn" (click)="editShift(shift)">
-              <i class="icon-edit"></i>
-            </button>
-            <button class="delete-btn" (click)="deleteShift(shift)">
-              <i class="icon-delete"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Add/Edit Shift Modal -->
-  <div class="modal-backdrop" *ngIf="showShiftModal"></div>
-  <div class="shift-modal" *ngIf="showShiftModal">
-    <div class="shift-modal-content">
-      <button class="modal-close" (click)="closeShiftModal()">&times;</button>
-      <h3>Add New Shift</h3>
-      <form (ngSubmit)="saveShift()">
-        <label>
-          Shift Name
-          <input type="text" [(ngModel)]="shiftForm.name" name="shiftName" required />
-        </label>
-        <label>
-          Department
-          <select [(ngModel)]="shiftForm.department" name="shiftDepartment" required>
-            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
-          </select>
-        </label>
-        <label>
-          Day
-          <select [(ngModel)]="shiftForm.day" name="shiftDay" required>
-            <option *ngFor="let day of days" [value]="day">{{ day }}</option>
-          </select>
-        </label>
-        <div class="shift-time-row">
-          <label>
-            Start Time
-            <input type="time" [(ngModel)]="shiftForm.startTime" name="startTime" required />
-          </label>
-          <label>
-            End Time
-            <input type="time" [(ngModel)]="shiftForm.endTime" name="endTime" required />
-          </label>
-        </div>
-        <label>
-          Assign Employees
-          <div class="assign-employees-list">
-            <div *ngFor="let emp of allEmployees">
-              <input type="checkbox" [value]="emp.name" [(ngModel)]="shiftForm.assignedEmployees" name="assignedEmployees" />
-              {{ emp.name }}
-            </div>
+  <!-- Shifts List -->
+  <ion-list class="shift-list">
+    <ion-item-sliding *ngFor="let shift of filteredShifts()">
+      <ion-item>
+        <ion-label class="shift-info">
+          <h2>{{ shift.name }}</h2>
+          <p>{{ shift.department }} • {{ shift.day }}</p>
+          <div class="employee-avatars">
+            <ion-avatar *ngFor="let emp of shift.employees">
+              <img [src]="emp.avatar" [alt]="emp.name" />
+            </ion-avatar>
           </div>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="modal-cancel" (click)="closeShiftModal()">Cancel</button>
-          <button type="submit" class="modal-save">Save Shift</button>
+        </ion-label>
+        <div class="shift-time">
+          {{ shift.startTime }} - {{ shift.endTime }}
         </div>
-      </form>
-    </div>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="primary" (click)="editShift(shift)">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="deleteShift(shift)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredShifts().length === 0">
+    <ion-icon name="time-outline"></ion-icon>
+    <h3>No shifts found</h3>
+    <p>Try adjusting your filters or create a new shift</p>
+    <ion-button (click)="openAddShiftModal()">Add Shift</ion-button>
   </div>
-</div>
+</ion-content>
+
+<!-- Add/Edit Shift Modal -->
+<ion-modal [isOpen]="showShiftModal" (didDismiss)="closeShiftModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>{{ editingShift ? 'Edit Shift' : 'Add Shift' }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeShiftModal()">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <form (ngSubmit)="saveShift()">
+        <ion-item>
+          <ion-label position="stacked">Shift Name</ion-label>
+          <ion-input [(ngModel)]="shiftForm.name" name="shiftName" required></ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Department</ion-label>
+          <ion-select [(ngModel)]="shiftForm.department" name="shiftDepartment" required>
+            <ion-select-option *ngFor="let dept of departments" [value]="dept">{{ dept }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Day</ion-label>
+          <ion-select [(ngModel)]="shiftForm.day" name="shiftDay" required>
+            <ion-select-option *ngFor="let day of days" [value]="day">{{ day }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <div class="time-inputs">
+          <ion-item>
+            <ion-label position="stacked">Start Time</ion-label>
+            <ion-datetime-button datetime="startTime"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="startTime" presentation="time" [(ngModel)]="shiftForm.startTime" name="startTime"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked">End Time</ion-label>
+            <ion-datetime-button datetime="endTime"></ion-datetime-button>
+            <ion-modal [keepContentsMounted]="true">
+              <ng-template>
+                <ion-datetime id="endTime" presentation="time" [(ngModel)]="shiftForm.endTime" name="endTime"></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </ion-item>
+        </div>
+
+        <ion-item>
+          <ion-label position="stacked">Assign Employees</ion-label>
+          <ion-select [(ngModel)]="shiftForm.assignedEmployees" name="assignedEmployees" multiple="true">
+            <ion-select-option *ngFor="let emp of allEmployees" [value]="emp.id">{{ emp.name }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-button expand="block" type="submit" class="ion-margin-top">
+          {{ editingShift ? 'Update Shift' : 'Create Shift' }}
+        </ion-button>
+      </form>
+    </ion-content>
+  </ng-template>
+</ion-modal>
