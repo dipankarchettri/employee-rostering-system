@@ -1,0 +1,73 @@
+
+  
+  <div class="ion-page" id="main-content">
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button></ion-menu-button>
+        </ion-buttons>
+        <ion-title>Employees</ion-title>
+        <ion-buttons slot="end">
+          <ion-button>
+            <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="dashboard-content">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1>Employee Management</h1>
+        <p class="subtitle">View, add and manage your employees</p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2>Manage Employees</h2>
+          <button class="add-button" (click)="addNewEmployee()">Add New</button>
+        </div>
+        
+        <!-- Filter Controls -->
+        <div class="filter-container">
+          <select class="filter-dropdown" [(ngModel)]="selectedDepartment" (change)="filterEmployees()">
+            <option value="">All Departments</option>
+            <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+          </select>
+          
+          <select class="filter-dropdown" [(ngModel)]="selectedType" (change)="filterEmployees()">
+            <option value="">All Employee Types</option>
+            <option *ngFor="let type of employeeTypes" [value]="type">{{ type }}</option>
+          </select>
+        </div>
+        
+        <!-- Employee Table -->
+        <table class="employee-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Contact</th>
+              <th>Department</th>
+              <th>Employee Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employee of employees">
+              <td>{{ employee.name }}</td>
+              <td>{{ employee.contact }}</td>
+              <td>{{ employee.department }}</td>
+              <td>{{ employee.type }}</td>
+              <td>
+                <div class="action-buttons">
+                  <button class="action-button edit-icon" (click)="editEmployee(employee)"></button>
+                  <button class="action-button delete-icon" (click)="deleteEmployee(employee)"></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ion-content>
+  </div>
