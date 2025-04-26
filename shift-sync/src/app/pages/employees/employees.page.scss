@@ -1,0 +1,190 @@
+:root {
+    --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
+    --ion-color-primary: #3880ff;
+    --ion-color-secondary: #3dc2ff;
+    --ion-background-color: #18191b;
+    --ion-card-background: #232326;
+    --ion-text-color: #fff;
+  }
+  
+  body, .dashboard-content {
+    background: var(--ion-background-color);
+    color: var(--ion-text-color);
+    min-height: 100vh;
+    margin: 0;
+    font-family: var(--ion-font-family);
+  }
+  
+  ion-app {
+    background: var(--ion-background-color);
+    color: var(--ion-text-color);
+  }
+  
+  ion-header {
+    background: var(--ion-background-color);
+  }
+  
+  ion-toolbar {
+    --background: var(--ion-background-color);
+    --color: var(--ion-text-color);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+  
+  ion-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+  
+  ion-button {
+    --ripple-color: transparent;
+  }
+  
+  ion-menu-button, ion-button {
+    --color: var(--ion-text-color);
+  }
+  
+  .dashboard-content {
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+  
+  .welcome-section {
+    padding: 16px 0;
+    margin-bottom: 16px;
+  }
+  
+  .welcome-section h1 {
+    margin: 0 0 8px 0;
+    font-size: 1.8rem;
+  }
+  
+  .welcome-section .subtitle {
+    margin: 0;
+    color: #aaa;
+    font-size: 1rem;
+  }
+  
+  .dashboard-card {
+    background: var(--ion-card-background);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 16px;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .card-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+  
+  .filter-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .filter-dropdown {
+    background: #2f3033;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: white;
+    padding: 8px 12px;
+    flex: 1;
+    min-width: 120px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+  
+  .add-button {
+    background: var(--ion-color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  
+  .add-button::before {
+    content: "+";
+    font-size: 18px;
+  }
+  
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .employee-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 500;
+    color: #aaa;
+    border-bottom: 1px solid #333;
+  }
+  
+  .employee-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #333;
+  }
+  
+  .employee-table tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .action-button {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .action-button:hover {
+    background: #333;
+  }
+  
+  .edit-icon::before {
+    content: "✓";
+  }
+  
+  .delete-icon::before {
+    content: "🗑";
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .filter-container {
+      flex-direction: column;
+    }
+    
+    .employee-table {
+      display: block;
+      overflow-x: auto;
+    }
+  }

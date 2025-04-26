@@ -22,13 +22,28 @@ export const routes: Routes = [
   { 
     path: 'departments',
     loadComponent: () => import('./pages/departments/departments.page').then(m => m.DepartmentsPage)
-   },
-   { 
+  },
+  { 
     path: 'shifts',
     loadComponent: () => import('./pages/shifts/shifts.page').then(m => m.ShiftsPage)
-   },
- ];
-
+  },
+  {
+    path: 'employees',
+    loadComponent: () => import('./pages/employees/employees.page').then(m => m.EmployeesPage)
+  },
+  {
+    path: 'rosters',
+    loadComponent: () => import('./pages/rosters/rosters.page').then( m => m.RostersPage)
+  },
+  {
+    path: 'availability',
+    loadComponent: () => import('./pages/availability/availability.page').then( m => m.AvailabilityPage)
+  },
+  {
+    path: 'reports',
+    loadComponent: () => import('./pages/reports/reports.page').then( m => m.ReportsPage)
+  },
+];
 
 
 // Keep this if you need the NgModule for other features

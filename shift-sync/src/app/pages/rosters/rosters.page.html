@@ -1,0 +1,112 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Roster</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <span class="user-badge">User</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="roster-content">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1>Roster Generation</h1>
+    <p>Create and manage employee schedules</p>
+  </div>
+
+  <!-- Main Card -->
+  <div class="main-card">
+    <div class="card-header">
+      <h2>Generate Roster</h2>
+      <div class="export-buttons">
+        <ion-button size="small" fill="outline" (click)="exportRoster('email')">
+          <ion-icon name="mail-outline"></ion-icon>
+          Email
+        </ion-button>
+        <ion-button size="small" fill="outline" (click)="exportRoster('pdf')">
+          <ion-icon name="document-outline"></ion-icon>
+          Export PDF
+        </ion-button>
+        <ion-button size="small" fill="outline" (click)="exportRoster('csv')">
+          <ion-icon name="document-text-outline"></ion-icon>
+          Export CSV
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <!-- Date Range Panel -->
+      <div class="control-panel date-panel">
+        <h3>Date Range Selection</h3>
+        <div class="date-inputs">
+          <div class="date-field">
+            <label>Start Date</label>
+            <ion-button fill="outline" expand="block" class="date-button">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              <span>{{startDate | date: 'MMM d, y'}}</span>
+            </ion-button>
+          </div>
+          <div class="date-field">
+            <label>End Date</label>
+            <ion-button fill="outline" expand="block" class="date-button">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              <span>{{endDate | date: 'MMM d, y'}}</span>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generate Options Panel -->
+      <div class="control-panel options-panel">
+        <h3>Generate Options</h3>
+        <div class="options-list">
+          <ion-item lines="none">
+            <ion-checkbox [(ngModel)]="applyPreferences"></ion-checkbox>
+            <ion-label>Apply employee preferences</ion-label>
+          </ion-item>
+          <ion-item lines="none">
+            <ion-checkbox [(ngModel)]="balanceWorkload"></ion-checkbox>
+            <ion-label>Balance workload</ion-label>
+          </ion-item>
+        </div>
+        <ion-button expand="block" (click)="generateRoster()" class="generate-button">
+          Generate Roster
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Roster Table -->
+    <div class="table-container">
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th class="employee-column">Member</th>
+            <th *ngFor="let day of weekdayLabels">{{day}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employee of employees">
+            <td class="employee-cell">
+              <div class="employee-info">
+                <div class="employee-avatar">{{employee.initial}}</div>
+                <span class="employee-name">{{employee.name}}</span>
+              </div>
+            </td>
+            <td *ngFor="let day of weekdays" 
+                [class.has-shift]="employee.schedule[day]">
+              {{employee.schedule[day] || '—'}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ion-content>

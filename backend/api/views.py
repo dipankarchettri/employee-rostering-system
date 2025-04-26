@@ -56,6 +56,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['employee__company']
+    
 #signup view 
 class CompanySignupView(APIView):
     def post(self, request):

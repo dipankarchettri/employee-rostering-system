@@ -1,0 +1,138 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Reports</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+      <ion-button>
+        <span class="user-badge">User</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="roster-content">
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1>Shift Reports</h1>
+    <p>Generate and view schedule analytics</p>
+  </div>
+
+  <!-- Main Card -->
+  <div class="main-card">
+    <div class="card-header">
+      <h2>Generate Reports</h2>
+      <div class="export-buttons">
+        <ion-button size="small" fill="outline" (click)="exportReport('email')">
+          <ion-icon name="mail-outline"></ion-icon>
+          Email
+        </ion-button>
+        <ion-button size="small" fill="outline" (click)="exportReport('pdf')">
+          <ion-icon name="document-outline"></ion-icon>
+          Export PDF
+        </ion-button>
+        <ion-button size="small" fill="outline" (click)="exportReport('csv')">
+          <ion-icon name="document-text-outline"></ion-icon>
+          Export CSV
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <!-- Date Range Panel -->
+      <div class="control-panel date-panel">
+        <h3>Date Range</h3>
+        <div class="date-inputs">
+          <div class="date-field">
+            <label>Start Date</label>
+            <ion-button fill="outline" expand="block" class="date-button">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              <span>{{startDate | date: 'MMM d, y'}}</span>
+            </ion-button>
+          </div>
+          <div class="date-field">
+            <label>End Date</label>
+            <ion-button fill="outline" expand="block" class="date-button">
+              <ion-icon name="calendar-outline" slot="start"></ion-icon>
+              <span>{{endDate | date: 'MMM d, y'}}</span>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Options Panel -->
+      <div class="control-panel filter-panel">
+        <h3>Report Filters</h3>
+        <div class="filter-inputs">
+          <ion-item>
+            <ion-label position="stacked">Department</ion-label>
+            <ion-select interface="popover" [(ngModel)]="selectedDepartment" placeholder="All Departments">
+              <ion-select-option value="all">All Departments</ion-select-option>
+              <ion-select-option value="hr">HR Department</ion-select-option>
+              <ion-select-option value="it">IT Support</ion-select-option>
+              <ion-select-option value="ops">Operations</ion-select-option>
+              <ion-select-option value="cs">Customer Service</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Report Type</ion-label>
+            <ion-select interface="popover" [(ngModel)]="selectedReportType" placeholder="Select Report Type">
+              <ion-select-option value="summary">Shift Summary</ion-select-option>
+              <ion-select-option value="employee">Employee Assignment</ion-select-option>
+              <ion-select-option value="coverage">Coverage Analysis</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+        <ion-button expand="block" (click)="generateReport()" class="generate-button">
+          Generate Report
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="summary-stats">
+      <div class="stat-item">
+        <div class="stat-value">156</div>
+        <div class="stat-label">Total Shifts</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">22</div>
+        <div class="stat-label">Employees Assigned</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">3</div>
+        <div class="stat-label">Coverage Conflicts</div>
+      </div>
+    </div>
+
+    <!-- Report Table -->
+    <div class="table-container">
+      <table class="roster-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Department</th>
+            <th>Shift Name</th>
+            <th>Employees</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of reportData">
+            <td>{{report.date | date: 'MMM d'}}</td>
+            <td>{{report.department}}</td>
+            <td>{{report.shiftName}}</td>
+            <td>{{report.employeeCount}}</td>
+            <td [class]="report.status === 'Complete' ? 'status-complete' : 'status-pending'">
+              {{report.status}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</ion-content>

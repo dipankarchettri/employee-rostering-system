@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MenuController, IonicModule } from '@ionic/angular';  // Import MenuController
+import { MainMenuComponent } from '../../components/main-menu/main-menu.component';  // Import MainMenuComponent
 
 @Component({
   selector: 'app-shifts',
   templateUrl: './shifts.page.html',
   styleUrls: ['./shifts.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, IonicModule, MainMenuComponent]  // Add MainMenuComponent and IonicModule
 })
 export class ShiftsPage {
   departments = ['Sales', 'Support', 'HR'];
@@ -45,6 +47,13 @@ export class ShiftsPage {
     assignedEmployees: []
   };
 
+  constructor(private menuCtrl: MenuController) {}
+
+  // Enable menu when the page enters
+  ionViewWillEnter() {
+    this.menuCtrl.enable(true, 'main-menu');
+  }
+
   filteredShifts() {
     return this.shifts.filter(shift =>
       (!this.selectedDepartment || shift.department === this.selectedDepartment) &&
@@ -80,5 +89,4 @@ export class ShiftsPage {
   deleteShift(shift: any) {
     // Add logic to delete shift
   }
-
 }

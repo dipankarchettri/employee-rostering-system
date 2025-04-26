@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'rest_framework',
+    'corsheaders',
     'django_filters',
     'django.contrib.staticfiles',  # required for serving swagger ui's css/js files
     'drf_yasg',
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -92,10 +94,19 @@ DATABASES = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8100', 
-    
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8100',  # Your Ionic frontend URL
 ]
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8100',  # Your Ionic frontend URL
+]
+# Disable CSRF for login endpoint (for development)
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8100',  # Add the frontend URL here
+]
+
 
 
 # Password validation
