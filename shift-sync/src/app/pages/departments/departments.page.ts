@@ -1,128 +1,170 @@
 import { Component } from '@angular/core';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonList, 
+  IonItem, IonLabel, IonButton, IonIcon, IonBadge,
+  IonItemSliding, IonItemOptions, IonItemOption, IonModal,
+  IonInput, IonTextarea, IonSearchbar, IonButtons
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { 
+  addOutline, createOutline, trashOutline, 
+  businessOutline, closeOutline, peopleOutline
+} from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MenuController } from '@ionic/angular';
+import { HttpClient } from '@angular/common/http';
 
-// Define a simple Department interface based on template usage
 interface Department {
-  id?: number; // Optional ID
+  id?: number;
   name: string;
   description: string;
-  employees: number;
+  numEmployees: number;
 }
-
-
-
 
 @Component({
   selector: 'app-departments',
   templateUrl: './departments.page.html',
   styleUrls: ['./departments.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonHeader, IonToolbar, IonTitle, IonContent,
+    IonList, IonItem, IonLabel, IonButton, IonIcon,
+    IonBadge, IonItemSliding, IonItemOptions, IonItemOption,
+    IonModal, IonInput, IonTextarea, IonSearchbar, IonButtons
+  ]
 })
 export class DepartmentsPage {
-  showAddSection = false; // Controls visibility of the add section
-
-  // Sample initial data (replace with actual data loading if needed)
   departments: Department[] = [
-    { id: 1, name: 'Human Resources', description: 'Manages employee relations and recruitment', employees: 15 },
-    { id: 2, name: 'Marketing', description: 'Handles company promotion and branding', employees: 12 },
-    { id: 3, name: 'Finance', description: 'Manages company finances and payroll', employees: 8 },
-    { id: 4, name: 'IT', description: 'Maintains IT infrastructure and support', employees: 10 },
-    { id: 5, name: 'Sales', description: 'Handles sales and client relationships', employees: 14 },
-    { id: 6, name: 'Operations', description: 'Oversees daily business operations', employees: 9 },
-    { id: 7, name: 'Customer Support', description: 'Provides customer service and support', employees: 11 },
-    { id: 8, name: 'Legal', description: 'Manages legal affairs and compliance', employees: 4 },
-    { id: 9, name: 'Research & Development', description: 'Drives innovation and product development', employees: 7 },
-    { id: 10, name: 'Procurement', description: 'Handles purchasing and vendor management', employees: 6 }
+    {
+      id: 1,
+      name: 'Human Resources',
+      description: 'Handles recruitment, employee relations, and benefits',
+      numEmployees: 8
+    },
+    {
+      id: 2,
+      name: 'Engineering',
+      description: 'Software development and product engineering',
+      numEmployees: 24
+    },
+    {
+      id: 3,
+      name: 'Marketing',
+      description: 'Brand management and digital marketing',
+      numEmployees: 12
+    },
+    {
+      id: 4,
+      name: 'Sales',
+      description: 'Customer acquisition and revenue generation',
+      numEmployees: 18
+    },
+    {
+      id: 5,
+      name: 'Customer Support',
+      description: 'Client assistance and issue resolution',
+      numEmployees: 15
+    },
+    {
+      id: 6,
+      name: 'Finance',
+      description: 'Accounting, budgeting and financial planning',
+      numEmployees: 6
+    },
+    {
+      id: 7,
+      name: 'Operations',
+      description: 'Business processes and logistics',
+      numEmployees: 10
+    }
   ];
+  
+  searchTerm = '';
+  addModalOpen = false;
+  editingDepartment = false;
+  currentDepartmentId: number | null = null;
+  newDepartment: Department = {
+    name: '',
+    description: '',
+    numEmployees: 0
+  };
 
-  // Object to hold data for the new department form
-  newDepartment: Department = this.getEmptyDepartment();
-
-  constructor(private alertController: AlertController) {} // Inject AlertController for delete confirmation
-
-  // Helper function to create an empty department object
-  private getEmptyDepartment(): Department {
-    return { name: '', description: '', employees: 0 };
+  constructor(private http: HttpClient) {
+    addIcons({
+      addOutline,
+      createOutline,
+      trashOutline,
+      businessOutline,
+      closeOutline,
+      peopleOutline
+    });
+    // Comment out the API call if using dummy data
+    // this.loadDepartments();
   }
 
-  // Toggles the visibility of the "Add Department" section
-  toggleAddSection() {
-    this.showAddSection = !this.showAddSection;
-    if (!this.showAddSection) {
-      this.clearForm(); // Clear form if section is hidden
-    }
+  // ... rest of the methods remain the same ...
+  filteredDepartments() {
+    if (!this.searchTerm) return this.departments;
+    const term = this.searchTerm.toLowerCase();
+    return this.departments.filter(dep =>
+      dep.name.toLowerCase().includes(term) ||
+      (dep.description && dep.description.toLowerCase().includes(term))
+    );
   }
 
-  // Saves the new department data
-  saveDepartment() {
-    if (!this.newDepartment.name.trim()) {
-      // Basic validation: Ensure name is not empty
-      this.presentAlert('Validation Error', 'Department Name cannot be empty.');
-      return;
-    }
-    // Add a temporary ID for demo purposes (replace with real ID logic)
-    const departmentToAdd = { ...this.newDepartment, id: Date.now() };
-    this.departments.push(departmentToAdd);
-    console.log('Saved department:', departmentToAdd);
-    this.clearForm();
-    this.showAddSection = false; // Hide section after saving
+  openAddModal() {
+    this.addModalOpen = true;
+    this.editingDepartment = false;
+    this.currentDepartmentId = null;
+    this.resetForm();
   }
 
-  // Cancels adding a new department
-  cancelAdd() {
-    this.showAddSection = false;
-    this.clearForm();
-  }
-
-  // Resets the new department form
-  clearForm() {
-    this.newDepartment = this.getEmptyDepartment();
-  }
-
-  // Placeholder for edit functionality
   editDepartment(department: Department) {
-    // Implement edit logic here (e.g., open a modal, populate a form)
-    console.log('Edit department:', department);
-    this.presentAlert('Edit', `Editing department: ${department.name}`);
-    // Example: You might want to populate the 'newDepartment' form with the selected department's data
-    // this.newDepartment = { ...department };
-    // this.showAddSection = true; // Show the form for editing
-    // You'd likely need an 'isEditMode' flag as well to change the save logic
+    this.addModalOpen = true;
+    this.editingDepartment = true;
+    this.currentDepartmentId = department.id || null;
+    this.newDepartment = { ...department };
   }
 
-  // Deletes a department after confirmation
-  async deleteDepartment(departmentToDelete: Department) {
-    const alert = await this.alertController.create({
-      header: 'Confirm Delete',
-      message: `Are you sure you want to delete the department "${departmentToDelete.name}"?`,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-        },
-        {
-          text: 'Delete',
-          handler: () => {
-            this.departments = this.departments.filter(d => d.id !== departmentToDelete.id);
-            console.log('Deleted department:', departmentToDelete);
-          }
-        }
-      ]
-    });
-    await alert.present();
+  deleteDepartment(department: Department) {
+    if (confirm(`Delete department "${department.name}"?`)) {
+      this.departments = this.departments.filter(d => d.id !== department.id);
+    }
   }
 
-  // Helper to show simple alerts
-  async presentAlert(header: string, message: string) {
-    const alert = await this.alertController.create({
-      header: header,
-      message: message,
-      buttons: ['OK']
-    });
-    await alert.present();
+  closeAddModal() {
+    this.addModalOpen = false;
+    this.resetForm();
+  }
+
+  submitDepartment() {
+    if (this.editingDepartment && this.currentDepartmentId) {
+      // Update existing department
+      const index = this.departments.findIndex(d => d.id === this.currentDepartmentId);
+      if (index !== -1) {
+        this.departments[index] = {
+          ...this.departments[index],
+          ...this.newDepartment
+        };
+      }
+    } else {
+      // Create new department
+      const newId = Math.max(...this.departments.map(d => d.id || 0), 0) + 1;
+      this.departments.push({
+        ...this.newDepartment,
+        id: newId
+      });
+    }
+    this.closeAddModal();
+  }
+
+  private resetForm() {
+    this.newDepartment = {
+      name: '',
+      description: '',
+      numEmployees: 0
+    };
   }
 }
