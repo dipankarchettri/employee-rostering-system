@@ -1,134 +1,257 @@
-:root {
-  --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
-  --ion-color-primary: #3880ff;
-  --ion-color-secondary: #3dc2ff;
-  --ion-background-color: #f8f9fa; // Lighten background for better contrast
-  --ion-card-background: #ffffff; // Lighten card background for better contrast
-  --ion-text-color: #333; // Darken text for better readability
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap");
+
+.dashboard-content {
+  padding: 16px;
+  box-sizing: border-box;
+  margin-top: 40px;
 }
 
-body, .departments-container {
+.container {
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+ion-app {
   background: var(--ion-background-color);
   color: var(--ion-text-color);
-  min-height: 100vh;
 }
 
-.departments-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 16px;
+ion-header {
+  background: var(--ion-background-color);
 }
 
-.departments-search input {
-  background: #f1f3f5;
-  color: var(--ion-text-color);
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 8px;
-  width: 100%;
+ion-toolbar {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.add-department-btn {
+ion-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+ion-button {
+  --ripple-color: transparent;
+}
+
+ion-menu-button,
+ion-button {
+  --color: var(--ion-text-color);
+}
+
+ion-button {
   background: var(--ion-color-primary);
-  color: #fff;
+  margin-right: 8px;
+  color: white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  font-weight: bold;
+  text-align: center;
+  gap: 8px;
+  width: auto;
+  min-width: 100px;
+  height: 40px;
+  line-height: normal;
 }
 
-.departments-table-wrapper {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  overflow-x: auto;
-}
-
-.departments-table {
+/* Table Styling */
+.data-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 16px;
+  margin-top: 20px;
 }
 
-.departments-table th, .departments-table td {
-  padding: 12px;
+.data-table th,
+.data-table td {
+  padding: 12px 16px;
   text-align: left;
-  color: var(--ion-text-color);
-  border-bottom: 1px solid #ddd;
 }
 
-.departments-table th {
-  background: #333;
-  font-weight: bold;
-  color: #fff;
+.data-table th {
+  font-weight: 500;
+  color: #aaa;
+  border-bottom: 1px solid #333;
 }
 
-.edit-btn, .delete-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--ion-color-primary);
+.data-table td {
+  border-bottom: 1px solid #333;
 }
 
-.department-modal {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  max-width: 500px;
-  margin: 0 auto;
+.data-table tr:last-child td {
+  border-bottom: none;
 }
 
-.department-modal-content {
+/* Action Buttons */
+.actions {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
-.modal-close {
-  background: none;
+.action-button {
+  background: transparent;
   border: none;
-  color: var(--ion-text-color);
-  font-size: 1.5rem;
+  color: #aaa;
   cursor: pointer;
-  align-self: flex-end;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    font-size: 18px;
+  }
+
+  &.edit-icon::before {
+    content: "✎";
+    color: var(--ion-color-secondary);
+  }
+
+  &.delete-icon::before {
+    content: "🗑";
+    color: var(--ion-color-secondary);
+  }
+
+  &:hover {
+    background: #38393d;
+  }
 }
 
-.modal-actions {
+/* Add Department Modal */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+.add-section {
+  background: var(--ion-card-background);
+  color: var(--ion-text-color);
+  padding: 16px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.add-section h2 {
+  margin-top: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 12px;
+
+  label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #2f3033;
+    border: 1px solid #444;
+    color: var(--ion-text-color);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+    margin-top: 4px;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  input[type="text"]::placeholder,
+  input[type="number"]::placeholder,
+  textarea::placeholder {
+    color: #888;
+  }
+}
+
+.buttons {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
 }
 
-.modal-cancel, .modal-save {
+button {
   background: var(--ion-color-primary);
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &.cancel {
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+
+    &:hover {
+      background: #333;
+    }
+  }
+
+  &:disabled {
+    background: #444;
+    cursor: not-allowed;
+  }
+
+ 
+}
+
+/* Modal Close */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--ion-text-color);
+  font-size: 1.6rem;
   cursor: pointer;
 }
 
-.modal-cancel {
-  background: #555;
-}
-
-@media (max-width: 768px) {
-  .departments-header, .departments-table-wrapper {
-    padding: 8px;
+/* Responsive */
+@media (max-width: 480px) {
+  .add-section {
+    padding: 16px;
   }
 
-  .departments-table th, .departments-table td {
-    padding: 8px;
+  .data-table {
+    font-size: 0.9rem;
   }
 
-  .department-modal {
-    padding: 8px;
+  .buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-button {
+    width: 28px;
+    height: 28px;
   }
 }
