@@ -1,95 +1,86 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start" name="ion-menu-button">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-title>Departments</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openAddModal()">
+      <ion-button (click)="toggleAddSection()">
         <ion-icon slot="start" name="add"></ion-icon>
-        Add Department
+        + Add Department
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- Search Bar -->
-  <ion-searchbar 
-    [(ngModel)]="searchTerm" 
-    placeholder="Filter departments..."
-    debounce="300"
-    class="ion-margin-bottom">
-  </ion-searchbar>
+<ion-content>
+  <div class="container">
+    <!-- Departments Table -->
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Department Name</th>
+          <th>Description</th>
+          <th>Number of Employees</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let department of departments">
+          <td>{{ department.name }}</td>
+          <td>{{ department.description }}</td>
+          <td>{{ department.employees }}</td>
+          <td class="actions">
+            <button class="action-button edit-icon" (click)="editDepartment(department)">            
+            </button>            
+            <button class="action-button delete-icon" (click)="deleteDepartment(department)">
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
-  <!-- Departments List -->
-  <ion-list>
-    <ion-item-sliding *ngFor="let department of filteredDepartments()">
-      <ion-item>
-        <ion-label class="department-info">
-          <h2>{{ department.name }}</h2>
-          <p>{{ department.description || 'No description' }}</p>
-          <ion-badge color="primary">{{ department.numEmployees }} employees</ion-badge>
-        </ion-label>
-      </ion-item>
-
-      <ion-item-options side="end">
-        <ion-item-option color="primary" (click)="editDepartment(department)">
-          <ion-icon slot="icon-only" name="create"></ion-icon>
-        </ion-item-option>
-        <ion-item-option color="danger" (click)="deleteDepartment(department)">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
-
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="filteredDepartments().length === 0">
-    <ion-icon name="business-outline"></ion-icon>
-    <h3>No departments found</h3>
-    <p *ngIf="searchTerm">Try adjusting your search</p>
-    <p *ngIf="!searchTerm">Create your first department</p>
-    <ion-button (click)="openAddModal()">Add Department</ion-button>
+    <!-- Add Department Section -->
+    <div class="modal-backdrop" *ngIf="showAddSection">
+      <div class="container add-section">
+        <button class="modal-close" (click)="cancelAdd()">&times;</button>
+        <h2>Add New Department</h2>
+        <form (ngSubmit)="saveDepartment()" #deptForm="ngForm">
+          <div class="form-group">
+            <label for="departmentName">Department Name</label>
+            <input 
+              type="text" 
+              id="departmentName" 
+              name="name" 
+              [(ngModel)]="newDepartment.name" 
+              required 
+              placeholder="Enter department name">
+          </div>
+          <div class="form-group">
+            <label for="departmentDescription">Description</label>
+            <textarea 
+              id="departmentDescription" 
+              name="description" 
+              [(ngModel)]="newDepartment.description" 
+              required 
+              placeholder="Enter a description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="departmentEmployees">Number of Employees</label>
+            <input 
+              type="number" 
+              id="departmentEmployees" 
+              name="employees" 
+              [(ngModel)]="newDepartment.employees" 
+              required 
+              placeholder="0">
+          </div>
+          <div class="buttons">
+            <button type="button" class="cancel" (click)="cancelAdd()">Cancel</button>
+            <button type="submit" class="save" [disabled]="deptForm.invalid">Save Department</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </ion-content>
-
-<!-- Add/Edit Department Modal -->
-<ion-modal [isOpen]="addModalOpen" (didDismiss)="closeAddModal()">
-  <ng-template>
-    <ion-header>
-      <ion-toolbar>
-        <ion-title>{{ editingDepartment ? 'Edit Department' : 'Add Department' }}</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="closeAddModal()">Close</ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    <ion-content class="ion-padding">
-      <form (ngSubmit)="submitDepartment()">
-        <ion-item>
-          <ion-label position="stacked">Department Name</ion-label>
-          <ion-input 
-            [(ngModel)]="newDepartment.name" 
-            name="departmentName" 
-            required>
-          </ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="stacked">Description</ion-label>
-          <ion-textarea 
-            [(ngModel)]="newDepartment.description" 
-            name="departmentDescription"
-            rows="4">
-          </ion-textarea>
-        </ion-item>
-
-        <ion-button 
-          expand="block" 
-          type="submit" 
-          class="ion-margin-top"
-          [disabled]="!newDepartment.name.trim()">
-          {{ editingDepartment ? 'Update Department' : 'Create Department' }}
-        </ion-button>
-      </form>
-    </ion-content>
-  </ng-template>
-</ion-modal>
