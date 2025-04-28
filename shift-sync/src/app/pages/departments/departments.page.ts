@@ -13,26 +13,67 @@ import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ API 
 })
 export class DepartmentsPage {
   departments: any[] = [];
+  employees: any[] = [];
   searchTerm = '';
   addModalOpen = false;
   newDepartment = { name: '', description: '' };
 
   constructor(private http: HttpClient) {
     this.loadDepartments();
+    this.loadEmployees();
   }
 
   loadDepartments() {
-    const companyId = 1;
+    const companyId = 7; // Use your dynamic company ID logic here
+
+    if (!companyId) {
+      console.error('Company ID not found. User might not be logged in.');
+      return;
+    }
+
     this.http.get<any[]>(`http://localhost:8000/api/departments/?company=${companyId}`)
       .subscribe({
         next: (data) => {
           this.departments = data.map(d => ({
             ...d,
-            numEmployees: 0 // or fetch from another endpoint if needed
+            numEmployees: 0 // Initialize the employee count
           }));
+
+          // Now count the employees for each department
+          this.departments.forEach(department => {
+            // Reset employee count before counting
+            department.numEmployees = 0;
+            this.employees.forEach(employee => {
+              // Check if the employee belongs to the current department
+              if (employee.departments.includes(department.name)) {
+                department.numEmployees++;
+              }
+            });
+          });
         },
         error: (err) => {
           console.error('Failed to load departments:', err);
+        }
+      });
+  }
+
+  loadEmployees() {
+    const companyId = 7; // Use your dynamic company ID logic here
+
+    if (!companyId) {
+      console.error('Company ID not found. User might not be logged in.');
+      return;
+    }
+
+    this.http.get<any[]>(`http://localhost:8000/api/employees/?company=${companyId}`)
+      .subscribe({
+        next: (data) => {
+          this.employees = data;
+          // After loading employees, recalculate the department counts
+          this.loadDepartments();
+        },
+        error: (err) => {
+          console.error('Failed to load employees:', err);
         }
       });
   }

@@ -71,31 +71,39 @@ export class LoginPage implements OnInit {
     if (this.loginForm.valid) {
       const { email, password, rememberMe } = this.loginForm.value;
       console.log('Logging in with:', email, password, rememberMe);
-
+  
       const body = {
-        email: email, // Django expects username
+        email: email,
         password: password
       };
-
-      // Get CSRF token from cookies
+  
       const csrfToken = getCSRFToken();
-
+  
       if (csrfToken) {
-        // Add CSRF token to headers
         const headers = new HttpHeaders({
           'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken,  // CSRF token
+          'X-CSRFToken': csrfToken,
         });
-
-        this.http.post('http://localhost:8000/api/login/', body, {
+  
+        this.http.post<any>('http://localhost:8000/api/login/', body, {
           withCredentials: true,
           headers: headers
         })
         .subscribe({
           next: (response) => {
             console.log('Login successful', response);
+  
+            // Store company_id
+            if (response.company_id) {
+              if (rememberMe) {
+                localStorage.setItem('company_id', response.company_id);
+              } else {
+                sessionStorage.setItem('company_id', response.company_id);
+              }
+            }
+  
             this.showToast('Login successful!', 'success');
-            this.router.navigate(['/home']); // Redirect to home page or dashboard
+            this.router.navigate(['/home']);
           },
           error: (error) => {
             console.error('Login failed', error);
