@@ -27,15 +27,12 @@ import {
   notificationsOutline,
   calendarOutline
 } from 'ionicons/icons';
+import { HttpClient } from '@angular/common/http';
 
 // Define the Employee interface
 interface Employee {
+  id: number;
   name: string;
-  initial: string;
-  department: string;
-  schedule: {
-    [key: string]: string;
-  };
 }
 
 @Component({
@@ -75,80 +72,10 @@ export class AvailabilityPage implements OnInit {
   // Selected employee
   selectedEmployee: Employee | null = null;
   
-  // Sample employee data (same as in the roster page)
-  employees: Employee[] = [
-    {
-      name: 'Sarah Johnson',
-      initial: 'SJ',
-      department: 'HR Department',
-      schedule: {
-        monday: 'M',
-        tuesday: 'M',
-        wednesday: '',
-        thursday: 'A',
-        friday: 'A',
-        saturday: '',
-        sunday: ''
-      }
-    },
-    {
-      name: 'Michael Chen',
-      initial: 'MC',
-      department: 'IT Support',
-      schedule: {
-        monday: '',
-        tuesday: 'A',
-        wednesday: 'A',
-        thursday: 'M',
-        friday: 'M',
-        saturday: '',
-        sunday: ''
-      }
-    },
-    {
-      name: 'Lisa Rodriguez',
-      initial: 'LR',
-      department: 'Operations',
-      schedule: {
-        monday: '',
-        tuesday: '',
-        wednesday: 'M',
-        thursday: 'M',
-        friday: '',
-        saturday: 'A',
-        sunday: 'A'
-      }
-    },
-    {
-      name: 'James Wilson',
-      initial: 'JW',
-      department: 'Customer Service',
-      schedule: {
-        monday: 'A',
-        tuesday: 'A',
-        wednesday: '',
-        thursday: '',
-        friday: 'M',
-        saturday: 'M',
-        sunday: ''
-      }
-    },
-    {
-      name: 'Emily Parker',
-      initial: 'EP',
-      department: 'HR Department',
-      schedule: {
-        monday: 'M',
-        tuesday: '',
-        wednesday: '',
-        thursday: 'A',
-        friday: 'A',
-        saturday: '',
-        sunday: 'M'
-      }
-    }
-  ];
-
+  // Employees and availabilities
+  employees: Employee[] = [];
+  availabilities: any[] = []; // full API response
+  
   // Availability matrix data structure
   availabilityMatrix: {
     [timeSlot: string]: {
@@ -156,7 +83,7 @@ export class AvailabilityPage implements OnInit {
     };
   } = {};
 
-  constructor() {
+  constructor(private http: HttpClient) {
     // Register the icons
     addIcons({
       mailOutline,
@@ -171,25 +98,72 @@ export class AvailabilityPage implements OnInit {
   }
 
   ngOnInit() {
-    // Initialization code
+    this.fetchAvailabilities();
   }
-  
+
+  // Fetch availabilities from API
+  fetchAvailabilities() {
+    const companyId = 7; // or make it dynamic
+    this.http.get<any[]>(`http://127.0.0.1:8000/api/availabilities/?company=${companyId}`)
+      .subscribe(data => {
+        this.availabilities = data;
+        this.employees = this.extractUniqueEmployees(data);
+      });
+  }
+
+  // Helper method to extract unique employees from API response
+  extractUniqueEmployees(data: any[]): Employee[] {
+    const employeeMap = new Map<number, Employee>();
+    data.forEach(entry => {
+      if (!employeeMap.has(entry.employee)) {
+        employeeMap.set(entry.employee, {
+          id: entry.employee,
+          name: entry.employee_name
+        });
+      }
+    });
+    return Array.from(employeeMap.values());
+  }
+
+  // Initialize availability matrix
   initializeAvailabilityMatrix() {
-    // Create an empty matrix for each time slot and day
     this.timeSlots.forEach(timeSlot => {
       this.availabilityMatrix[timeSlot] = {};
       this.weekdays.forEach(day => {
-        this.availabilityMatrix[timeSlot][day] = false;
+        this.availabilityMatrix[timeSlot][day] = false; // Default to false (unchecked)
       });
     });
   }
 
+  // When an employee is selected, update the availability matrix
+  onEmployeeSelected() {
+    if (this.selectedEmployee) {
+      this.updateAvailabilityMatrix();
+    }
+  }
+
+  // Update availability matrix based on selected employee's availability data
+  updateAvailabilityMatrix() {
+    this.timeSlots.forEach(timeSlot => {
+      this.weekdays.forEach(day => {
+        const availability = this.availabilities.find(
+          avail => avail.employee === this.selectedEmployee?.id &&
+                  avail.shift_type.toLowerCase() === timeSlot.toLowerCase() &&
+                  avail.day_of_week.toLowerCase() === day.toLowerCase()
+        );
+        this.availabilityMatrix[timeSlot][day] = availability ? availability.is_available : false;
+      });
+    });
+  }
+
+  // Save availability data (just logs for now)
   saveAvailability() {
     console.log('Saving availability for:', this.selectedEmployee?.name);
     console.log('Availability data:', this.availabilityMatrix);
     // Implementation for saving availability data
   }
 
+  // Export availability data
   exportAvailability(format: string) {
     console.log(`Exporting availability in ${format} format`);
     // Implementation for export logic
