@@ -1,150 +1,339 @@
-:root {
-  --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
-  --ion-color-primary: #3880ff;
-  --ion-color-secondary: #3dc2ff;
-  --ion-background-color: #18191b;
-  --ion-card-background: #232326;
-  --ion-text-color: #fff;
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap");
+
+.dashboard-content {
+  padding: 16px;
+  box-sizing: border-box;
+  margin-top: 40px;
 }
 
-body, .shift-management-container {
+.container {
+  padding: 16px;
+  box-sizing: border-box;
+  margin-top: 40px;
+}
+
+ion-app {
   background: var(--ion-background-color);
   color: var(--ion-text-color);
-  min-height: 100vh;
 }
 
-.shift-management-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-  margin-bottom: 16px;
+ion-header {
+  background: var(--ion-background-color);
 }
 
-.shift-management-filters select {
-  background: var(--ion-card-background);
-  color: var(--ion-text-color);
-  border: none;
-  border-radius: 8px;
-  padding: 8px;
-  margin-right: 8px;
+ion-toolbar {
+  --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.add-shift-btn {
+ion-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+ion-button {
+  --ripple-color: transparent;
+}
+
+ion-menu-button,
+ion-button {
+  --color: var(--ion-text-color);
+}
+
+ion-button {
   background: var(--ion-color-primary);
-  color: #fff;
+  margin-right: 8px;
+  color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-weight: 500;
+  display: inline-flex; /* smaller by default than flex */
+  align-items: center; /* center vertically */
+  justify-content: center; /* center horizontally */
+  cursor: pointer;
+  text-align: center;
+  gap: 8px;
+  width: auto;
+  min-width: 100px;
+  height: 40px; 
+  line-height: normal; 
+}
+
+
+/* Filter Section */
+.filter-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .filter-dropdown {
+    background: #2f3033;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: white;
+    padding: 8px 12px;
+    flex: 1;
+    min-width: 120px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+  }
+}
+
+.add-button {
+  background: var(--ion-color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
   padding: 8px 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
-  font-weight: bold;
 }
 
-.shift-table-wrapper {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-  overflow-x: auto;
+.add-button::before {
+  content: "+";
+  font-size: 18px;
 }
 
-.shift-table {
+.employee-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
 }
 
-.shift-table th, .shift-table td {
-  padding: 12px;
+.employee-table th {
   text-align: left;
-  color: var(--ion-text-color);
+  padding: 12px 16px;
+  font-weight: 500;
+  color: #aaa;
+  border-bottom: 1px solid #333;
 }
 
-.shift-table th {
-  background: #333;
-  font-weight: bold;
-  color: #fff
+.employee-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #333;
 }
 
-.employee-avatars {
+.employee-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Shifts Table */
+
+.no-shifts {
+  text-align: center;
+  padding: 24px;
+  color: #666;
+}
+
+/* Action Buttons */
+.action-buttons {
   display: flex;
-  gap: 4px;
-}
-
-.employee-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-.edit-btn, .delete-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--ion-color-primary);
-}
-
-.shift-modal {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.shift-modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  color: var(--ion-text-color);
-  font-size: 1.5rem;
-  cursor: pointer;
-  align-self: flex-end;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
   gap: 8px;
 }
 
-.modal-cancel, .modal-save {
-  background: var(--ion-color-primary);
-  color: #fff;
+.action-button {
+  background: transparent;
   border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
+  color: #aaa;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    font-size: 18px;
+  }
+
+  &.edit-icon::before {
+    content: "✎";
+    color: var(--ion-color-secondary);
+  }
+
+  &.delete-icon::before {
+    content: "🗑";
+    color: var(--ion-color-secondary);
+  }
+
+  &:hover {
+    background: #38393d;
+  }
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+}
+
+/* Modal Container */
+.department-modal {
+  background: var(--ion-card-background);
+  color: var(--ion-text-color);
+  padding: 16px; /* Reduced padding */
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Modal Title */
+.department-modal h3 {
+  margin-top: 0;
+  margin-bottom: 12px; /* Reduced bottom margin */
+  font-size: 1.2rem; /* Slightly smaller font size */
+  font-weight: 600;
+}
+
+/* Close Button */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--ion-text-color);
+  font-size: 1.6rem;
   cursor: pointer;
 }
 
-.modal-cancel {
-  background: #555;
+/* Form Groups */
+.form-group {
+  margin-bottom: 12px; /* Reduced margin-bottom for compactness */
+
+  label {
+    display: block;
+    margin-bottom: 4px; /* Reduced margin */
+    font-weight: 500;
+  }
+
+  input[type="text"],
+  input[type="time"],
+  select {
+    width: 100%;
+    padding: 8px 12px; /* Reduced padding */
+    border-radius: 6px;
+    background: #2f3033;
+    border: 1px solid #444;
+    color: var(--ion-text-color);
+    appearance: none;
+    font-size: 0.9rem; /* Smaller font size */
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #888;
+    }
+  }
 }
 
-.assign-employees-list {
+/* Time Picker Row */
+.time-pickers {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  gap: 12px; /* Reduced gap */
+
+  .form-group {
+    flex: 1;
+  }
 }
 
-@media (max-width: 768px) {
-  .shift-management-header, .shift-table-wrapper {
-    padding: 8px;
+/* Employee Assignment Section */
+.employee-assignment {
+  margin-top: 8px; /* Reduced margin-top */
+  font-size: 0.9rem; /* Reduced font size */
+  
+  h4 {
+    font-size: 0.9rem; /* Reduced font size */
+    margin-bottom: 4px; /* Reduced margin-bottom */
+    font-weight: 500;
   }
 
-  .shift-table th, .shift-table td {
-    padding: 8px;
+  .employee-list {
+    max-height: 100px; /* Reduced height */
+    overflow-y: auto;
+    border: 1px solid #444;
+    border-radius: 6px;
+    background: #2f3033;
+    padding: 4px; /* Reduced padding */
+    
+    .employee-item {
+      display: flex;
+      align-items: center;
+      gap: 4px; /* Reduced gap between items */
+      margin-bottom: 4px; /* Reduced margin between items */
+      color: var(--ion-text-color);
+
+      ion-checkbox {
+        --checkbox-background: #2f3033;
+        --checkbox-border-color: #555;
+        --checkbox-checked-background: var(--ion-color-primary);
+      }
+    }
+  }
+}
+
+/* Modal Action Buttons */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px; /* Reduced margin-top */
+  gap: 8px; /* Reduced gap */
+}
+
+.modal-button {
+  padding: 8px 16px; /* Reduced padding */
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem; /* Smaller font size */
+  transition: background-color 0.3s;
+
+  &.modal-cancel {
+    background: transparent;
+    color: #aaa;
+    border: 1px solid #555;
+
+    &:hover {
+      background: #333;
+    }
   }
 
-  .shift-modal {
-    padding: 8px;
+  &.modal-save {
+    background: var(--ion-color-primary);
+    color: white;
+
+    &:hover {
+      background: darken(#3880ff, 10%);
+    }
+  }
+}
+
+
+/* Responsive */
+@media (max-width: 480px) {
+  .department-modal {
+    padding: 16px;
+  }
+
+  .time-pickers {
+    flex-direction: column;
   }
 }

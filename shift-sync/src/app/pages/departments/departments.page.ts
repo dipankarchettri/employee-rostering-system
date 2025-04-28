@@ -1,15 +1,26 @@
 import { Component } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { CommonModule } from '@angular/common'; // ✅ Corrected
+import { IonicModule, AlertController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http'; // ✅ API support
+import { MenuController } from '@ionic/angular';
+
+// Define a simple Department interface based on template usage
+interface Department {
+  id?: number; // Optional ID
+  name: string;
+  description: string;
+  employees: number;
+}
+
+
+
 
 @Component({
   selector: 'app-departments',
   templateUrl: './departments.page.html',
   styleUrls: ['./departments.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HttpClientModule] // ✅ Include HttpClientModule
+  imports: [IonicModule, CommonModule, FormsModule]
 })
 export class DepartmentsPage {
   departments: any[] = [];
