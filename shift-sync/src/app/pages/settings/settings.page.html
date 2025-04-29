@@ -1,0 +1,118 @@
+<div class="ion-page" id="main-content">
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>Settings</ion-title>
+      <ion-buttons slot="end">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+<ion-content class="settings-content">
+  <div class="settings-section">
+    <!-- Titles displayed horizontally like tabs -->
+    <div class="settings-titles">
+      <!-- Add click handlers and dynamic active class -->
+      <div class="settings-title" [class.active]="activeTab === 'notifications'" (click)="selectTab('notifications')">
+        <h2>Notification Settings</h2>
+      </div>
+      <div class="settings-title" [class.active]="activeTab === 'preferences'" (click)="selectTab('preferences')">
+        <h2>Preferences</h2>
+      </div>
+      <div class="settings-title" [class.active]="activeTab === 'accessControl'" (click)="selectTab('accessControl')">
+        <h2>Access Control</h2>
+      </div>
+    </div>
+
+    <!-- Content related to the selected tab would go here -->
+    <!-- Use *ngIf to show content based on activeTab -->
+    <div *ngIf="activeTab === 'notifications'">
+      <div class="settings-toggle">
+        <label>Email Alerts</label>
+        <ion-toggle [(ngModel)]="emailNotifications"></ion-toggle>
+      </div>
+      <p class="settings-description">Receive email notifications for shift assignments</p>
+    </div>
+
+    <div *ngIf="activeTab === 'preferences'">
+      <!-- Move General Preferences content here -->
+      <div class="settings-select">
+        <label>Default Shift Length</label>
+        <ion-select [(ngModel)]="defaultShiftLength" interface="popover">
+          <ion-select-option value="8">8 hours</ion-select-option>
+          <ion-select-option value="12">12 hours</ion-select-option>
+        </ion-select>
+      </div>
+      <div class="settings-select">
+        <label>Default Department</label>
+        <ion-select [(ngModel)]="defaultDepartment" interface="popover">
+          <ion-select-option value="emergency">HR</ion-select-option>
+          <ion-select-option value="pediatrics">IT</ion-select-option>
+        </ion-select>
+      </div>
+      <div class="settings-select">
+        <label>Time Zone</label>
+        <ion-select [(ngModel)]="timeZone" interface="popover">
+          <ion-select-option value="UTC-05:00">UTC-05:00 Eastern Time</ion-select-option>
+          <ion-select-option value="UTC-06:00">UTC-06:00 Central Time</ion-select-option>
+        </ion-select>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'accessControl'">
+      <!-- Move User Management content here -->
+      <div class="user-management-header">
+         <h2 class="section-title">User Management</h2> <!-- Title specific to this tab -->
+         <ion-button class="add-user-button" (click)="openAddUserModal()">
+           <ion-icon slot="start" name="add-outline"></ion-icon>
+           Add User
+         </ion-button>
+       </div>
+       <div class="user-list-container">
+         <div class="user-list-header">
+           <span class="user-col">User</span>
+           <span class="role-col">Role</span>
+           <span class="actions-col">Actions</span>
+         </div>
+         <div class="user-list-row" *ngFor="let user of users">
+           <span class="user-col user-info">
+             <ion-avatar slot="start">
+               <img [src]="user.avatar" alt="User Avatar" />
+             </ion-avatar>
+             <span>{{ user.name }}</span>
+           </span>
+           <span class="role-col">{{ user.role }}</span>
+           <span class="actions-col action-icons">
+             <ion-button fill="clear" size="small" (click)="editUser(user)">
+               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+             </ion-button>
+             <ion-button fill="clear" size="small" color="danger" (click)="deleteUser(user)">
+               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+             </ion-button>
+           </span>
+         </div>
+         <div *ngIf="!users || users.length === 0" class="no-users-message">
+            No users found.
+         </div>
+       </div>
+    </div>
+
+  </div>
+
+  <!-- Remove the separate sections if their content is moved into tabs -->
+  <!--
+  <div class="settings-section">
+     <h2 class="section-title">General Preferences</h2>
+     ...
+  </div>
+
+  <div class="settings-section user-management-section">
+     ...
+  </div>
+  -->
+</ion-content>

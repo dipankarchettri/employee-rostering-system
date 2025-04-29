@@ -3,19 +3,29 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Shift Management</ion-title>
+    <ion-title>Shifts</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="openAddShiftModal()">
-        <ion-icon slot="start" name="add"></ion-icon>
-        + Add Shift
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="dashboard-content">
-  <!-- Filters -->
-  <div class="dashboard-card">
+  
+  <div class="welcome-section">
+    <h1>Shifts Management</h1>
+  </div>
+
+  <div class="department-card">
+      <div class="card-header">
+        <h2>Manage Shifts</h2>
+        <ion-button (click)="openAddShiftModal()">
+          <ion-icon slot="start" name="add"></ion-icon>
+          + Add Shift
+        </ion-button>
+      
+      </div>
+
+  <div class="department-card">
     <div class="filter-container">
       <select class="filter-dropdown" [(ngModel)]="selectedDepartment" (change)="onFilterChange()">
         <option value="">All Departments</option>
@@ -30,30 +40,27 @@
   </div>
 
   <!-- Shifts List -->
-  <div class="dashboard-card">
-    <div class="card-header">
-      <h2>Current Shifts</h2>
-    </div>
+
 
     <table class="employee-table">
       <thead>
         <tr>
-          <th>Shift Name</th>
           <th>Department</th>
           <th>Day</th>
+          <th>Shift Type</th>
           <th>Time</th>
-          <th>Assigned</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let shift of filteredShifts">
-          <td>{{ shift.name }}</td>
-          <!-- Directly display the department name from filtered shift -->
-          <td>{{ shift.departmentName }}</td>
+          
+          <td>{{ getDepartmentName(shift.departmentId) }}</td>
           <td>{{ shift.day }}</td>
+          <td>{{ shift.name }}</td>          
           <td>{{ shift.startTime }} - {{ shift.endTime }}</td>
-          <td>{{ shift.assignedEmployees?.length || 0 }}</td>
+
+          
           <td>
             <div class="action-buttons">
               <button class="action-button edit-icon" (click)="openEditShiftModal(shift)"></button>
@@ -67,4 +74,56 @@
       </tbody>
     </table>
   </div>
+
+   <!-- Add/Edit Shift Modal -->
+  <div class="modal-backdrop" *ngIf="showShiftModal" (click)="closeShiftModal()">
+    <div class="department-modal" (click)="$event.stopPropagation()">
+      <h3>{{ editingShift ? 'Edit Shift' : 'Add New Shift' }}</h3>
+      <button class="modal-close" (click)="closeShiftModal()">&times;</button>
+
+
+      <div class="form-group">
+        <label>Department</label>
+        <select class="filter-dropdown" [(ngModel)]="currentShift.departmentId">
+          <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Day</label>
+        <select class="filter-dropdown" [(ngModel)]="currentShift.day">
+          <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Shift Type</label>
+        <input type="text" [(ngModel)]="currentShift.name" placeholder="Enter shift name">
+      </div>
+
+      <div class="time-pickers">
+        <div class="form-group">
+          <label>Start Time</label>
+          <input type="time" [(ngModel)]="currentShift.startTime">
+        </div>
+        <div class="form-group">
+          <label>End Time</label>
+          <input type="time" [(ngModel)]="currentShift.endTime">
+        </div>
+      </div>
+
+      
+
+      <div class="modal-actions">
+        <button class="modal-button modal-cancel" (click)="closeShiftModal()">Cancel</button>
+        <button class="modal-button modal-save" (click)="saveShift()">
+          {{ editingShift ? 'Update' : 'Save' }} Shift
+        </button>
+      </div>
+    </div>
+  </div>
+
 </ion-content>
+
+
+

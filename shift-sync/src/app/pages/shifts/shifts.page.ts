@@ -42,6 +42,18 @@ export class ShiftsPage {
   selectedDepartment = '';
   selectedDay = '';
 
+  // Modal state and shift being edited/added
+  showShiftModal = false;
+  editingShift = false;
+  currentShift: any = {
+    id: null,
+    departmentId: '',
+    day: '',
+    name: '',
+    startTime: '',
+    endTime: ''
+  };
+
   constructor(private menuCtrl: MenuController, private http: HttpClient) {}
 
   ionViewWillEnter() {
@@ -123,27 +135,103 @@ export class ShiftsPage {
     return dayMap[dayCode] || dayCode;
   }
 
+<<<<<<< HEAD
+=======
+  getDayCode(dayName: string): string {
+    const dayMap: { [key: string]: string } = {
+      'Monday': 'Mon',
+      'Tuesday': 'Tue',
+      'Wednesday': 'Wed',
+      'Thursday': 'Thu',
+      'Friday': 'Fri',
+      'Saturday': 'Sat',
+      'Sunday': 'Sun'
+    };
+    return dayMap[dayName] || dayName;
+  }
+
+  getShiftType(name: string): string {
+    const lower = name.toLowerCase();
+    if (lower.includes('morning')) return 'morning';
+    if (lower.includes('evening')) return 'evening';
+    if (lower.includes('night')) return 'night';
+    return name.toLowerCase();
+  }
+
+  getDepartmentName(departmentId: number): string {
+    const department = this.departments.find(d => d.id === departmentId);
+    return department ? department.name : 'Unknown';
+  }
+
+>>>>>>> 56d5b35c9b69a8f829b6376dee755d959021b17c
   onFilterChange() {
     this.applyFilters();
   }
 
   openAddShiftModal() {
-    // Logic to open modal
+    this.editingShift = false;
+    this.currentShift = {
+      id: null,
+      departmentId: this.departments.length ? this.departments[0].id : '',
+      day: this.days.length ? this.days[0] : '',
+      name: '',
+      startTime: '',
+      endTime: ''
+    };
+    this.showShiftModal = true;
   }
 
   openEditShiftModal(shift: any) {
-    // Logic to edit shift
-  }
-
-  confirmDelete(shift: any) {
-    // Logic to delete shift
+    this.editingShift = true;
+    this.currentShift = {
+      id: shift.id,
+      departmentId: shift.departmentId,
+      day: shift.day,
+      name: shift.name,
+      startTime: shift.startTime,
+      endTime: shift.endTime
+    };
+    this.showShiftModal = true;
   }
 
   closeShiftModal() {
-    // Logic to close modal
+    this.showShiftModal = false;
   }
 
   saveShift() {
-    // Logic to save shift
+    if (this.editingShift) {
+      // Update existing shift
+      const idx = this.shifts.findIndex(s => s.id === this.currentShift.id);
+      if (idx > -1) {
+        this.shifts[idx] = {
+          ...this.shifts[idx],
+          department: +this.currentShift.departmentId,
+          day_of_week: this.getDayCode(this.currentShift.day),
+          shift_type: this.getShiftType(this.currentShift.name),
+          start_time: this.currentShift.startTime,
+          end_time: this.currentShift.endTime
+        };
+      }
+    } else {
+      // Add new shift (mock, in real app you would POST to backend)
+      const newId = this.shifts.length ? Math.max(...this.shifts.map(s => s.id)) + 1 : 1;
+      this.shifts.push({
+        id: newId,
+        department: +this.currentShift.departmentId,
+        day_of_week: this.getDayCode(this.currentShift.day),
+        shift_type: this.getShiftType(this.currentShift.name),
+        start_time: this.currentShift.startTime,
+        end_time: this.currentShift.endTime
+      });
+    }
+    this.applyFilters();
+    this.closeShiftModal();
+  }
+
+  confirmDelete(shift: any) {
+    if (confirm('Are you sure you want to delete this shift?')) {
+      this.shifts = this.shifts.filter(s => s.id !== shift.id);
+      this.applyFilters();
+    }
   }
 }
