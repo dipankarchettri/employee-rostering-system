@@ -1,118 +1,324 @@
-<div class="ion-page" id="main-content">
-  <ion-header class="ion-no-border">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Settings</ion-title>
-      <ion-buttons slot="end">
-        <ion-button>
-          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Settings</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
 <ion-content class="settings-content">
   <div class="settings-section">
-    <!-- Titles displayed horizontally like tabs -->
-    <div class="settings-titles">
-      <!-- Add click handlers and dynamic active class -->
-      <div class="settings-title" [class.active]="activeTab === 'notifications'" (click)="selectTab('notifications')">
-        <h2>Notification Settings</h2>
+    <!-- Tab Titles -->
+    <div class="settings-tabs">
+      <div
+        class="tab"
+        [class.active]="activeTab === 'company'"
+        (click)="setActiveTab('company')"
+      >
+        <h3>Company Profile</h3>
       </div>
-      <div class="settings-title" [class.active]="activeTab === 'preferences'" (click)="selectTab('preferences')">
-        <h2>Preferences</h2>
+      <div
+        class="tab"
+        [class.active]="activeTab === 'localization'"
+        (click)="setActiveTab('localization')"
+      >
+        <h3>Localization</h3>
       </div>
-      <div class="settings-title" [class.active]="activeTab === 'accessControl'" (click)="selectTab('accessControl')">
-        <h2>Access Control</h2>
+      <div
+        class="tab"
+        [class.active]="activeTab === 'employee'"
+        (click)="setActiveTab('employee')"
+      >
+        <h3>Employee Defaults</h3>
       </div>
-    </div>
-
-    <!-- Content related to the selected tab would go here -->
-    <!-- Use *ngIf to show content based on activeTab -->
-    <div *ngIf="activeTab === 'notifications'">
-      <div class="settings-toggle">
-        <label>Email Alerts</label>
-        <ion-toggle [(ngModel)]="emailNotifications"></ion-toggle>
+      <div
+        class="tab"
+        [class.active]="activeTab === 'system'"
+        (click)="setActiveTab('system')"
+      >
+        <h3>System & Display</h3>
       </div>
-      <p class="settings-description">Receive email notifications for shift assignments</p>
-    </div>
-
-    <div *ngIf="activeTab === 'preferences'">
-      <!-- Move General Preferences content here -->
-      <div class="settings-select">
-        <label>Default Shift Length</label>
-        <ion-select [(ngModel)]="defaultShiftLength" interface="popover">
-          <ion-select-option value="8">8 hours</ion-select-option>
-          <ion-select-option value="12">12 hours</ion-select-option>
-        </ion-select>
-      </div>
-      <div class="settings-select">
-        <label>Default Department</label>
-        <ion-select [(ngModel)]="defaultDepartment" interface="popover">
-          <ion-select-option value="emergency">HR</ion-select-option>
-          <ion-select-option value="pediatrics">IT</ion-select-option>
-        </ion-select>
-      </div>
-      <div class="settings-select">
-        <label>Time Zone</label>
-        <ion-select [(ngModel)]="timeZone" interface="popover">
-          <ion-select-option value="UTC-05:00">UTC-05:00 Eastern Time</ion-select-option>
-          <ion-select-option value="UTC-06:00">UTC-06:00 Central Time</ion-select-option>
-        </ion-select>
+      <div
+        class="tab"
+        [class.active]="activeTab === 'data'"
+        (click)="setActiveTab('data')"
+      >
+        <h3>Data & Security</h3>
       </div>
     </div>
 
-    <div *ngIf="activeTab === 'accessControl'">
-      <!-- Move User Management content here -->
-      <div class="user-management-header">
-         <h2 class="section-title">User Management</h2> <!-- Title specific to this tab -->
-         <ion-button class="add-user-button" (click)="openAddUserModal()">
-           <ion-icon slot="start" name="add-outline"></ion-icon>
-           Add User
-         </ion-button>
-       </div>
-       <div class="user-list-container">
-         <div class="user-list-header">
-           <span class="user-col">User</span>
-           <span class="role-col">Role</span>
-           <span class="actions-col">Actions</span>
-         </div>
-         <div class="user-list-row" *ngFor="let user of users">
-           <span class="user-col user-info">
-             <ion-avatar slot="start">
-               <img [src]="user.avatar" alt="User Avatar" />
-             </ion-avatar>
-             <span>{{ user.name }}</span>
-           </span>
-           <span class="role-col">{{ user.role }}</span>
-           <span class="actions-col action-icons">
-             <ion-button fill="clear" size="small" (click)="editUser(user)">
-               <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-             </ion-button>
-             <ion-button fill="clear" size="small" color="danger" (click)="deleteUser(user)">
-               <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-             </ion-button>
-           </span>
-         </div>
-         <div *ngIf="!users || users.length === 0" class="no-users-message">
-            No users found.
-         </div>
-       </div>
-    </div>
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Company Profile -->
+      <div *ngIf="activeTab === 'company'" class="tab-pane">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Company Logo</ion-card-title>
+            <p>Upload your company logo. Recommended size: 200x200 pixels.</p>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="logo-upload" (click)="fileInput.click()">
+              <input
+                #fileInput
+                type="file"
+                accept="image/*"
+                (change)="handleLogoUpload($event)"
+                hidden
+              />
+              <div *ngIf="!logoPreview" class="upload-placeholder">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+                <p>Click to upload logo</p>
+              </div>
+              <div *ngIf="logoPreview" class="logo-preview">
+                <img [src]="logoPreview" alt="Company Logo" />
+                <ion-button fill="clear" (click)="removeLogo($event)">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
 
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Business Hours</ion-card-title>
+            <p>Set your regular business hours for each day of the week.</p>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let hour of businessHours">
+                <ion-toggle [(ngModel)]="hour.isOpen" slot="start"></ion-toggle>
+                <ion-label>{{hour.day}}</ion-label>
+                <div *ngIf="hour.isOpen" class="time-inputs">
+                  <ion-input
+                    type="time"
+                    [(ngModel)]="hour.openTime"
+                  ></ion-input>
+                  <span>to</span>
+                  <ion-input
+                    type="time"
+                    [(ngModel)]="hour.closeTime"
+                  ></ion-input>
+                </div>
+                <span *ngIf="!hour.isOpen" class="closed-label">Closed</span>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Holiday Calendar -->
+        <div class="settings-card holiday-calendar-card">
+          <div class="holiday-calendar-header">
+            <div>
+              <h2>Holiday Calendar</h2>
+              <p>
+                Set special dates like holidays when your business is closed.
+              </p>
+            </div>
+          </div>
+          <div class="holiday-calendar-content">
+            <div class="holiday-form-col">
+              <h3>Add New Holiday</h3>
+              <div class="holiday-form-fields">
+                <label class="holiday-label">Holiday Name</label>
+                <ion-input
+                  [(ngModel)]="newHoliday.name"
+                  placeholder="e.g., Christmas Day"
+                  class="holiday-input"
+                ></ion-input>
+
+                <label class="holiday-label">Date</label>
+                <ion-datetime
+                  displayFormat="MMMM do, yyyy"
+                  [(ngModel)]="newHoliday.date"
+                  class="holiday-input"
+                ></ion-datetime>
+
+                <div class="holiday-checkbox-row">
+                  <ion-toggle [(ngModel)]="newHoliday.isRecurring"></ion-toggle>
+                  <span class="recurring-label">Recurring yearly</span>
+                </div>
+                <ion-button
+                  expand="block"
+                  class="add-holiday-btn"
+                  (click)="addHoliday()"
+                  >Add Holiday</ion-button
+                >
+              </div>
+            </div>
+            <div class="existing-holidays-col">
+              <h3>Existing Holidays</h3>
+              <div *ngIf="holidays.length === 0" class="empty-state">
+                No holidays added yet
+              </div>
+              <div
+                *ngFor="let holiday of holidays"
+                class="existing-holiday-card"
+              >
+                <div>
+                  <div class="holiday-name">{{holiday.name}}</div>
+                  <div class="holiday-date">
+                    {{holiday.date | date:'MMMM do, yyyy'}}
+                    <span *ngIf="holiday.isRecurring">(Recurring)</span>
+                  </div>
+                </div>
+                <button class="remove-btn" (click)="removeHoliday(holiday)">
+                  Remove
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="holiday-calendar-actions">
+            <button class="cancel-btn">Cancel</button>
+            <button class="save-btn">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Localization -->
+      <div *ngIf="activeTab === 'localization'" class="tab-pane">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Language & Region</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Language</ion-label>
+              <ion-select [(ngModel)]="language" interface="popover">
+                <ion-select-option value="en">English</ion-select-option>
+                <ion-select-option value="es">Español</ion-select-option>
+                <ion-select-option value="fr">Français</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Date Format</ion-label>
+              <ion-select [(ngModel)]="dateFormat" interface="popover">
+                <ion-select-option value="MM/DD/YYYY"
+                  >MM/DD/YYYY</ion-select-option
+                >
+                <ion-select-option value="DD/MM/YYYY"
+                  >DD/MM/YYYY</ion-select-option
+                >
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Time Format</ion-label>
+              <ion-select [(ngModel)]="timeFormat" interface="popover">
+                <ion-select-option value="12h">12-hour</ion-select-option>
+                <ion-select-option value="24h">24-hour</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Currency</ion-label>
+              <ion-select [(ngModel)]="currency" interface="popover">
+                <ion-select-option value="USD">USD ($)</ion-select-option>
+                <ion-select-option value="EUR">EUR (€)</ion-select-option>
+                <ion-select-option value="GBP">GBP (£)</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Employee Defaults -->
+      <div *ngIf="activeTab === 'employee'" class="tab-pane">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Default Working Hours</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Default Shift Length (hours)</ion-label>
+              <ion-input
+                type="number"
+                [(ngModel)]="defaultShiftLength"
+              ></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Maximum Weekly Hours</ion-label>
+              <ion-input type="number" [(ngModel)]="maxWeeklyHours"></ion-input>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- System & Display -->
+      <div *ngIf="activeTab === 'system'" class="tab-pane">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Display Settings</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label>Timezone</ion-label>
+              <ion-select [(ngModel)]="timezone" interface="popover">
+                <ion-select-option value="UTC-5"
+                  >UTC-05:00 (Eastern Time)</ion-select-option
+                >
+                <ion-select-option value="UTC-6"
+                  >UTC-06:00 (Central Time)</ion-select-option
+                >
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>Week Starts On</ion-label>
+              <ion-select [(ngModel)]="weekStartDay" interface="popover">
+                <ion-select-option value="0">Sunday</ion-select-option>
+                <ion-select-option value="1">Monday</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-toggle [(ngModel)]="darkMode" slot="start"></ion-toggle>
+              <ion-label>Dark Mode</ion-label>
+            </ion-item>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Data & Security -->
+      <div *ngIf="activeTab === 'data'" class="tab-pane">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Data Management</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-button expand="block" (click)="exportData()"
+              >Export Data</ion-button
+            >
+            <ion-button expand="block" (click)="confirmReset()"
+              >Reset to Defaults</ion-button
+            >
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Security</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-toggle [(ngModel)]="twoFactorAuth" slot="start"></ion-toggle>
+              <ion-label>Two-Factor Authentication</ion-label>
+            </ion-item>
+
+            <ion-button expand="block" (click)="requestDataDeletion()"
+              >Request Data Deletion</ion-button
+            >
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
   </div>
-
-  <!-- Remove the separate sections if their content is moved into tabs -->
-  <!--
-  <div class="settings-section">
-     <h2 class="section-title">General Preferences</h2>
-     ...
-  </div>
-
-  <div class="settings-section user-management-section">
-     ...
-  </div>
-  -->
 </ion-content>

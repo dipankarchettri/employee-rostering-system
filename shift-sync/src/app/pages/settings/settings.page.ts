@@ -1,15 +1,31 @@
 import { Component } from '@angular/core';
-import { IonicModule, ModalController, AlertController } from '@ionic/angular'; // Import ModalController & AlertController
+import { AlertController } from '@ionic/angular';
+import { 
+  IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, 
+  IonButton, IonIcon, IonToggle, IonInput, IonSelect, 
+  IonSelectOption, IonItem, IonLabel, IonDatetime, IonCard, 
+  IonCardHeader, IonCardTitle, IonCardContent, IonList, 
+  IonMenuButton, IonCheckbox 
+} from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
+import { addIcons } from 'ionicons';
+import { 
+  notificationsOutline, cloudUploadOutline, trashOutline, 
+  calendarOutline 
+} from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule for *ngFor, *ngIf
 
-// Define an interface for the User structure (optional but good practice)
-interface User {
-  id: number;
+interface BusinessHour {
+  day: string;
+  isOpen: boolean;
+  openTime: string;
+  closeTime: string;
+}
+
+interface Holiday {
+  date: string;
   name: string;
-  role: string;
-  avatar: string;
+  isRecurring: boolean;
 }
 
 @Component({
@@ -17,141 +33,129 @@ interface User {
   templateUrl: './settings.page.html',
   styleUrls: ['./settings.page.scss'],
   standalone: true,
-  imports: [IonicModule, FormsModule, CommonModule], // Ensure CommonModule is imported
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [
+    FormsModule,
+    CommonModule,
+    IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, 
+    IonButton, IonIcon, IonToggle, IonInput, IonSelect, 
+    IonSelectOption, IonItem, IonLabel, IonDatetime, IonCard, 
+    IonCardHeader, IonCardTitle, IonCardContent, IonList,
+    IonMenuButton, IonCheckbox
+  ]
 })
 export class SettingsPage {
-  // --- Properties for Data Binding ---
-  emailNotifications: boolean = true; // Default value for the toggle
-  defaultShiftLength: string = '8';   // Default value for select
-  defaultDepartment: string = 'emergency'; // Default value for select
-  timeZone: string = 'UTC-05:00'; // Default value for select
-
-  // --- Tab Management ---
-  // Define possible tab names, matching the *ngIf conditions in HTML
-  activeTab: 'notifications' | 'preferences' | 'accessControl' = 'notifications'; // Default active tab
-
-  // --- User Management ---
-  // Define users array with the User interface type
-  users: User[] = [
-    { id: 1, name: 'John Doe', role: 'Admin', avatar: 'assets/avatar.png' },
-    { id: 2, name: 'Jane Smith', role: 'Scheduler', avatar: 'assets/avatar-female.png' },
-    { id: 3, name: 'Peter Jones', role: 'Employee', avatar: 'assets/avatar-male.png' }
-    // In a real app, fetch this data from a service
+  activeTab = 'company';
+  logoPreview: string | null = null;
+  
+  businessHours: BusinessHour[] = [
+    { day: 'Monday', isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    { day: 'Tuesday', isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    { day: 'Wednesday', isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    { day: 'Thursday', isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    { day: 'Friday', isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    { day: 'Saturday', isOpen: false, openTime: '09:00', closeTime: '17:00' },
+    { day: 'Sunday', isOpen: false, openTime: '09:00', closeTime: '17:00' },
   ];
+  
+  holidays: Holiday[] = [
+    { date: new Date(2025, 0, 1).toISOString(), name: 'New Year\'s Day', isRecurring: true },
+    { date: new Date(2025, 11, 25).toISOString(), name: 'Christmas Day', isRecurring: true },
+  ];
+  
+  newHoliday: Holiday = {
+    date: new Date().toISOString(),
+    name: '',
+    isRecurring: false
+  };
+  
+  language = 'en';
+  dateFormat = 'MM/DD/YYYY';
+  timeFormat = '12h';
+  currency = 'USD';
+  
+  defaultShiftLength = 8;
+  maxWeeklyHours = 40;
+  
+  timezone = 'UTC-5';
+  weekStartDay = '0';
+  darkMode = false;
+  
+  twoFactorAuth = false;
 
-  // Inject ModalController for opening modals and AlertController for confirmations
-  constructor(
-    private modalCtrl: ModalController,
-    private alertCtrl: AlertController
-  ) {}
-
-  // --- Methods ---
-
-  /**
-   * Sets the currently active tab based on the clicked title.
-   * @param tabName The name of the tab to activate ('notifications', 'preferences', 'accessControl').
-   */
-  selectTab(tabName: 'notifications' | 'preferences' | 'accessControl') {
-    this.activeTab = tabName;
-    console.log('Active tab set to:', this.activeTab);
+  constructor(private alertController: AlertController) {
+    addIcons({ 
+      notificationsOutline, 
+      cloudUploadOutline, 
+      trashOutline, 
+      calendarOutline 
+    });
   }
 
-  /**
-   * Opens a modal for adding a new user.
-   * Replace 'AddUserModalComponent' with your actual modal component.
-   */
-  async openAddUserModal() {
-    console.log('Attempting to open Add User Modal');
-    // Example using Ionic ModalController:
-    // const modal = await this.modalCtrl.create({
-    //   component: AddUserModalComponent, // Replace with your actual modal component name
-    // });
-    // await modal.present();
-    // const { data, role } = await modal.onDidDismiss();
-    // if (role === 'confirm' && data) {
-    //   // Add the new user to the list (or handle via service)
-    //   this.users.push(data); // Make sure 'data' matches the User interface
-    //   console.log('New user added:', data);
-    // }
+  setActiveTab(tab: string) {
+    this.activeTab = tab;
   }
 
-  /**
-   * Handles the editing of a user.
-   * Typically opens an edit modal or navigates to an edit page.
-   * @param user The user object to edit.
-   */
-  async editUser(user: User) {
-    console.log('Editing user:', user);
-    // Example: Open an edit modal, passing the user data
-    // const modal = await this.modalCtrl.create({
-    //   component: EditUserModalComponent, // Replace with your actual modal component name
-    //   componentProps: {
-    //     userData: { ...user } // Pass a copy of the user data
-    //   }
-    // });
-    // await modal.present();
-    // const { data, role } = await modal.onDidDismiss();
-    // if (role === 'confirm' && data) {
-    //   // Update the user in the list (or handle via service)
-    //   const index = this.users.findIndex(u => u.id === data.id);
-    //   if (index > -1) {
-    //     this.users[index] = data; // Make sure 'data' matches the User interface
-    //     console.log('User updated:', data);
-    //   }
-    // }
+  handleLogoUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.logoPreview = reader.result as string;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
   }
 
-  /**
-   * Handles the deletion of a user.
-   * Shows a confirmation prompt before deleting.
-   * @param user The user object to delete.
-   */
-  async deleteUser(user: User) {
-    console.log('Attempting to delete user:', user);
-    // Example: Show a confirmation alert using Ionic AlertController
-    const alert = await this.alertCtrl.create({
-      header: 'Confirm Deletion',
-      message: `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
+  removeLogo(event: Event) {
+    event.stopPropagation();
+    this.logoPreview = null;
+  }
+
+  addHoliday() {
+    if (this.newHoliday.name.trim()) {
+      this.holidays.push({...this.newHoliday});
+      this.newHoliday = {
+        date: new Date().toISOString(),
+        name: '',
+        isRecurring: false
+      };
+    }
+  }
+
+  removeHoliday(holiday: Holiday) {
+    this.holidays = this.holidays.filter(h => h !== holiday);
+  }
+
+  async exportData() {
+    const alert = await this.alertController.create({
+      header: 'Export Data',
+      message: 'Your data has been exported successfully',
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
+  async confirmReset() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Reset',
+      message: 'Are you sure you want to reset all settings to default?',
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
+          role: 'cancel'
+        },
+        {
+          text: 'Reset',
           handler: () => {
-            console.log('Delete cancelled');
-          }
-        }, {
-          text: 'Delete',
-          role: 'confirm', // Use role 'confirm' for the primary action
-          cssClass: 'danger', // Optional: style the delete button
-          handler: () => {
-            // Perform the deletion (e.g., filter the array or call a service)
-            this.users = this.users.filter(u => u.id !== user.id);
-            console.log('User deleted:', user);
-            // Add logic here to call an API endpoint if necessary
+            // Implement reset logic
           }
         }
       ]
     });
-
     await alert.present();
   }
 
-  // --- Lifecycle Hooks (Optional) ---
-  ionViewWillEnter() {
-    // This is a good place to fetch initial data if needed when the view becomes active
-    console.log('Settings page will enter. Current active tab:', this.activeTab);
-    // Example: Fetch users if the array is empty
-    // if (this.users.length === 0) {
-    //   this.fetchUsers();
-    // }
+  requestDataDeletion() {
+    // Implement GDPR deletion request
   }
-
-  // Example data fetching function (replace with your actual service call)
-  // fetchUsers() {
-  //   console.log('Fetching users...');
-  //   // Replace with actual API call using HttpClient or a service
-  //   // this.userService.getUsers().subscribe(data => this.users = data);
-  // }
 }

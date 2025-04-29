@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap");
-
 :root {
   --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
   --ion-color-primary: #3880ff;
@@ -9,227 +7,383 @@
   --ion-text-color: #fff;
   --ion-text-color-medium: #aaa;
   --ion-border-color: #333;
-}
-
-ion-app {
-  background: var(--ion-background-color);
-  color: var(--ion-text-color);
-}
-
-ion-header {
-  background: var(--ion-background-color);
-}
-
-ion-toolbar {
-  --background: var(--ion-background-color);
-  --color: var(--ion-text-color);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-ion-title {
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
-ion-button {
-  --ripple-color: transparent;
-}
-
-ion-menu-button, ion-button {
-  --color: var(--ion-text-color);
+  --ion-color-light: #333;
 }
 
 .settings-content {
-  padding: 20px;
-  box-sizing: border-box;
-  background: var(--ion-background-color);
-  color: var(--ion-text-color);
-  font-family: var(--ion-font-family);
-  min-height: 100vh;
-}
-
-.settings-header {
-  ion-toolbar {
-    --background: var(--ion-background-color);
-    --color: var(--ion-text-color);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  }
-
-  ion-title {
-    font-size: 1.2rem;
-    font-weight: 500;
-  }
+  --background: var(--ion-background-color);
 }
 
 .settings-section {
-  background: var(--ion-card-background);
-  border-radius: 12px;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 16px;
+}
+
+.settings-tabs {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 8px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-  border: 1px solid var(--ion-border-color);
+  border-bottom: 1px solid var(--ion-border-color);
 
-  .section-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-    margin: 0 0 16px 0;
-  }
-
-  h3 {
-    font-size: 1.05rem;
-    font-weight: 500;
-    margin: 20px 0 10px 0;
-  }
-
-  .settings-titles {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 20px;
-    gap: 28px;
-    border-bottom: 1px solid var(--ion-border-color);
-  }
-
-  .settings-title {
-    padding-bottom: 10px;
+  .tab {
+    padding: 12px 16px;
     cursor: pointer;
-    position: relative;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
 
-    h2 {
-      font-size: 1rem;
+    h3 {
+      margin: 0;
+      font-size: 14px;
       font-weight: 500;
       color: var(--ion-text-color-medium);
-      margin: 0;
-      transition: color 0.2s ease-in-out;
     }
 
     &.active {
-      h2 {
+      border-bottom-color: var(--ion-color-primary);
+
+      h3 {
         color: var(--ion-color-primary);
-      }
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background-color: var(--ion-color-primary);
-      }
-    }
-
-    &:hover:not(.active) {
-      h2 {
-        color: var(--ion-text-color);
+        font-weight: 600;
       }
     }
   }
+}
 
-  .settings-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding: 8px 0;
+.tab-content {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-    label {
-      font-size: 1rem;
-      flex-shrink: 0;
-      margin-right: 16px;
-    }
+ion-card {
+  margin-bottom: 16px;
+  background: var(--ion-card-background);
+  box-shadow: none;
+  border: 1px solid var(--ion-border-color);
 
-    ion-toggle {
-      --background: #2f3033;
-      --background-checked: var(--ion-color-primary);
-      --handle-background: #ddd;
-      --handle-background-checked: white;
-    }
-  }
+  ion-card-header {
+    padding-bottom: 0;
 
-  .settings-select {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    margin-bottom: 20px;
-
-    label {
-      font-size: 1rem;
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 600;
       color: var(--ion-text-color);
-      margin-bottom: 8px;
-      margin-right: 0;
-      font-weight: 500;
-      letter-spacing: 0.02em;
     }
 
-    ion-select {
-      --background: #232323;
-      --color: var(--ion-text-color);
-      --placeholder-color: var(--ion-text-color-medium);
-      --padding-start: 16px;
-      --padding-end: 16px;
-      --min-height: 48px;
-      --border-radius: 6px;
-      --border-width: 1px;
-      --border-style: solid;
-      --border-color: var(--ion-border-color);
-      --highlight-color-focused: var(--ion-color-primary);
-      --highlight-color: var(--ion-color-primary);
-      --icon-color: var(--ion-color-primary);
-      font-size: 1rem;
-      font-weight: 500;
-      transition: border-color 0.2s;
-
-      &:focus-within {
-        --border-color: var(--ion-color-primary);
-        box-shadow: 0 0 0 2px rgba(56, 128, 255, 0.15);
-      }
-    }
-  }
-
-  .settings-description {
-    font-size: 0.9rem;
-    color: var(--ion-text-color-medium);
-    margin-top: -4px;
-    margin-bottom: 16px;
-    padding-left: 4px;
-  }
-}
-
-/* Fix dropdown popover/options styling */
-ion-select-popover {
-  --background: var(--ion-card-background);
-  --color: var(--ion-text-color);
-
-  .select-interface-option {
-    color: var(--ion-text-color);
-    
-    &.selected,
-    &:focus,
-    &[aria-selected="true"] {
-      background: var(--ion-color-primary) !important;
-      color: #fff !important;
+    p {
+      color: var(--ion-text-color-medium);
+      font-size: 14px;
+      margin-top: 4px;
     }
   }
 }
 
-/* Mobile action-sheet interface */
-.action-sheet-group {
+.logo-upload {
+  height: 150px;
+  border: 2px dashed var(--ion-border-color);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
   background: var(--ion-card-background);
 
-  .action-sheet-button {
-    color: var(--ion-text-color);
+  .upload-placeholder {
+    text-align: center;
 
-    &.action-sheet-selected {
-      color: var(--ion-color-primary) !important;
+    ion-icon {
+      font-size: 48px;
+      color: var(--ion-text-color-medium);
+    }
+
+    p {
+      margin-top: 8px;
+      color: var(--ion-text-color-medium);
+    }
+  }
+
+  .logo-preview {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+
+    ion-button {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      --padding-start: 0;
+      --padding-end: 0;
     }
   }
 }
 
-.user-management-section {
-  color: #000;
-  /* ... rest of your existing user management styles ... */
+.holiday-calendar-card {
+  background: var(--ion-card-background);
+  border-radius: 16px;
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.3);
+  padding: 32px 32px 24px 32px;
+  margin: 32px auto;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-@media (max-width: 768px) {
-  /* ... rest of your existing responsive styles ... */
+.holiday-calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  h2 {
+    margin: 0 0 4px 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ion-text-color);
+  }
+
+  p {
+    margin: 0;
+    color: var(--ion-text-color-medium);
+    font-size: 1rem;
+    font-weight: 400;
+  }
+}
+
+.holiday-calendar-content {
+  display: flex;
+  gap: 40px;
+}
+
+.holiday-form-col {
+  flex: 1 1 0;
+  min-width: 320px;
+  max-width: 420px;
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: var(--ion-text-color);
+  }
+
+  .holiday-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .holiday-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--ion-text-color);
+    margin-bottom: 4px;
+    margin-top: 8px;
+  }
+
+  .holiday-input {
+    border-radius: 8px;
+    border: 1px solid var(--ion-border-color);
+    background: var(--ion-background-color);
+    color: var(--ion-text-color);
+    font-size: 1rem;
+    padding: 0 12px;
+    min-height: 44px;
+  }
+
+  .holiday-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 0 0;
+
+    .recurring-label {
+      font-size: 1rem;
+      color: var(--ion-text-color);
+      font-weight: 500;
+    }
+  }
+
+  .add-holiday-btn {
+    margin-top: 12px;
+    background: var(--ion-text-color);
+    color: var(--ion-background-color);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    height: 44px;
+
+    &:hover {
+      background: #ccc;
+    }
+  }
+}
+
+.existing-holidays-col {
+  flex: 1 1 0;
+  min-width: 320px;
+  max-width: 420px;
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: var(--ion-text-color);
+  }
+
+  .empty-state {
+    color: var(--ion-text-color-medium);
+    font-size: 1rem;
+    padding: 16px 0;
+    text-align: center;
+    background: var(--ion-background-color);
+    border-radius: 8px;
+  }
+
+  .existing-holiday-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--ion-background-color);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--ion-border-color);
+
+    .holiday-name {
+      font-weight: 700;
+      font-size: 1.08rem;
+      color: var(--ion-text-color);
+      margin-bottom: 2px;
+    }
+
+    .holiday-date {
+      color: var(--ion-text-color-medium);
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0 8px;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #b91c1c;
+      }
+    }
+  }
+}
+
+.holiday-calendar-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+
+  .cancel-btn {
+    background: transparent;
+    color: var(--ion-text-color);
+    border: 1px solid var(--ion-border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover {
+      background: var(--ion-card-background);
+    }
+  }
+
+  .save-btn {
+    background: var(--ion-text-color);
+    color: var(--ion-background-color);
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: #ccc;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .holiday-calendar-content {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .holiday-form-col,
+  .existing-holidays-col {
+    max-width: 100%;
+  }
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  span {
+    color: var(--ion-text-color-medium);
+  }
+
+  ion-input {
+    width: 100px;
+    background: var(--ion-card-background);
+    color: var(--ion-text-color);
+    border-radius: 8px;
+    --padding-start: 8px;
+    --padding-end: 8px;
+  }
+}
+
+.closed-label {
+  color: var(--ion-text-color-medium);
+  font-style: italic;
+}
+
+.holiday-form {
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--ion-border-color);
+  padding-bottom: 16px;
+}
+
+ion-list {
+  background: transparent;
+}
+
+@media (min-width: 768px) {
+  .settings-tabs {
+    justify-content: center;
+  }
+
+  ion-card {
+    margin-bottom: 24px;
+  }
 }
