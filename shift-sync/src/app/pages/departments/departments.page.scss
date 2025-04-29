@@ -6,6 +6,44 @@
   margin-top: 40px;
 }
 
+.welcome-section {
+  padding: 16px 0;
+  margin-bottom: 16px;
+}
+
+.welcome-section h1 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+}
+
+.welcome-section .subtitle {
+  margin: 0;
+  color: #aaa;
+  font-size: 1rem;
+}
+
+.department-card {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
 .container {
   padding: 16px;
   box-sizing: border-box;
@@ -147,6 +185,7 @@ ion-button {
 
 .add-section h2 {
   margin-top: 0;
+  margin-bottom: 30px;
   font-size: 1.2rem;
   font-weight: 600;
 }

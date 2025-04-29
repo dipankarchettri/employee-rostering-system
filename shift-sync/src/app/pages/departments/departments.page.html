@@ -4,18 +4,29 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Departments</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="toggleAddSection()">
-        <ion-icon slot="start" name="add"></ion-icon>
-        + Add Department
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="container">
-    <!-- Departments Table -->
+
+    <div class="welcome-section">
+      <h1>Department Management</h1>
+    </div>
+
+    <div class="department-card">
+      <div class="card-header">
+        <h2>Manage Departments</h2>
+        <ion-buttons slot="end">
+          <ion-button (click)="toggleAddSection()">
+            <ion-icon slot="start" name="add"></ion-icon>
+            + Add Department
+          </ion-button>
+        </ion-buttons>
+      </div>
+      
+      
+
     <table class="data-table">
       <thead>
         <tr>
@@ -83,4 +94,5 @@
       </div>
     </div>
   </div>
+</div>
 </ion-content>
