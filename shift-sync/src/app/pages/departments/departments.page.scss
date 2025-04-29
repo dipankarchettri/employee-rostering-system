@@ -104,18 +104,14 @@ ion-button {
   align-items: center;
   justify-content: center;
 
-  &::before {
-    font-size: 18px;
-  }
-
+  
   &.edit-icon::before {
     content: "✎";
-    color: var(--ion-color-secondary);
-  }
+    
+  } 
 
   &.delete-icon::before {
     content: "🗑";
-    color: var(--ion-color-secondary);
   }
 
   &:hover {
@@ -219,8 +215,6 @@ button {
     background: #444;
     cursor: not-allowed;
   }
-
- 
 }
 
 /* Modal Close */
