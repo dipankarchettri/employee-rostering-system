@@ -6,4 +6,4 @@ class RosterConfig(AppConfig):
 
     def ready(self):
         # Import here to avoid AppRegistryNotReady error
-        from . import signals
+        pass

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company, Department, Employee, Shift, Availability, Roster, Notification
+from .models import Company, Department, Employee, Shift,  Roster, Notification, Unavailability
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,70 +34,65 @@ class EmployeeSerializer(serializers.ModelSerializer):
         }
 
 class ShiftSerializer(serializers.ModelSerializer):
-    shift_type_display = serializers.CharField(source='get_shift_type_display', read_only=True)
-    day_of_week_display = serializers.CharField(source='get_day_of_week_display', read_only=True)
+    day_of_week = serializers.SerializerMethodField()
+    date = serializers.SerializerMethodField()  # Add this for backward compatibility
     
     class Meta:
         model = Shift
-        fields = [
-            'id', 'company', 'department', 'day_of_week', 
-            'day_of_week_display', 'shift_type', 'shift_type_display',
-            'start_time', 'end_time'
-        ]
+        fields = '__all__'
+    
+    def get_day_of_week(self, obj):
+        return obj.start_time.strftime('%A').lower()
+        
+    def get_date(self, obj):
+        return obj.start_time.date()  # Extract date from DateTimeField
+        
+class UnavailabilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Unavailability
+        fields = '__all__'  # Includes all fields
         extra_kwargs = {
-            'start_time': {'read_only': True},
-            'end_time': {'read_only': True}
+            'employee': {'required': True}  # Force employee to be provided
         }
 
-class AvailabilitySerializer(serializers.ModelSerializer):
-    employee_name = serializers.CharField(source='employee.name', read_only=True)
-    company = serializers.PrimaryKeyRelatedField(source='employee.company', read_only=True)
-    
-    class Meta:
-        model = Availability
-        fields = [
-            'id', 'employee', 'employee_name', 'company',
-            'shift_type', 'day_of_week', 'is_available', 'reason'
-        ]
-        extra_kwargs = {
-            'employee': {'required': True}
-        }
+    def validate(self, data):
+        if data['end'] <= data['start']:
+            raise serializers.ValidationError("End time must be after start time")
+        return data
+
 
 class RosterSerializer(serializers.ModelSerializer):
-    employee_name = serializers.CharField(source='employee.name', read_only=True)
-    shift_details = serializers.SerializerMethodField(read_only=True)
+    shift_details = serializers.SerializerMethodField()
     
     class Meta:
         model = Roster
-        fields = [
-            'id', 'company', 'employee', 'employee_name',
-            'shift', 'shift_details', 'date',
-            'is_conflict', 'assigned_manually'
-        ]
+        fields = '__all__'
     
     def get_shift_details(self, obj):
         return {
-            'department': obj.shift.department.name,
-            'day_of_week': obj.shift.get_day_of_week_display(),
-            'shift_type': obj.shift.get_shift_type_display(),
-            'start_time': obj.shift.start_time,
-            'end_time': obj.shift.end_time
+            'id': obj.shift.id,
+            'date': obj.shift.start_time.date(),  # Changed from date to start_time.date()
+            'day_of_week': obj.shift.start_time.strftime('%A').lower(),  # Changed here
+            'start_time': obj.shift.start_time.time(),  # Get time component
+            'end_time': obj.shift.end_time.time(),     # Get time component
+            'department': obj.shift.department_id,
+            'shift_type': obj.shift.get_shift_type_display()
         }
 
 class NotificationSerializer(serializers.ModelSerializer):
     employee_name = serializers.CharField(source='employee.name', read_only=True)
     shift_details = serializers.SerializerMethodField(read_only=True)
-    
+
     class Meta:
         model = Notification
         fields = [
             'id', 'employee', 'employee_name', 'shift',
             'shift_details', 'message', 'email_sent', 'created_at'
         ]
-    
+
     def get_shift_details(self, obj):
         return {
             'department': obj.shift.department.name,
-            'day_of_week': obj.shift.get_day_of_week_display(),
+            'date': obj.shift.start_time.date().strftime('%Y-%m-%d'),  # Changed here
             'shift_type': obj.shift.get_shift_type_display()
         }
