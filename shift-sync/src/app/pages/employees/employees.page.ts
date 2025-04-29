@@ -54,7 +54,7 @@ export class EmployeesPage implements OnInit {
   selectedDepartment: string = '';
   selectedType: string = '';
 
-  companyId = 7; 
+  companyId = 19; 
 
   constructor(private http: HttpClient) {}
 

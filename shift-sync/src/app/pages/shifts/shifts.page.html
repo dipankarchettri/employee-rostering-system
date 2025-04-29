@@ -49,7 +49,8 @@
       <tbody>
         <tr *ngFor="let shift of filteredShifts">
           <td>{{ shift.name }}</td>
-          <td>{{ getDepartmentName(shift.departmentId) }}</td>
+          <!-- Directly display the department name from filtered shift -->
+          <td>{{ shift.departmentName }}</td>
           <td>{{ shift.day }}</td>
           <td>{{ shift.startTime }} - {{ shift.endTime }}</td>
           <td>{{ shift.assignedEmployees?.length || 0 }}</td>

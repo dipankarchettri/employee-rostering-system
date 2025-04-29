@@ -41,7 +41,7 @@ export class DepartmentsPage {
   }
 
   loadDepartments() {
-    const companyId = 7; // Use your dynamic company ID logic here
+    const companyId = 16; // Use your dynamic company ID logic here
 
     if (!companyId) {
       console.error('Company ID not found. User might not be logged in.');
@@ -75,7 +75,7 @@ export class DepartmentsPage {
   }
 
   loadEmployees() {
-    const companyId = 7; // Use your dynamic company ID logic here
+    const companyId = 16; // Use your dynamic company ID logic here
 
     if (!companyId) {
       console.error('Company ID not found. User might not be logged in.');

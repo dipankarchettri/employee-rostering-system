@@ -32,7 +32,11 @@ interface Employee {
   initial: string;
   department: string;
   schedule: {
-    [key: string]: string;
+    [key: string]: {
+      shift?: 'morning' | 'evening' | 'night';
+      dept?: 'dept1' | 'dept2';
+      reason?: string;
+    };
   };
 }
 
@@ -67,79 +71,52 @@ export class RostersPage implements OnInit {
   // Weekday keys for accessing the schedule object
   weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
   
-  // Sample employee data
+  // Sample employee data with updated structure
   employees: Employee[] = [
     {
-      name: 'Sarah Johnson',
-      initial: 'SJ',
-      department: 'HR Department',
+      name: 'John',
+      initial: 'J',
+      department: 'HR Department & IT',
       schedule: {
-        monday: 'M',
-        tuesday: 'M',
-        wednesday: '',
-        thursday: 'A',
-        friday: 'A',
-        saturday: '',
-        sunday: ''
+        monday: { shift: 'morning', dept: 'dept1' },
+        tuesday: { shift: 'morning', dept: 'dept1' },
+        wednesday: { reason: 'Day off' },
+        thursday: { shift: 'evening', dept: 'dept2' },
+        friday: { shift: 'evening', dept: 'dept2' },
+        saturday: { reason: 'Weekend' },
+        sunday: { reason: 'Weekend' }
       }
     },
     {
-      name: 'Michael Chen',
-      initial: 'MC',
-      department: 'IT Support',
+      name: 'Firas',
+      initial: 'F',
+      department: 'IT & DevOps ',
       schedule: {
-        monday: '',
-        tuesday: 'A',
-        wednesday: 'A',
-        thursday: 'M',
-        friday: 'M',
-        saturday: '',
-        sunday: ''
+        monday: { reason: 'Training' },
+        tuesday: { shift: 'evening', dept: 'dept1' },
+        wednesday: { shift: 'evening', dept: 'dept1' },
+        thursday: { shift: 'morning', dept: 'dept2' },
+        friday: { shift: 'morning', dept: 'dept2' },
+        saturday: { reason: 'On call' },
+        sunday: { reason: 'Weekend' }
       }
     },
     {
-      name: 'Lisa Rodriguez',
-      initial: 'LR',
+      name: 'Kavya',
+      initial: 'K',
       department: 'Operations',
       schedule: {
-        monday: '',
-        tuesday: '',
-        wednesday: 'M',
-        thursday: 'M',
-        friday: '',
-        saturday: 'A',
-        sunday: 'A'
-      }
-    },
-    {
-      name: 'James Wilson',
-      initial: 'JW',
-      department: 'Customer Service',
-      schedule: {
-        monday: 'A',
-        tuesday: 'A',
-        wednesday: '',
-        thursday: '',
-        friday: 'M',
-        saturday: 'M',
-        sunday: ''
-      }
-    },
-    {
-      name: 'Emily Parker',
-      initial: 'EP',
-      department: 'HR Department',
-      schedule: {
-        monday: 'M',
-        tuesday: '',
-        wednesday: '',
-        thursday: 'A',
-        friday: 'A',
-        saturday: '',
-        sunday: 'M'
+        monday: { reason: 'Vacation' },
+        tuesday: { reason: 'Vacation' },
+        wednesday: { shift: 'morning', dept: 'dept1' },
+        thursday: { shift: 'morning', dept: 'dept1' },
+        friday: { reason: 'Medical leave' },
+        saturday: { shift: 'night', dept: 'dept2' },
+        sunday: { shift: 'night', dept: 'dept2' }
       }
     }
   ];
+
 
   // Form control properties
   startDate: Date = new Date();

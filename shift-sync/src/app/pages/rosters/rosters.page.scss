@@ -339,3 +339,46 @@
       border-bottom: none;
     }
   }
+
+  // Add these styles to your existing SCSS
+.employee-cell {
+  .employee-dept {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    margin-top: 4px;
+  }
+}
+
+.shift-cell {
+  padding: 4px;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  .shift-type {
+    font-weight: 500;
+    color: var(--ion-color-primary);
+  }
+  
+  .shift-dept {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+  }
+  
+  .shift-reason {
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    font-style: italic;
+  }
+}
+
+.has-shift {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.1);
+  border-left: 2px solid var(--ion-color-primary);
+}
+
+.no-shift {
+  background-color: rgba(var(--ion-color-medium-rgb), 0.05);
+}

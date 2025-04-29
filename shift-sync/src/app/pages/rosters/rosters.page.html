@@ -83,6 +83,7 @@
       </div>
     </div>
 
+
     <!-- Roster Table -->
     <div class="table-container">
       <table class="roster-table">
@@ -98,11 +99,21 @@
               <div class="employee-info">
                 <div class="employee-avatar">{{employee.initial}}</div>
                 <span class="employee-name">{{employee.name}}</span>
+                <span class="employee-dept">{{employee.department}}</span>
               </div>
             </td>
             <td *ngFor="let day of weekdays" 
-                [class.has-shift]="employee.schedule[day]">
-              {{employee.schedule[day] || '—'}}
+                [class.has-shift]="employee.schedule[day]?.shift"
+                [class.no-shift]="!employee.schedule[day]?.shift">
+              <div class="shift-cell">
+                <ng-container *ngIf="employee.schedule[day]?.shift; else noShift">
+                  <div class="shift-type">{{employee.schedule[day]?.shift | titlecase}}</div>
+                  <div class="shift-dept">{{employee.schedule[day]?.dept}}</div>
+                </ng-container>
+                <ng-template #noShift>
+                  <div class="shift-reason">{{employee.schedule[day]?.reason || '—'}}</div>
+                </ng-template>
+              </div>
             </td>
           </tr>
         </tbody>
