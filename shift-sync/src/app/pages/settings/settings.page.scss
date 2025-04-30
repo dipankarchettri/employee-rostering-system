@@ -1,389 +1,851 @@
+/* settings.page.scss - Refined UI Theme */
 :root {
   --ion-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', sans-serif;
   --ion-color-primary: #3880ff;
   --ion-color-secondary: #3dc2ff;
   --ion-background-color: #18191b;
   --ion-card-background: #232326;
-  --ion-text-color: #fff;
-  --ion-text-color-medium: #aaa;
-  --ion-border-color: #333;
-  --ion-color-light: #333;
+  --ion-text-color: #ffffff;
+  --ion-border-color: #333333;
+  --ion-toggle-handle: #3880ff;
+  --ion-item-background: #232326;
+  --ion-input-background: #2f3033;
+  --ion-secondary-text: #aaaaaa;
+  --ion-hover-color: #333333;
+  --ion-shadow-color: rgba(0, 0, 0, 0.14);
+  --ion-button-hover-bg: #2e71e5;
+  --ion-form-border: #444444;
 }
 
-.settings-content {
+body, .dashboard-content {
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--ion-font-family);
+}
+
+ion-app {
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+}
+
+ion-header {
+  background: var(--ion-background-color);
+}
+
+ion-toolbar {
   --background: var(--ion-background-color);
+  --color: var(--ion-text-color);
+  box-shadow: 0 1px 2px var(--ion-shadow-color);
 }
 
-.settings-section {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px;
+ion-title {
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
-.settings-tabs {
-  display: flex;
-  overflow-x: auto;
-  padding-bottom: 8px;
+ion-button {
+  --ripple-color: transparent;
+}
+
+ion-menu-button, ion-button {
+  --color: var(--ion-text-color);
+}
+
+.dashboard-content {
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.welcome-section {
+  padding: 16px 0;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--ion-border-color);
-
-  .tab {
-    padding: 12px 16px;
-    cursor: pointer;
-    white-space: nowrap;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
-
-    h3 {
-      margin: 0;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--ion-text-color-medium);
-    }
-
-    &.active {
-      border-bottom-color: var(--ion-color-primary);
-
-      h3 {
-        color: var(--ion-color-primary);
-        font-weight: 600;
-      }
-    }
-  }
 }
 
-.tab-content {
+.welcome-section h1 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  color: var(--ion-text-color);
+}
+
+.welcome-section .subtitle {
+  margin: 0;
+  color: var(--ion-secondary-text);
+  font-size: 1rem;
+}
+
+.content-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.settings-segment {
+  max-width: 1345px;
   background: var(--ion-card-background);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-ion-card {
-  margin-bottom: 16px;
-  background: var(--ion-card-background);
-  box-shadow: none;
-  border: 1px solid var(--ion-border-color);
-
-  ion-card-header {
-    padding-bottom: 0;
-
-    ion-card-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--ion-text-color);
-    }
-
-    p {
-      color: var(--ion-text-color-medium);
+  border-bottom: 1px solid var(--ion-border-color);
+  margin-left: 28px;
+  
+  ion-segment-button {
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: var(--ion-color-primary);
+    --padding-start: 0;
+    --padding-end: 0;
+    min-width: auto;
+    margin-right: 24px;
+    
+    ion-label {
       font-size: 14px;
-      margin-top: 4px;
+      font-weight: 500;
+      text-transform: none;
+      color: var(--ion-secondary-text);
+    }
+    
+    &.segment-button-checked ion-label {
+       color: var(--ion-color-primary);
+    }
+    
+    &::part(indicator) {
+      height: 2px;
     }
   }
 }
 
-.logo-upload {
-  height: 150px;
-  border: 2px dashed var(--ion-border-color);
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+.content-section {
+  padding: 0;
+  margin: 0 auto;
+}
+
+/* Card styling */
+.dashboard-card {
   background: var(--ion-card-background);
-
-  .upload-placeholder {
-    text-align: center;
-
-    ion-icon {
-      font-size: 48px;
-      color: var(--ion-text-color-medium);
-    }
-
-    p {
-      margin-top: 8px;
-      color: var(--ion-text-color-medium);
-    }
-  }
-
-  .logo-preview {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-
-    img {
-      max-height: 100%;
-      max-width: 100%;
-      object-fit: contain;
-    }
-
-    ion-button {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      --padding-start: 0;
-      --padding-end: 0;
-    }
-  }
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  border: none;
 }
 
-.holiday-calendar-card {
-  background: var(--ion-card-background);
-  border-radius: 16px;
-  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.3);
-  padding: 32px 32px 24px 32px;
-  margin: 32px auto;
-  max-width: 900px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.holiday-calendar-header {
+.card-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  margin-bottom: 16px;
+  background-color: var(--ion-card-background);
+}
 
-  h2 {
-    margin: 0 0 4px 0;
-    font-size: 1.5rem;
-    font-weight: 700;
+.card-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--ion-text-color);
+  font-weight: 500;
+}
+
+/* Company Information Section */
+.settings-section {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+  overflow: hidden;
+  border: none;
+}
+
+/* Override for settings sections when they have the dashboard-card class */
+.settings-section.dashboard-card {
+  padding: 0;
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+  
+  ion-card-content {
+    padding: 0 16px 16px;
+  }
+}
+
+.section-header {
+  padding: 16px 16px 12px;
+  background-color: var(--ion-card-background);
+  color: var(--ion-text-color) !important;
+
+  ion-card-title {
+    font-size: 1.25rem;
+    font-weight: 500;
     color: var(--ion-text-color);
+    margin: 0 0 8px;
+    color: var(--ion-text-color) !important;
   }
 
   p {
+    font-size: 14px;
+    color: var(--ion-secondary-text);
     margin: 0;
-    color: var(--ion-text-color-medium);
-    font-size: 1rem;
-    font-weight: 400;
   }
 }
 
-.holiday-calendar-content {
+ion-card-content {
+  padding: 0 16px 16px;
+  background-color: var(--ion-card-background);
+}
+
+.dropdown-label, .toggle-label, .setting-label, .input-label, .field-label, .form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-text-color);
+  margin-bottom: 8px;
+}
+
+.value-display, .setting-value {
+  text-align: right;
+  font-size: 14px;
+  color: var(--ion-color-primary);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+/* Form Styles */
+.settings-form {
+  padding: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 16px;
+  
+  &.single-column {
+    grid-template-columns: 1fr;
+    max-width: 50%;
+  }
+}
+
+.form-group {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.form-input, .custom-input {
+  width: 100%;
+  background: var(--ion-input-background);
+  border: 1px solid var(--ion-form-border);
+  border-radius: 6px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --color: var(--ion-text-color);
+  color: var(--ion-text-color);
+  
+  &:hover, &.ion-focused {
+    border-color: var(--ion-color-primary);
+  }
+}
+
+.form-select {
+  width: 100%;
+  background: var(--ion-input-background);
+  border: 1px solid var(--ion-form-border);
+  border-radius: 6px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  --placeholder-color: rgba(255, 255, 255, 0.5);
+  --color: var(--ion-text-color);
+  color: var(--ion-text-color);
+  
+  &::part(icon) {
+    color: var(--ion-secondary-text);
+    opacity: 1;
+  }
+  
+  &:hover {
+    border-color: var(--ion-color-primary);
+  }
+}
+
+.button-container {
+  margin-top: 24px;
   display: flex;
-  gap: 40px;
+  justify-content: flex-start;
+  gap: 12px;
 }
 
-.holiday-form-col {
-  flex: 1 1 0;
-  min-width: 320px;
-  max-width: 420px;
-
-  h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 18px;
-    color: var(--ion-text-color);
+.save-button, .primary-button {
+  --background: var(--ion-color-primary);
+  --color: white;
+  --border-radius: 6px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 12px;
+  --padding-bottom: 12px;
+  height: auto;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+  margin: 0;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    --background: var(--ion-button-hover-bg);
   }
+}
 
-  .holiday-form-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
+/* Notification Settings */
+.setting-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--ion-border-color);
+  background: var(--ion-card-background);
+  
+  &:last-child {
+    border-bottom: none;
   }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
 
-  .holiday-label {
-    font-size: 1rem;
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sub-setting {
+  margin-top: 12px;
+  padding-left: 8px;
+}
+
+ion-toggle {
+  --background: var(--ion-border-color);
+  --background-checked: var(--ion-color-primary);
+  --handle-background: var(--ion-card-background);
+  --handle-background-checked: white;
+}
+
+/* Integration Styles */
+.integration-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--ion-border-color);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+}
+
+.integration-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.integration-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.integration-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ion-text-color);
+  margin-bottom: 4px;
+}
+
+.integration-description {
+  font-size: 14px;
+  color: var(--ion-secondary-text);
+}
+
+.integration-form {
+  margin-top: 16px;
+  padding-left: 8px;
+}
+
+/* Audit Logs */
+.audit-logs-section {
+  margin-top: 32px;
+  
+  h2 {
+    font-size: 18px;
     font-weight: 500;
     color: var(--ion-text-color);
-    margin-bottom: 4px;
-    margin-top: 8px;
+    margin: 0 0 12px 0;
   }
+  
+  .section-description {
+    font-size: 14px;
+    color: var(--ion-secondary-text);
+    margin: 0 0 24px 0;
+  }
+}
 
-  .holiday-input {
-    border-radius: 8px;
-    border: 1px solid var(--ion-border-color);
-    background: var(--ion-background-color);
+.audit-table {
+  border: 1px solid var(--ion-border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Employee-style table */
+.employee-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  th {
+    text-align: left;
+    padding: 12px 16px;
+    font-weight: 500;
+    color: var(--ion-secondary-text);
+    border-bottom: 1px solid var(--ion-border-color);
+  }
+  
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--ion-border-color);
     color: var(--ion-text-color);
-    font-size: 1rem;
-    padding: 0 12px;
-    min-height: 44px;
   }
-
-  .holiday-checkbox-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 8px 0 0 0;
-
-    .recurring-label {
-      font-size: 1rem;
-      color: var(--ion-text-color);
-      font-weight: 500;
-    }
+  
+  tr:last-child td {
+    border-bottom: none;
   }
+  
+  tr:hover {
+    background: var(--ion-hover-color);
+  }
+}
 
-  .add-holiday-btn {
-    margin-top: 12px;
-    background: var(--ion-text-color);
-    color: var(--ion-background-color);
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    height: 44px;
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 2fr;
+  background: var(--ion-card-background);
+  border-bottom: 1px solid var(--ion-border-color);
+  
+  .header-cell {
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ion-secondary-text);
+  }
+}
 
+.table-body {
+  max-height: 300px;
+  overflow-y: auto;
+  
+  .table-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 2fr;
+    border-top: 1px solid var(--ion-border-color);
+    background: var(--ion-card-background);
+    
     &:hover {
-      background: #ccc;
+      background: var(--ion-hover-color);
+    }
+    
+    .cell {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--ion-text-color);
     }
   }
 }
 
-.existing-holidays-col {
-  flex: 1 1 0;
-  min-width: 320px;
-  max-width: 420px;
-
-  h3 {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 18px;
+/* Export Section */
+.export-section {
+  .export-description {
+    font-size: 14px;
     color: var(--ion-text-color);
+    margin: 0 0 24px 0;
+    line-height: 1.5;
   }
 
-  .empty-state {
-    color: var(--ion-text-color-medium);
-    font-size: 1rem;
-    padding: 16px 0;
-    text-align: center;
-    background: var(--ion-background-color);
-    border-radius: 8px;
-  }
-
-  .existing-holiday-card {
+  .export-buttons {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--ion-background-color);
-    border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 14px;
-    border: 1px solid var(--ion-border-color);
+    gap: 16px;
+    flex-wrap: wrap;
 
-    .holiday-name {
-      font-weight: 700;
-      font-size: 1.08rem;
-      color: var(--ion-text-color);
-      margin-bottom: 2px;
-    }
-
-    .holiday-date {
-      color: var(--ion-text-color-medium);
-      font-size: 1rem;
-      font-weight: 400;
-    }
-
-    .remove-btn {
-      background: none;
-      border: none;
-      color: #ef4444;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      padding: 0 8px;
-      transition: color 0.2s;
+    .export-button {
+      --color: var(--ion-text-color);
+      --background: var(--ion-card-background);
+      --background-hover: var(--ion-hover-color);
+      --border-color: var(--ion-border-color);
+      --border-width: 1px;
+      --border-style: solid;
+      --border-radius: 6px;
+      --padding-start: 16px;
+      --padding-end: 16px;
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+      height: auto;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: none;
+      margin: 0;
+      transition: all 0.2s ease;
 
       &:hover {
-        color: #b91c1c;
+        --border-color: var(--ion-color-primary);
+        --color: var(--ion-color-primary);
       }
     }
   }
 }
 
-.holiday-calendar-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 18px;
-
-  .cancel-btn {
-    background: transparent;
-    color: var(--ion-text-color);
-    border: 1px solid var(--ion-border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 500;
-    padding: 10px 24px;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-
-    &:hover {
-      background: var(--ion-card-background);
-    }
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .settings-form .form-row,
+  .settings-form .form-row.single-column {
+    grid-template-columns: 1fr;
   }
-
-  .save-btn {
-    background: var(--ion-text-color);
-    color: var(--ion-background-color);
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    padding: 10px 24px;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: #ccc;
-    }
-  }
-}
-
-@media (max-width: 900px) {
-  .holiday-calendar-content {
+  
+  .integration-row {
     flex-direction: column;
-    gap: 24px;
+    align-items: flex-start;
+    gap: 16px;
   }
-
-  .holiday-form-col,
-  .existing-holidays-col {
-    max-width: 100%;
+  
+  .table-header, 
+  .table-body .table-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .header-cell.date,
+  .header-cell.details,
+  .cell.date,
+  .cell.details {
+    display: none;
   }
 }
 
-.time-inputs {
+/* Button styles from employee page */
+.add-button {
+  background: var(--ion-color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
-
-  span {
-    color: var(--ion-text-color-medium);
+  cursor: pointer;
+  height: 40px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: var(--ion-button-hover-bg);
   }
-
-  ion-input {
-    width: 100px;
-    background: var(--ion-card-background);
-    color: var(--ion-text-color);
-    border-radius: 8px;
-    --padding-start: 8px;
-    --padding-end: 8px;
+  
+  &::before {
+    content: "+";
+    font-size: 18px;
+    margin-right: 4px;
   }
 }
 
-.closed-label {
-  color: var(--ion-text-color-medium);
-  font-style: italic;
+/* Action buttons from employee page */
+.action-buttons {
+  display: flex;
+  gap: 8px;
 }
 
-.holiday-form {
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--ion-border-color);
-  padding-bottom: 16px;
-}
-
-ion-list {
+.action-button {
   background: transparent;
+  border: none;
+  color: var(--ion-secondary-text);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: var(--ion-hover-color);
+  }
 }
 
-@media (min-width: 768px) {
-  .settings-tabs {
-    justify-content: center;
-  }
+.edit-icon::before {
+  content: "✓";
+}
 
-  ion-card {
-    margin-bottom: 24px;
+.delete-icon::before {
+  content: "🗑";
+}
+
+/* Filter styles from employee page */
+.filter-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.filter-dropdown {
+  background: var(--ion-input-background);
+  border: 1px solid var(--ion-form-border);
+  border-radius: 6px;
+  color: var(--ion-text-color);
+  padding: 8px 12px;
+  flex: 1;
+  min-width: 120px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+/* Inputs */
+ion-input, ion-select, ion-datetime, select, input, textarea {
+  background: var(--ion-input-background);
+  border: 1px solid var(--ion-form-border);
+  border-radius: 6px;
+  color: var(--ion-text-color);
+  padding: 8px 12px;
+  appearance: none;
+  transition: border-color 0.2s ease;
+  --highlight-color-focused: transparent !important;
+  --highlight-color-valid: transparent !important;
+  --highlight-color-invalid: transparent !important;
+  --highlight-height: 0 !important;
+
+  &:focus, &:hover {
+    border-color: var(--ion-color-primary);
   }
 }
+
+/* Company name input and time zone dropdown */
+input[placeholder="Company name"],
+ion-input[placeholder="Company name"],
+ion-select.time-zone-select,
+.time-zone-dropdown {
+  background: var(--ion-input-background) !important;
+  border: 1px solid var(--ion-form-border) !important;
+  border-radius: 6px !important;
+  color: var(--ion-text-color) !important;
+  --color: var(--ion-text-color) !important;
+}
+
+/* Fix selection and focus states */
+::selection {
+  background-color: rgba(56, 128, 255, 0.3);
+  color: var(--ion-text-color);
+}
+
+/* Consistent scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background-color: var(--ion-background-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--ion-border-color);
+  border-radius: 4px;
+  
+  &:hover {
+    background-color: var(--ion-hover-color);
+  }
+}
+
+/* Work Schedule Settings card styling */
+.settings-section.dashboard-card {
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+}
+
+.range-setting {
+  margin-bottom: 20px;
+}
+
+.range-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.range-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ion-text-color);
+}
+
+.range-value {
+  font-size: 14px;
+  color: var(--ion-color-primary);
+  font-weight: 500;
+}
+
+ion-range.blue-range {
+  --bar-height: 6px;
+  --bar-background: var(--ion-border-color);
+  --bar-background-active: var(--ion-color-primary);
+  --knob-background: var(--ion-color-primary);
+  --knob-size: 18px;
+  padding: 8px 0;
+  
+  &::part(knob) {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Select row styling - matching employees page UI */
+.select-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.select-group {
+  label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ion-text-color);
+    margin-bottom: 8px;
+  }
+}
+
+.custom-select {
+  width: 100%;
+  background: #1e1e20 !important; /* Darker background matching employees page */
+  border: 1px solid var(--ion-border-color) !important;
+  border-radius: 6px !important;
+  color: var(--ion-text-color) !important;
+  --color: var(--ion-text-color) !important;
+  --placeholder-color: var(--ion-text-color) !important;
+  min-height: 48px !important;
+  
+  &::part(placeholder),
+  &::part(text) {
+    font-size: 14px;
+    color: var(--ion-text-color);
+    padding: 12px 16px;
+  }
+  
+  &::part(icon) {
+    color: var(--ion-text-color);
+    opacity: 1;
+    margin-right: 8px;
+  }
+  
+  &:hover {
+    border-color: var(--ion-color-primary);
+  }
+}
+
+/* Custom dropdown styles for better consistency */
+ion-select::part(icon) {
+  width: 16px;
+  height: 16px;
+  color: var(--ion-text-color);
+  opacity: 1;
+}
+
+ion-select::part(text) {
+  color: var(--ion-text-color);
+  opacity: 1;
+}
+
+/* Popover styles for dropdowns */
+.select-interface-option {
+  --background: var(--ion-card-background);
+  --color: var(--ion-text-color);
+}
+
+/* Custom styling for select when opened */
+ion-select:focus {
+  border-color: var(--ion-color-primary) !important;
+  box-shadow: 0 0 0 1px var(--ion-color-primary);
+}
+
+/* Fix dropdown underlines and focus states */
+ion-select, 
+.custom-select,
+.filter-dropdown {
+  --highlight-color-focused: var(--ion-color-primary) !important;
+  --highlight-color-valid: var(--ion-border-color) !important;
+  --highlight-color-invalid: var(--ion-border-color) !important;
+  --highlight-height: 0 !important; /* Remove underlines */
+  outline: none !important;
+  
+  &:focus {
+    border-color: var(--ion-color-primary) !important;
+    box-shadow: 0 0 0 1px var(--ion-color-primary);
+    outline: none !important;
+  }
+}
+
+/* Override any default form validation colors */
+.form-valid,
+.input-valid,
+.select-valid {
+  border-color: var(--ion-border-color) !important;
+  --highlight-color: var(--ion-border-color) !important;
+}
+
+action-message,
+.success-message,
+.action-text,
+.success-text,
+.status-message,
+div.success-message,
+div.action-message,
+div.success-text,
+div.action-text,
+div.status-message,
+*[class*="success-message"],
+*[class*="action-message"],
+*[class*="success-text"],
+*[class*="action-text"],
+*[class*="status-message"] {
+  background: var(--ion-input-background) !important;
+  background-color: var(--ion-input-background) !important;
+  color: var(--ion-text-color) !important;
+  border: none !important;
+}
+
+/* Toast and alert styling */
+ion-toast.success-toast::part(message),
+ion-alert.success-alert .alert-message,
+.toast-success,
+.alert-success {
+  color: var(--ion-color-primary) !important;
+  background-color: var(--ion-input-background)!important;
+}
+
+/* Fix any validation icons */
+.validation-icon,
+.status-icon {
+  color: var(--ion-color-primary) !important;
+}
+
+
+

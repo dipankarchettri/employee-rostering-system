@@ -1,4 +1,8 @@
-<ion-header>
+<ion-app>
+  <app-main-menu></app-main-menu>
+  
+  <div class="ion-page" id="main-content">
+    <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -12,313 +16,722 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="settings-content">
-  <div class="settings-section">
-    <!-- Tab Titles -->
-    <div class="settings-tabs">
-      <div
-        class="tab"
-        [class.active]="activeTab === 'company'"
-        (click)="setActiveTab('company')"
-      >
-        <h3>Company Profile</h3>
+    <ion-content class="dashboard-content">
+      <!-- Welcome Section -->
+      <div class="welcome-section">
+        <h1>Settings</h1>
+        <p class="subtitle">Manage your system preferences and settings</p>
       </div>
-      <div
-        class="tab"
-        [class.active]="activeTab === 'localization'"
-        (click)="setActiveTab('localization')"
-      >
-        <h3>Localization</h3>
+
+      <div class="content-container">
+        <ion-segment [(ngModel)]="currentSegment" scrollable="true" class="settings-segment">
+          <ion-segment-button value="general">
+            <ion-label>General</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="scheduling">
+            <ion-label>Scheduling</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="notifications">
+            <ion-label>Notifications</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="integrations">
+            <ion-label>Integrations</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <!-- General Settings -->
+        <div *ngIf="currentSegment === 'general'" class="content-section">
+          <!-- Company Information -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <ion-card-title>Company Information</ion-card-title>
+              <p>Set your company details and preferences</p>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="settings-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Company name</label>
+                    <ion-input
+                      class="form-input"
+                      type="text"
+                      [(ngModel)]="companyName"
+                      placeholder="Enter company name">
+                    </ion-input>
       </div>
-      <div
-        class="tab"
-        [class.active]="activeTab === 'employee'"
-        (click)="setActiveTab('employee')"
-      >
-        <h3>Employee Defaults</h3>
-      </div>
-      <div
-        class="tab"
-        [class.active]="activeTab === 'system'"
-        (click)="setActiveTab('system')"
-      >
-        <h3>System & Display</h3>
-      </div>
-      <div
-        class="tab"
-        [class.active]="activeTab === 'data'"
-        (click)="setActiveTab('data')"
-      >
-        <h3>Data & Security</h3>
+
+                  <div class="form-group">
+                    <label class="form-label">Time zone</label>
+                    <ion-select
+                      class="form-select"
+                      [(ngModel)]="timeZone"
+                      interface="popover">
+                      <ion-select-option *ngFor="let tz of timeZones" [value]="tz.value">
+                        {{ tz.label }}
+                      </ion-select-option>
+                    </ion-select>
       </div>
     </div>
 
-    <!-- Tab Content -->
-    <div class="tab-content">
-      <!-- Company Profile -->
-      <div *ngIf="activeTab === 'company'" class="tab-pane">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Company Logo</ion-card-title>
-            <p>Upload your company logo. Recommended size: 200x200 pixels.</p>
-          </ion-card-header>
-          <ion-card-content>
-            <div class="logo-upload" (click)="fileInput.click()">
-              <input
-                #fileInput
-                type="file"
-                accept="image/*"
-                (change)="handleLogoUpload($event)"
-                hidden
-              />
-              <div *ngIf="!logoPreview" class="upload-placeholder">
-                <ion-icon name="cloud-upload-outline"></ion-icon>
-                <p>Click to upload logo</p>
-              </div>
-              <div *ngIf="logoPreview" class="logo-preview">
-                <img [src]="logoPreview" alt="Company Logo" />
-                <ion-button fill="clear" (click)="removeLogo($event)">
-                  <ion-icon name="trash-outline"></ion-icon>
+                <div class="button-container">
+                  <ion-button class="save-button" (click)="saveCompanySettings()">
+                    Save changes
                 </ion-button>
               </div>
             </div>
           </ion-card-content>
         </ion-card>
 
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Business Hours</ion-card-title>
-            <p>Set your regular business hours for each day of the week.</p>
+          <!-- Regional Settings -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <ion-card-title>Regional Settings</ion-card-title>
+              <p>Configure language and formatting preferences</p>
           </ion-card-header>
+
           <ion-card-content>
-            <ion-list>
-              <ion-item *ngFor="let hour of businessHours">
-                <ion-toggle [(ngModel)]="hour.isOpen" slot="start"></ion-toggle>
-                <ion-label>{{hour.day}}</ion-label>
-                <div *ngIf="hour.isOpen" class="time-inputs">
-                  <ion-input
-                    type="time"
-                    [(ngModel)]="hour.openTime"
-                  ></ion-input>
-                  <span>to</span>
-                  <ion-input
-                    type="time"
-                    [(ngModel)]="hour.closeTime"
-                  ></ion-input>
-                </div>
-                <span *ngIf="!hour.isOpen" class="closed-label">Closed</span>
-              </ion-item>
-            </ion-list>
-          </ion-card-content>
-        </ion-card>
+              <div class="settings-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Language</label>
+                    <ion-select
+                      class="form-select"
+                      [(ngModel)]="language"
+                      interface="popover">
+                      <ion-select-option value="English">English</ion-select-option>
+                      <ion-select-option value="Spanish">Spanish</ion-select-option>
+                      <ion-select-option value="French">French</ion-select-option>
+                      <ion-select-option value="German">German</ion-select-option>
+                      <ion-select-option value="Chinese">Chinese</ion-select-option>
+                    </ion-select>
+                  </div>
 
-        <!-- Holiday Calendar -->
-        <div class="settings-card holiday-calendar-card">
-          <div class="holiday-calendar-header">
-            <div>
-              <h2>Holiday Calendar</h2>
-              <p>
-                Set special dates like holidays when your business is closed.
-              </p>
-            </div>
-          </div>
-          <div class="holiday-calendar-content">
-            <div class="holiday-form-col">
-              <h3>Add New Holiday</h3>
-              <div class="holiday-form-fields">
-                <label class="holiday-label">Holiday Name</label>
-                <ion-input
-                  [(ngModel)]="newHoliday.name"
-                  placeholder="e.g., Christmas Day"
-                  class="holiday-input"
-                ></ion-input>
-
-                <label class="holiday-label">Date</label>
-                <ion-datetime
-                  displayFormat="MMMM do, yyyy"
-                  [(ngModel)]="newHoliday.date"
-                  class="holiday-input"
-                ></ion-datetime>
-
-                <div class="holiday-checkbox-row">
-                  <ion-toggle [(ngModel)]="newHoliday.isRecurring"></ion-toggle>
-                  <span class="recurring-label">Recurring yearly</span>
-                </div>
-                <ion-button
-                  expand="block"
-                  class="add-holiday-btn"
-                  (click)="addHoliday()"
-                  >Add Holiday</ion-button
-                >
-              </div>
-            </div>
-            <div class="existing-holidays-col">
-              <h3>Existing Holidays</h3>
-              <div *ngIf="holidays.length === 0" class="empty-state">
-                No holidays added yet
-              </div>
-              <div
-                *ngFor="let holiday of holidays"
-                class="existing-holiday-card"
-              >
-                <div>
-                  <div class="holiday-name">{{holiday.name}}</div>
-                  <div class="holiday-date">
-                    {{holiday.date | date:'MMMM do, yyyy'}}
-                    <span *ngIf="holiday.isRecurring">(Recurring)</span>
+                  <div class="form-group">
+                    <label class="form-label">Date format</label>
+                    <ion-select
+                      class="form-select"
+                      [(ngModel)]="dateFormat"
+                      interface="popover">
+                      <ion-select-option value="MM/DD/YYYY">MM/DD/YYYY</ion-select-option>
+                      <ion-select-option value="DD/MM/YYYY">DD/MM/YYYY</ion-select-option>
+                      <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
+                    </ion-select>
                   </div>
                 </div>
-                <button class="remove-btn" (click)="removeHoliday(holiday)">
-                  Remove
-                </button>
-              </div>
+
+                <div class="form-row single-column">
+                  <div class="form-group">
+                    <label class="form-label">Time format</label>
+                    <ion-select
+                      class="form-select"
+                      [(ngModel)]="timeFormat"
+                      interface="popover">
+                      <ion-select-option value="12-hour">12-hour (AM/PM)</ion-select-option>
+                      <ion-select-option value="24-hour">24-hour</ion-select-option>
+                    </ion-select>
+                  </div>
+                </div>
+
+                <div class="button-container">
+                  <ion-button class="save-button" (click)="saveRegionalSettings()">
+                    Save changes
+                  </ion-button>
+                </div>
             </div>
+          </ion-card-content>
+        </ion-card>
+        </div>
+
+        <!-- Other Sections -->
+        <div *ngIf="currentSegment === 'scheduling'" class="content-section">
+          <!-- Work Schedule Settings card -->
+          <ion-card class="settings-section dashboard-card">
+            <div class="card-header">
+              <h2>Work Schedule Settings</h2>
+            </div>
+            <ion-card-content>
+              <div class="settings-form">
+                <!-- Minimum break between shifts -->
+                <div class="range-setting">
+                  <div class="range-header">
+                    <span class="range-label">Minimum break between shifts (hours)</span>
+                    <span class="range-value">{{ scheduleSettings.minBreak }} hours</span>
           </div>
-          <div class="holiday-calendar-actions">
-            <button class="cancel-btn">Cancel</button>
-            <button class="save-btn">Save Changes</button>
+                  <ion-range
+                    [(ngModel)]="scheduleSettings.minBreak"
+                    min="1"
+                    max="24"
+                    step="1"
+                    value="8"
+                    color="primary"
+                    class="blue-range">
+                  </ion-range>
+                </div>
+
+                <!-- Maximum consecutive workdays -->
+                <div class="range-setting">
+                  <div class="range-header">
+                    <span class="range-label">Maximum consecutive workdays</span>
+                    <span class="range-value">{{ scheduleSettings.maxWorkdays }} days</span>
+              </div>
+                  <ion-range
+                    [(ngModel)]="scheduleSettings.maxWorkdays"
+                    min="1"
+                    max="7"
+                    step="1"
+                    value="5"
+                    color="primary"
+                    class="blue-range">
+                  </ion-range>
+            </div>
+
+                <!-- Select inputs row -->
+                <div class="select-row">
+                  <div class="select-group">
+                    <label>Default shift length</label>
+                    <ion-select
+                      [(ngModel)]="scheduleSettings.defaultShiftLength"
+                      value="8"
+                      placeholder="8 hours"
+                      interface="popover"
+                      class="custom-select">
+                      <ion-select-option value="8">8 hours</ion-select-option>
+                      <ion-select-option value="4">4 hours</ion-select-option>
+                      <ion-select-option value="6">6 hours</ion-select-option>
+                      <ion-select-option value="10">10 hours</ion-select-option>
+                      <ion-select-option value="12">12 hours</ion-select-option>
+                    </ion-select>
+              </div>
+
+                  <div class="select-group">
+                    <label>First day of week</label>
+                    <ion-select
+                      [(ngModel)]="scheduleSettings.firstDayOfWeek"
+                      value="monday"
+                      placeholder="Monday"
+                      interface="popover"
+                      class="custom-select">
+                      <ion-select-option value="monday">Monday</ion-select-option>
+                      <ion-select-option value="sunday">Sunday</ion-select-option>
+                      <ion-select-option value="saturday">Saturday</ion-select-option>
+                    </ion-select>
+                  </div>
+                </div>
+
+                <div class="button-container">
+                  <ion-button class="save-button" (click)="saveScheduleSettings()">
+                    Save changes
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Regional Settings card -->
+          <ion-card class="settings-section dashboard-card">
+            <div class="card-header">
+              <h2>Regional Settings</h2>
+            </div>
+            <ion-card-content>
+              <div class="settings-form">
+                <div class="select-row">
+                  <div class="select-group">
+                    <label>Language</label>
+                    <ion-select
+                      [(ngModel)]="regionalSettings.language"
+                      value="English"
+                      placeholder="English" 
+                      interface="popover"
+                      class="custom-select">
+                      <ion-select-option value="English">English</ion-select-option>
+                      <ion-select-option value="Spanish">Spanish</ion-select-option>
+                      <ion-select-option value="French">French</ion-select-option>
+                      <ion-select-option value="German">German</ion-select-option>
+                      <ion-select-option value="Chinese">Chinese</ion-select-option>
+                    </ion-select>
           </div>
+
+                  <div class="select-group">
+                    <label>Date format</label>
+                    <ion-select
+                      [(ngModel)]="regionalSettings.dateFormat"
+                      value="MM/DD/YYYY"
+                      placeholder="MM/DD/YYYY"
+                      interface="popover"
+                      class="custom-select">
+                      <ion-select-option value="MM/DD/YYYY">MM/DD/YYYY</ion-select-option>
+                      <ion-select-option value="DD/MM/YYYY">DD/MM/YYYY</ion-select-option>
+                      <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
+                    </ion-select>
         </div>
       </div>
 
-      <!-- Localization -->
-      <div *ngIf="activeTab === 'localization'" class="tab-pane">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Language & Region</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-item>
-              <ion-label>Language</ion-label>
-              <ion-select [(ngModel)]="language" interface="popover">
-                <ion-select-option value="en">English</ion-select-option>
-                <ion-select-option value="es">Español</ion-select-option>
-                <ion-select-option value="fr">Français</ion-select-option>
+                <div class="select-row">
+                  <div class="select-group">
+                    <label>Time format</label>
+                    <ion-select
+                      [(ngModel)]="regionalSettings.timeFormat"
+                      value="12-hour"
+                      placeholder="12-hour (AM/PM)"
+                      interface="popover"
+                      class="custom-select">
+                      <ion-select-option value="12-hour">12-hour (AM/PM)</ion-select-option>
+                      <ion-select-option value="24-hour">24-hour</ion-select-option>
               </ion-select>
-            </ion-item>
+                  </div>
+                  <div class="select-group">
+                    <!-- Empty for alignment -->
+                  </div>
+                </div>
 
-            <ion-item>
-              <ion-label>Date Format</ion-label>
-              <ion-select [(ngModel)]="dateFormat" interface="popover">
-                <ion-select-option value="MM/DD/YYYY"
-                  >MM/DD/YYYY</ion-select-option
-                >
-                <ion-select-option value="DD/MM/YYYY"
-                  >DD/MM/YYYY</ion-select-option
-                >
-              </ion-select>
-            </ion-item>
-
-            <ion-item>
-              <ion-label>Time Format</ion-label>
-              <ion-select [(ngModel)]="timeFormat" interface="popover">
-                <ion-select-option value="12h">12-hour</ion-select-option>
-                <ion-select-option value="24h">24-hour</ion-select-option>
-              </ion-select>
-            </ion-item>
-
-            <ion-item>
-              <ion-label>Currency</ion-label>
-              <ion-select [(ngModel)]="currency" interface="popover">
-                <ion-select-option value="USD">USD ($)</ion-select-option>
-                <ion-select-option value="EUR">EUR (€)</ion-select-option>
-                <ion-select-option value="GBP">GBP (£)</ion-select-option>
-              </ion-select>
-            </ion-item>
+                <div class="button-container">
+                  <ion-button class="save-button" (click)="saveRegionalSettings()">
+                    Save changes
+                  </ion-button>
+                </div>
+              </div>
           </ion-card-content>
         </ion-card>
       </div>
 
-      <!-- Employee Defaults -->
-      <div *ngIf="activeTab === 'employee'" class="tab-pane">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Default Working Hours</ion-card-title>
+        <!-- Notifications Settings -->
+        <div *ngIf="currentSegment === 'notifications'" class="content-section">
+          <!-- Notification Channels -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <ion-card-title>Notification Channels</ion-card-title>
+              <p>Configure how you receive notifications</p>
           </ion-card-header>
+
           <ion-card-content>
-            <ion-item>
-              <ion-label>Default Shift Length (hours)</ion-label>
+              <!-- Email notifications -->
+              <div class="setting-item">
+                <div class="setting-row">
+                  <span class="setting-label">Email notifications</span>
+                  <ion-toggle [(ngModel)]="notificationSettings.emailEnabled"></ion-toggle>
+                </div>
+
+                <div class="sub-setting" *ngIf="notificationSettings.emailEnabled">
+                  <div class="input-label">Email address</div>
               <ion-input
-                type="number"
-                [(ngModel)]="defaultShiftLength"
-              ></ion-input>
-            </ion-item>
+                    type="email" 
+                    [(ngModel)]="notificationSettings.emailAddress"
+                    placeholder="Enter your email address"
+                    class="custom-input">
+                  </ion-input>
+                </div>
+              </div>
 
-            <ion-item>
-              <ion-label>Maximum Weekly Hours</ion-label>
-              <ion-input type="number" [(ngModel)]="maxWeeklyHours"></ion-input>
-            </ion-item>
+              <!-- Push notifications -->
+              <div class="setting-item">
+                <div class="setting-row">
+                  <span class="setting-label">Push notifications</span>
+                  <ion-toggle [(ngModel)]="notificationSettings.pushEnabled"></ion-toggle>
+                </div>
+              </div>
+
+              <!-- In-app notifications -->
+              <div class="setting-item">
+                <div class="setting-row">
+                  <span class="setting-label">In-app notifications</span>
+                  <ion-toggle [(ngModel)]="notificationSettings.inAppEnabled"></ion-toggle>
+                </div>
+              </div>
+
+              <ion-button class="save-button" (click)="saveNotificationSettings()">
+                Save changes
+              </ion-button>
+          </ion-card-content>
+        </ion-card>
+
+          <!-- Notification Events -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <ion-card-title>Notification Events</ion-card-title>
+              <p>Choose which events trigger notifications</p>
+            </ion-card-header>
+
+            <ion-card-content>
+              <!-- Shift changes -->
+              <div class="setting-item">
+                <div class="setting-row">
+                  <span class="setting-label">Shift changes</span>
+                  <ion-toggle [(ngModel)]="notificationEvents.shiftChanges"></ion-toggle>
+                </div>
+      </div>
+
+              <!-- Time-off requests -->
+              <div class="setting-item">
+                <div class="setting-row">
+                  <span class="setting-label">Time-off requests</span>
+                  <ion-toggle [(ngModel)]="notificationEvents.timeOffRequests"></ion-toggle>
+                </div>
+              </div>
+
+              <!-- Schedule publish -->
+              <div class="setting-item">
+                <div class="setting-row">
+                  <span class="setting-label">Schedule publish</span>
+                  <ion-toggle [(ngModel)]="notificationEvents.schedulePublish"></ion-toggle>
+                </div>
+              </div>
+
+              <ion-button class="save-button" (click)="saveNotificationEvents()">
+                Save changes
+              </ion-button>
           </ion-card-content>
         </ion-card>
       </div>
 
-      <!-- System & Display -->
-      <div *ngIf="activeTab === 'system'" class="tab-pane">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Display Settings</ion-card-title>
+        <!-- Integrations Settings -->
+        <div *ngIf="currentSegment === 'integrations'" class="content-section">
+          <!-- Calendar Integrations -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <ion-card-title>Calendar Integrations</ion-card-title>
+              <p>Connect to external calendar services</p>
+            </ion-card-header>
+
+            <ion-card-content>
+              <div class="integration-item">
+                <div class="integration-row">
+                  <div class="integration-info">
+                    <span class="integration-title">Google Calendar</span>
+                    <span class="integration-description">Sync roster schedules with Google Calendar</span>
+                  </div>
+                  <ion-button 
+                    [fill]="integrations.googleCalendar ? 'outline' : 'solid'"
+                    [color]="integrations.googleCalendar ? 'medium' : 'primary'"
+                    (click)="toggleGoogleCalendarConnection()">
+                    {{ integrations.googleCalendar ? 'Disconnect' : 'Connect' }}
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+
+          <!-- Communication Integrations -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <ion-card-title>Communication Integrations</ion-card-title>
+              <p>Connect to messaging platforms</p>
           </ion-card-header>
+
           <ion-card-content>
-            <ion-item>
-              <ion-label>Timezone</ion-label>
-              <ion-select [(ngModel)]="timezone" interface="popover">
-                <ion-select-option value="UTC-5"
-                  >UTC-05:00 (Eastern Time)</ion-select-option
-                >
-                <ion-select-option value="UTC-6"
-                  >UTC-06:00 (Central Time)</ion-select-option
-                >
-              </ion-select>
-            </ion-item>
+              <!-- Slack Integration -->
+              <div class="integration-item">
+                <div class="integration-row">
+                  <div class="integration-info">
+                    <span class="integration-title">Slack</span>
+                    <span class="integration-description">Send roster notifications to Slack channels</span>
+                  </div>
+                  <ion-button 
+                    [fill]="integrations.slackConnected ? 'outline' : 'solid'"
+                    [color]="integrations.slackConnected ? 'medium' : 'primary'"
+                    (click)="toggleSlackConnection()">
+                    {{ integrations.slackConnected ? 'Disconnect' : 'Connect' }}
+                  </ion-button>
+                </div>
 
-            <ion-item>
-              <ion-label>Week Starts On</ion-label>
-              <ion-select [(ngModel)]="weekStartDay" interface="popover">
-                <ion-select-option value="0">Sunday</ion-select-option>
-                <ion-select-option value="1">Monday</ion-select-option>
-              </ion-select>
-            </ion-item>
+                <div class="integration-form" *ngIf="!integrations.slackConnected">
+                  <div class="form-group">
+                    <div class="input-label">Slack workspace URL</div>
+                    <ion-input
+                      type="text"
+                      [(ngModel)]="integrations.slackWorkspaceUrl"
+                      placeholder="your-workspace.slack.com"
+                      class="custom-input">
+                    </ion-input>
+                  </div>
+                </div>
+              </div>
 
-            <ion-item>
-              <ion-toggle [(ngModel)]="darkMode" slot="start"></ion-toggle>
-              <ion-label>Dark Mode</ion-label>
-            </ion-item>
+              <!-- Microsoft Teams Integration -->
+              <div class="integration-item">
+                <div class="integration-row">
+                  <div class="integration-info">
+                    <span class="integration-title">Microsoft Teams</span>
+                    <span class="integration-description">Send roster updates and notifications to Teams channels</span>
+                  </div>
+                  <ion-button 
+                    [fill]="integrations.teamsConnected ? 'outline' : 'solid'"
+                    [color]="integrations.teamsConnected ? 'medium' : 'primary'"
+                    (click)="toggleTeamsConnection()">
+                    {{ integrations.teamsConnected ? 'Disconnect' : 'Connect' }}
+                  </ion-button>
+                </div>
+
+                <div class="integration-form" *ngIf="!integrations.teamsConnected">
+                  <div class="form-group">
+                    <div class="input-label">Teams webhook URL</div>
+                    <ion-input
+                      type="text"
+                      [(ngModel)]="integrations.teamsWebhookUrl"
+                      placeholder="https://outlook.office.com/webhook/..."
+                      class="custom-input">
+                    </ion-input>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Discord Integration -->
+              <div class="integration-item">
+                <div class="integration-row">
+                  <div class="integration-info">
+                    <span class="integration-title">Discord</span>
+                    <span class="integration-description">Send roster notifications to Discord channels</span>
+                  </div>
+                  <ion-button 
+                    [fill]="integrations.discordConnected ? 'outline' : 'solid'"
+                    [color]="integrations.discordConnected ? 'medium' : 'primary'"
+                    (click)="toggleDiscordConnection()">
+                    {{ integrations.discordConnected ? 'Disconnect' : 'Connect' }}
+                  </ion-button>
+                </div>
+
+                <div class="integration-form" *ngIf="!integrations.discordConnected">
+                  <div class="form-group">
+                    <div class="input-label">Discord webhook URL</div>
+                    <ion-input
+                      type="text"
+                      [(ngModel)]="integrations.discordWebhookUrl"
+                      placeholder="https://discord.com/api/webhooks/..."
+                      class="custom-input">
+                    </ion-input>
+                  </div>
+                </div>
+              </div>
+
+              <!-- WhatsApp Business Integration -->
+              <div class="integration-item">
+                <div class="integration-row">
+                  <div class="integration-info">
+                    <span class="integration-title">WhatsApp Business</span>
+                    <span class="integration-description">Send roster updates via WhatsApp Business API</span>
+                  </div>
+                  <ion-button 
+                    [fill]="integrations.whatsappConnected ? 'outline' : 'solid'"
+                    [color]="integrations.whatsappConnected ? 'medium' : 'primary'"
+                    (click)="toggleWhatsAppConnection()">
+                    {{ integrations.whatsappConnected ? 'Disconnect' : 'Connect' }}
+                  </ion-button>
+                </div>
+
+                <div class="integration-form" *ngIf="!integrations.whatsappConnected">
+                  <div class="form-group">
+                    <div class="input-label">WhatsApp Business Account ID</div>
+                    <ion-input
+                      type="text"
+                      [(ngModel)]="integrations.whatsappAccountId"
+                      placeholder="Enter your WhatsApp Business Account ID"
+                      class="custom-input">
+                    </ion-input>
+                  </div>
+                  <div class="form-group">
+                    <div class="input-label">API Key</div>
+                    <ion-input
+                      type="password"
+                      [(ngModel)]="integrations.whatsappApiKey"
+                      placeholder="Enter your WhatsApp Business API Key"
+                      class="custom-input">
+                    </ion-input>
+                  </div>
+                </div>
+              </div>
           </ion-card-content>
         </ion-card>
-      </div>
 
-      <!-- Data & Security -->
-      <div *ngIf="activeTab === 'data'" class="tab-pane">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Data Management</ion-card-title>
+          <!-- Export & Backup -->
+          <ion-card class="settings-section">
+            <ion-card-header class="section-header">
+              <div class="header-with-info">
+                <ion-card-title>Export & Backup</ion-card-title>
+                <ion-icon name="information-circle-outline" class="info-icon"></ion-icon>
+              </div>
+              <p>Export your company data for backup or reporting purposes.</p>
           </ion-card-header>
-          <ion-card-content>
-            <ion-button expand="block" (click)="exportData()"
-              >Export Data</ion-button
-            >
-            <ion-button expand="block" (click)="confirmReset()"
-              >Reset to Defaults</ion-button
-            >
-          </ion-card-content>
-        </ion-card>
 
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>Security</ion-card-title>
-          </ion-card-header>
           <ion-card-content>
-            <ion-item>
-              <ion-toggle [(ngModel)]="twoFactorAuth" slot="start"></ion-toggle>
-              <ion-label>Two-Factor Authentication</ion-label>
-            </ion-item>
+              <div class="export-section">
+                <p class="export-description">
+                  Export all company data including schedules, employee information, and settings.
+                </p>
+                
+                <div class="export-buttons">
+                  <ion-button 
+                    fill="outline" 
+                    class="export-button"
+                    (click)="exportData('json')">
+                    Export as JSON
+                  </ion-button>
 
-            <ion-button expand="block" (click)="requestDataDeletion()"
-              >Request Data Deletion</ion-button
-            >
+                  <ion-button 
+                    fill="outline" 
+                    class="export-button"
+                    (click)="exportData('excel')">
+                    Export as Excel
+                  </ion-button>
+                </div>
+              </div>
+
+              <!-- Audit Logs Section -->
+              <div class="audit-logs-section">
+                <h2>Audit Logs</h2>
+                <p class="section-description">View a history of recent changes and activities in your system.</p>
+
+                <div class="audit-table">
+                  <div class="table-header">
+                    <div class="header-cell action">Action</div>
+                    <div class="header-cell user">User</div>
+                    <div class="header-cell date">Date</div>
+                    <div class="header-cell details">Details</div>
+                  </div>
+
+                  <div class="table-body">
+                    <div class="table-row" *ngFor="let log of auditLogs">
+                      <div class="cell action">{{ log.action }}</div>
+                      <div class="cell user">{{ log.user }}</div>
+                      <div class="cell date">{{ log.date }}</div>
+                      <div class="cell details">{{ log.details }}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="view-all-button">
+                  <ion-button fill="clear" (click)="viewAllAuditLogs()">
+                    View All Audit Logs
+                  </ion-button>
+                </div>
+              </div>
           </ion-card-content>
         </ion-card>
       </div>
     </div>
+    </ion-content>
   </div>
-</ion-content>
+</ion-app>
+
+<style>
+  /* Add these styles to your SCSS file */
+  .content-section {
+    padding: 16px;
+  }
+
+  .settings-section {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .section-header {
+    padding: 20px 20px 12px;
+
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0 0 8px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .schedule-form, .policy-form {
+    padding: 0 20px 20px;
+  }
+
+  .schedule-item {
+    margin-bottom: 24px;
+  }
+
+  .schedule-label {
+    display: block;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .value-display {
+    text-align: right;
+    font-size: 14px;
+    color: #007bff;
+    margin-bottom: 4px;
+  }
+
+  .schedule-range {
+    --bar-height: 4px;
+    --bar-background: #e6e6e6;
+    --bar-background-active: #007bff;
+    --knob-background: #007bff;
+    --knob-size: 16px;
+  }
+
+  .dropdowns-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .dropdown-label {
+    display: block;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .custom-select {
+    width: 100%;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 6px;
+  }
+
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      margin-bottom: 24px;
+    }
+  }
+
+  .toggle-label {
+    font-size: 14px;
+    color: #1a1a1a;
+  }
+
+  .primary-button {
+    --background: #007bff;
+    --color: white;
+    --border-radius: 6px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    margin: 0;
+    text-transform: none;
+    font-weight: 500;
+
+    &.full-width {
+      width: 100%;
+    }
+  }
+
+  ion-toggle {
+    --background: #e6e6e6;
+    --background-checked: #007bff;
+    --handle-background: white;
+    --handle-background-checked: white;
+  }
+</style>
