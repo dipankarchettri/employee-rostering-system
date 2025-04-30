@@ -16,108 +16,76 @@
 </ion-header>
 
 <ion-content class="roster-content">
-  <!-- Header Section -->
-  <div class="page-header">
-    <h1>Roster Generation</h1>
-    <p>Create and manage employee schedules</p>
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading roster data...</p>
   </div>
 
-  <!-- Main Card -->
-  <div class="main-card">
-    <div class="card-header">
-      <h2>Generate Roster</h2>
-      <div class="export-buttons">
-        <ion-button size="small" fill="outline" (click)="exportRoster('email')">
-          <ion-icon name="mail-outline"></ion-icon>
-          Email
-        </ion-button>
-        <ion-button size="small" fill="outline" (click)="exportRoster('pdf')">
-          <ion-icon name="document-outline"></ion-icon>
-          Export PDF
-        </ion-button>
-        <ion-button size="small" fill="outline" (click)="exportRoster('csv')">
-          <ion-icon name="document-text-outline"></ion-icon>
-          Export CSV
-        </ion-button>
+  <!-- Header Section -->
+  <div class="page-header">
+    <h1>Weekly Roster</h1>
+    <p>{{ startDate | date:'mediumDate' }} - {{ endDate | date:'mediumDate' }}</p>
+  </div>
+
+  <!-- Controls Section -->
+  <div class="controls-section">
+    <ion-button expand="block" color="primary" (click)="generateRoster()">
+      <ion-icon name="refresh-outline" slot="start"></ion-icon>
+      Regenerate Roster
+    </ion-button>
+    
+    <div class="export-options">
+      <ion-button fill="outline" (click)="exportRoster('pdf')">
+        <ion-icon name="document-outline" slot="start"></ion-icon>
+        PDF
+      </ion-button>
+      <ion-button fill="outline" (click)="exportRoster('csv')">
+        <ion-icon name="document-text-outline" slot="start"></ion-icon>
+        CSV
+      </ion-button>
+      <ion-button fill="outline" (click)="exportRoster('email')">
+        <ion-icon name="mail-outline" slot="start"></ion-icon>
+        Email
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Roster Grid -->
+  <div class="roster-grid-container">
+    <div class="grid-header">
+      <div class="employee-header">Employee</div>
+      <div *ngFor="let day of weekdayLabels; let i = index" class="day-header">
+        <div>{{ day.short }}</div>
+        <div class="day-date">{{ getDayDate(i) | date:'d' }}</div>
       </div>
     </div>
 
-    <div class="controls-row">
-      <!-- Date Range Panel -->
-      <div class="control-panel date-panel">
-        <h3>Date Range Selection</h3>
-        <div class="date-inputs">
-          <div class="date-field">
-            <label>Start Date</label>
-            <ion-button fill="outline" expand="block" class="date-button">
-              <ion-icon name="calendar-outline" slot="start"></ion-icon>
-              <span>{{startDate | date: 'MMM d, y'}}</span>
-            </ion-button>
-          </div>
-          <div class="date-field">
-            <label>End Date</label>
-            <ion-button fill="outline" expand="block" class="date-button">
-              <ion-icon name="calendar-outline" slot="start"></ion-icon>
-              <span>{{endDate | date: 'MMM d, y'}}</span>
-            </ion-button>
+    <div class="grid-body">
+      <div *ngFor="let employee of employees" class="grid-row">
+        <div class="employee-cell">
+          <div class="employee-avatar">{{ employee.initial }}</div>
+          <div class="employee-info">
+            <div class="employee-name">{{ employee.name }}</div>
           </div>
         </div>
-      </div>
-
-      <!-- Generate Options Panel -->
-      <div class="control-panel options-panel">
-        <h3>Generate Options</h3>
-        <div class="options-list">
-          <ion-item lines="none">
-            <ion-checkbox [(ngModel)]="applyPreferences"></ion-checkbox>
-            <ion-label>Apply employee preferences</ion-label>
-          </ion-item>
-          <ion-item lines="none">
-            <ion-checkbox [(ngModel)]="balanceWorkload"></ion-checkbox>
-            <ion-label>Balance workload</ion-label>
-          </ion-item>
+        
+        <div *ngFor="let day of weekdayLabels" class="day-cell" 
+             [style.background-color]="employee.schedule[day.full.toLowerCase()]?.deptId ? 
+              getDepartmentColor(employee.schedule[day.full.toLowerCase()]?.deptId) + '20' : 'transparent'"
+             [style.border-left]="employee.schedule[day.full.toLowerCase()]?.deptId ? 
+              '4px solid ' + getDepartmentColor(employee.schedule[day.full.toLowerCase()]?.deptId) : 'none'">
+          <div *ngIf="employee.schedule[day.full.toLowerCase()]?.shift; else noShift" class="shift-info">
+            <div class="shift-type">{{ employee.schedule[day.full.toLowerCase()]?.shift }}</div>
+            <div class="shift-time">
+              {{ employee.schedule[day.full.toLowerCase()]?.startTime }} - {{ employee.schedule[day.full.toLowerCase()]?.endTime }}
+            </div>
+          </div>
+          <ng-template #noShift>
+            <div class="no-shift-label">—</div>
+          </ng-template>
         </div>
-        <ion-button expand="block" (click)="generateRoster()" class="generate-button">
-          Generate Roster
-        </ion-button>
       </div>
-    </div>
-
-
-    <!-- Roster Table -->
-    <div class="table-container">
-      <table class="roster-table">
-        <thead>
-          <tr>
-            <th class="employee-column">Member</th>
-            <th *ngFor="let day of weekdayLabels">{{day}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let employee of employees">
-            <td class="employee-cell">
-              <div class="employee-info">
-                <div class="employee-avatar">{{employee.initial}}</div>
-                <span class="employee-name">{{employee.name}}</span>
-                <span class="employee-dept">{{employee.department}}</span>
-              </div>
-            </td>
-            <td *ngFor="let day of weekdays" 
-                [class.has-shift]="employee.schedule[day]?.shift"
-                [class.no-shift]="!employee.schedule[day]?.shift">
-              <div class="shift-cell">
-                <ng-container *ngIf="employee.schedule[day]?.shift; else noShift">
-                  <div class="shift-type">{{employee.schedule[day]?.shift | titlecase}}</div>
-                  <div class="shift-dept">{{employee.schedule[day]?.dept}}</div>
-                </ng-container>
-                <ng-template #noShift>
-                  <div class="shift-reason">{{employee.schedule[day]?.reason || '—'}}</div>
-                </ng-template>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </ion-content>

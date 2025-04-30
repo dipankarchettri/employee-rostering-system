@@ -1,11 +1,11 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start" name="ion-menu-button">
+    <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>Departments</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="toggleAddSection()">
+      <ion-button (click)="openAddDepartmentModal()">
         <ion-icon slot="start" name="add"></ion-icon>
         + Add Department
       </ion-button>
@@ -13,74 +13,94 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <div class="container">
-    <!-- Departments Table -->
-    <table class="data-table">
+<ion-content class="dashboard-content">
+  
+  <div class="welcome-section">
+    <h1>Department Management</h1>
+    <div class="search-container">
+      <ion-searchbar 
+        [(ngModel)]="searchTerm" 
+        (ionChange)="onSearchChange()"
+        placeholder="Search departments">
+      </ion-searchbar>
+    </div>
+  </div>
+
+  <div class="department-card">
+    <div class="card-header">
+      <h2>Manage Departments</h2>
+    </div>
+
+    <table class="department-table">
       <thead>
         <tr>
           <th>Department Name</th>
           <th>Description</th>
-          <th>Number of Employees</th>
+          <th>Employees</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let department of departments">
+        <tr *ngFor="let department of filteredDepartments">
           <td>{{ department.name }}</td>
-          <td>{{ department.description }}</td>
+          <td>{{ department.description || 'N/A' }}</td>
           <td>{{ department.employees }}</td>
-          <td class="actions">
-            <button class="action-button edit-icon" (click)="editDepartment(department)">            
-            </button>            
-            <button class="action-button delete-icon" (click)="deleteDepartment(department)">
-            </button>
+          <td>
+            <div class="action-buttons">
+              <button class="action-button edit-icon" (click)="openEditDepartmentModal(department)"></button>
+              <button class="action-button delete-icon" (click)="confirmDelete(department)"></button>
+            </div>
           </td>
+        </tr>
+        <tr *ngIf="!filteredDepartments.length">
+          <td colspan="4" class="no-departments">No departments found</td>
         </tr>
       </tbody>
     </table>
+  </div>
 
-    <!-- Add Department Section -->
-    <div class="modal-backdrop" *ngIf="showAddSection">
-      <div class="container add-section">
-        <button class="modal-close" (click)="cancelAdd()">&times;</button>
-        <h2>Add New Department</h2>
-        <form (ngSubmit)="saveDepartment()" #deptForm="ngForm">
-          <div class="form-group">
-            <label for="departmentName">Department Name</label>
-            <input 
-              type="text" 
-              id="departmentName" 
-              name="name" 
-              [(ngModel)]="newDepartment.name" 
-              required 
-              placeholder="Enter department name">
-          </div>
-          <div class="form-group">
-            <label for="departmentDescription">Description</label>
-            <textarea 
-              id="departmentDescription" 
-              name="description" 
-              [(ngModel)]="newDepartment.description" 
-              required 
-              placeholder="Enter a description"></textarea>
-          </div>
-          <div class="form-group">
-            <label for="departmentEmployees">Number of Employees</label>
-            <input 
-              type="number" 
-              id="departmentEmployees" 
-              name="employees" 
-              [(ngModel)]="newDepartment.employees" 
-              required 
-              placeholder="0">
-          </div>
-          <div class="buttons">
-            <button type="button" class="cancel" (click)="cancelAdd()">Cancel</button>
-            <button type="submit" class="save" [disabled]="deptForm.invalid">Save Department</button>
-          </div>
-        </form>
-      </div>
+  <!-- Add/Edit Department Modal -->
+  <div class="modal-backdrop" *ngIf="showDepartmentModal" (click)="closeDepartmentModal()">
+    <div class="department-modal" (click)="$event.stopPropagation()">
+      <h3>{{ editingDepartment ? 'Edit Department' : 'Add New Department' }}</h3>
+      <button class="modal-close" (click)="closeDepartmentModal()">&times;</button>
+
+      <form (ngSubmit)="saveDepartment()" #deptForm="ngForm">
+        <div class="form-group">
+          <label>Department Name</label>
+          <input 
+            type="text" 
+            [(ngModel)]="currentDepartment.name" 
+            name="name" 
+            required 
+            placeholder="Enter department name">
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea 
+            [(ngModel)]="currentDepartment.description" 
+            name="description" 
+            placeholder="Enter a description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Number of Employees</label>
+          <input 
+            type="number" 
+            [(ngModel)]="currentDepartment.employees" 
+            name="employees" 
+            placeholder="0" 
+            disabled>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="modal-button modal-cancel" (click)="closeDepartmentModal()">Cancel</button>
+          <button type="submit" class="modal-button modal-save" [disabled]="deptForm.invalid">
+            {{ editingDepartment ? 'Update' : 'Save' }} Department
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 </ion-content>

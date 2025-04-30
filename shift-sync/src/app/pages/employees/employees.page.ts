@@ -1,120 +1,166 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { IonicModule } from '@ionic/angular';
 
-// Ionic components
-import {
-  IonApp,
-  IonContent,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonMenuButton,
-  IonIcon,
-  IonButton
-} from '@ionic/angular/standalone';
+interface Employee {
+  id?: number;
+  name: string;
+  contact_info: string;
+  employment_type: 'permanent' | 'casual' | null;
+  departments: string[];
+  company: number;
+}
 
-import { MainMenuComponent } from '../../components/main-menu/main-menu.component';
+interface Department {
+  id: number;
+  name: string;
+}
 
 @Component({
   selector: 'app-employees',
   templateUrl: './employees.page.html',
   styleUrls: ['./employees.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterModule,
-    MainMenuComponent,
-    HttpClientModule,
-    IonApp,
-    IonContent,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
-    IonMenuButton,
-    IonIcon,
-    IonButton
-  ]
+  imports: [IonicModule, CommonModule, FormsModule]
 })
-export class EmployeesPage implements OnInit {
-  employees: any[] = [];
-  filteredEmployees: any[] = [];
+export class EmployeesPage {
+  employees: Employee[] = [];
+  departments: Department[] = [];
+  filteredEmployees: Employee[] = [];
+  
+  selectedDepartment = '';
+  selectedType = '';
+  
+  showEmployeeModal = false;
+  editingEmployee = false;
+  currentEmployee: Employee = {
+    name: '',
+    contact_info: '',
+    employment_type: null,
+    departments: [],
+    company: 19,
+    id: 0
+  };
 
-  departments: any[] = [];
-  employeeTypes = [
-    'permanent',
-    'casual',
-  ];
+  constructor(private http: HttpClient) {
+    this.loadData();
+  }
 
-  selectedDepartment: string = '';
-  selectedType: string = '';
-
-  companyId = 19; 
-
-  constructor(private http: HttpClient) {}
-
-  ngOnInit() {
+  loadData() {
     this.loadDepartments();
     this.loadEmployees();
   }
 
-  loadEmployees() {
-    this.http.get<any[]>(`http://127.0.0.1:8000/api/employees/?company=${this.companyId}`)
-      .subscribe({
-        next: (data) => {
-          this.employees = data;
-          this.filteredEmployees = [...this.employees];
-        },
-        error: (err) => {
-          console.error('Failed to load employees:', err);
-        }
-      });
-  }
-
   loadDepartments() {
-    this.http.get<any[]>(`http://127.0.0.1:8000/api/departments/?company=${this.companyId}`)
+    this.http.get<Department[]>(`http://127.0.0.1:8000/api/departments/?company=19`)
       .subscribe({
         next: (data) => {
           this.departments = data;
         },
         error: (err) => {
-          console.error('Failed to load departments:', err);
+          console.error('Error loading departments:', err);
         }
       });
   }
 
-  addNewEmployee() {
-    console.log('Adding new employee');
+  loadEmployees() {
+    this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=19`)
+      .subscribe({
+        next: (data) => {
+          this.employees = data;
+          this.filteredEmployees = [...data];
+        },
+        error: (err) => {
+          console.error('Error loading employees:', err);
+        }
+      });
   }
 
-  editEmployee(employee: any) {
-    console.log('Editing employee:', employee);
-  }
-
-  deleteEmployee(employee: any) {
-    console.log('Deleting employee:', employee);
-  }
-
-  filterEmployees() {
+  onFilterChange() {
     this.filteredEmployees = this.employees.filter(emp => {
-      const matchesDepartment = this.selectedDepartment
-        ? emp.departments.some((dept: string) => dept.split(' (')[0] === this.selectedDepartment) // Split dept name for comparison
-        : true;
-      const matchesType = this.selectedType
-        ? emp.employment_type.toLowerCase() === this.selectedType.toLowerCase()
-        : true;
-      return matchesDepartment && matchesType;
+      const matchesDept = !this.selectedDepartment || 
+        emp.departments.includes(this.selectedDepartment);
+      const matchesType = !this.selectedType || 
+        emp.employment_type === this.selectedType;
+      return matchesDept && matchesType;
     });
   }
 
-  getDepartmentNames(departmentNames: string[]): string[] {
-    return departmentNames
-      .map(name => name.split(' (')[0]) // Split by ' (' and take the first part (department name)
-      .filter(name => name);
+  openAddEmployeeModal() {
+    this.currentEmployee = {
+      name: '',
+      contact_info: '',
+      employment_type: null,
+      departments: [],
+      company: 19,
+      id: 0
+    };
+    this.editingEmployee = false;
+    this.showEmployeeModal = true;
+  }
+
+  openEditEmployeeModal(employee: Employee) {
+    this.currentEmployee = { ...employee };
+    this.editingEmployee = true;
+    this.showEmployeeModal = true;
+  }
+
+  closeEmployeeModal() {
+    this.showEmployeeModal = false;
+  }
+
+  onDepartmentChange(event: Event, deptId: number) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    const deptIdStr = deptId.toString();
+    
+    if (!this.currentEmployee.departments) {
+      this.currentEmployee.departments = [];
+    }
+
+    if (isChecked) {
+      if (!this.currentEmployee.departments.includes(deptIdStr)) {
+        this.currentEmployee.departments.push(deptIdStr);
+      }
+    } else {
+      this.currentEmployee.departments = this.currentEmployee.departments.filter(id => id !== deptIdStr);
+    }
+  }
+
+  saveEmployee() {
+    if (!this.currentEmployee.name) {
+      alert('Name is required');
+      return;
+    }
+
+    const apiCall = this.editingEmployee && this.currentEmployee.id ?
+      this.http.put(`http://127.0.0.1:8000/api/employees/${this.currentEmployee.id}/`, this.currentEmployee) :
+      this.http.post('http://127.0.0.1:8000/api/employees/', this.currentEmployee);
+
+    apiCall.subscribe({
+      next: () => {
+        this.loadEmployees();
+        this.closeEmployeeModal();
+      },
+      error: (err) => {
+        console.error('Error saving employee:', err);
+      }
+    });
+  }
+
+  confirmDelete(employee: Employee) {
+    if (confirm(`Delete employee "${employee.name}"?`)) {
+      this.http.delete(`http://127.0.0.1:8000/api/employees/${employee.id}/`)
+        .subscribe({
+          next: () => {
+            this.employees = this.employees.filter(e => e.id !== employee.id);
+            this.filteredEmployees = this.filteredEmployees.filter(e => e.id !== employee.id);
+          },
+          error: (err) => {
+            console.error('Error deleting employee:', err);
+          }
+        });
+    }
   }
 }

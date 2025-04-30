@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     CompanyViewSet, DepartmentViewSet, EmployeeViewSet,
     ShiftViewSet, RosterViewSet,
-    NotificationViewSet, CompanySignupView, CompanyLoginView, UnavailabilityViewSet
+    NotificationViewSet, CompanySignupView, CompanyLoginView, UnavailabilityViewSet, CompanyDashboardView
 )
 
 router = DefaultRouter()
@@ -21,15 +21,5 @@ urlpatterns = [
     # Authentication
     path('signup/', CompanySignupView.as_view(), name='company-signup'),
     path('login/', CompanyLoginView.as_view(), name='company-login'),
-    
-    # Custom roster endpoints (added even though RosterViewSet is registered)
-    path('rosters/generate-weekly-roster/', 
-         RosterViewSet.as_view({'get': 'generate_weekly_roster'}), 
-         name='generate-weekly-roster'),
-    path('rosters/weekly-roster/', 
-         RosterViewSet.as_view({'get': 'weekly_roster'}), 
-         name='weekly-roster'),
-    path('rosters/<int:pk>/assign_manually/', 
-         RosterViewSet.as_view({'post': 'assign_manually'}), 
-         name='assign-manually'),
+     path('dashboard/<int:company_id>/', CompanyDashboardView.as_view(), name='company-dashboard'),
 ]

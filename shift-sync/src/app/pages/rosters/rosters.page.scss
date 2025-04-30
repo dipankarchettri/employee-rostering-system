@@ -1,384 +1,145 @@
-// Main content styles
 .roster-content {
-    --background: #f5f7fa;
-    --padding-start: 16px;
-    --padding-end: 16px;
-    --padding-top: 16px;
-    --padding-bottom: 16px;
-    
-    @media (prefers-color-scheme: dark) {
-      --background: #121212;
-    }
-  }
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
   
-  // Header styles
-  ion-header {
-    ion-toolbar {
-      --background: transparent;
-      --border-style: none;
-    }
-    
-    ion-title {
-      font-weight: 600;
-    }
-    
-    .user-badge {
-      background: #f0f0f0;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 13px;
-      
-      @media (prefers-color-scheme: dark) {
-        background: #333;
-      }
-    }
-  }
-  
-  // Page header section
-  .page-header {
-    margin-bottom: 16px;
-    
-    h1 {
-      font-size: 24px;
-      font-weight: 600;
-      margin: 0 0 4px 0;
-      color: #212b36;
-      
-      @media (prefers-color-scheme: dark) {
-        color: #ffffff;
-      }
-    }
-    
-    p {
-      font-size: 14px;
-      color: #637381;
-      margin: 0;
-      
-      @media (prefers-color-scheme: dark) {
-        color: #a0aec0;
-      }
-    }
-  }
-  
-  // Main card container
-  .main-card {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    margin-bottom: 20px;
-    
-    @media (prefers-color-scheme: dark) {
-      background: #1e1e1e;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
-  }
-  
-  // Card header with title and export buttons
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid #f1f1f1;
-    
-    @media (prefers-color-scheme: dark) {
-      border-bottom: 1px solid #2a2a2a;
-    }
-    
-    h2 {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0;
-      color: #212b36;
-      
-      @media (prefers-color-scheme: dark) {
-        color: #e0e0e0;
-      }
-    }
-    
-    .export-buttons {
-      display: flex;
-      gap: 8px;
-      
-      ion-button {
-        --border-color: #dfe3e8;
-        --color: #637381;
-        height: 32px;
-        font-size: 12px;
-        
-        @media (prefers-color-scheme: dark) {
-          --border-color: #3a3a3a;
-          --color: #a0aec0;
-        }
-        
-        ion-icon {
-          margin-right: 4px;
-        }
-      }
-    }
-    
-    @media (max-width: 576px) {
-      flex-direction: column;
-      align-items: flex-start;
-      
-      .export-buttons {
-        margin-top: 12px;
-      }
-    }
-  }
-  
-  // Controls row containing date and options panels
-  .controls-row {
-    display: flex;
-    gap: 20px;
-    padding: 20px;
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-    }
-  }
-  
-  // Common panel styles
-  .control-panel {
-    flex: 1;
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 16px;
-    
-    @media (prefers-color-scheme: dark) {
-      background: #252525;
-    }
-    
-    h3 {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 0 0 12px 0;
-      color: #212b36;
-      
-      @media (prefers-color-scheme: dark) {
-        color: #e0e0e0;
-      }
-    }
-  }
-  
-  // Date panel specific styles
-  .date-panel {
-    .date-inputs {
-      display: flex;
-      gap: 12px;
-      
-      @media (max-width: 576px) {
-        flex-direction: column;
-      }
-    }
-    
-    .date-field {
-      flex: 1;
-      
-      label {
-        display: block;
-        font-size: 12px;
-        color: #637381;
-        margin-bottom: 6px;
-        
-        @media (prefers-color-scheme: dark) {
-          color: #a0aec0;
-        }
-      }
-      
-      .date-button {
-        --background: #ffffff;
-        --border-color: #dfe3e8;
-        --color: #212b36;
-        font-size: 13px;
-        font-weight: normal;
-        height: 40px;
-        
-        @media (prefers-color-scheme: dark) {
-          --background: #1e1e1e;
-          --border-color: #3a3a3a;
-          --color: #e0e0e0;
-        }
-        
-        ion-icon {
-          color: #637381;
-          
-          @media (prefers-color-scheme: dark) {
-            color: #a0aec0;
-          }
-        }
-      }
-    }
-  }
-  
-  // Options panel specific styles
-  .options-panel {
-    .options-list {
-      margin-bottom: 12px;
-      
-      ion-item {
-        --background: transparent;
-        --padding-start: 0;
-        --min-height: 36px;
-        
-        ion-checkbox {
-          margin-right: 8px;
-          --size: 16px;
-          --background-checked: var(--ion-color-primary);
-          --border-color: #c4cdd5;
-          --border-color-checked: var(--ion-color-primary);
-          
-          @media (prefers-color-scheme: dark) {
-            --border-color: #3a3a3a;
-          }
-        }
-        
-        ion-label {
-          font-size: 14px;
-          color: #212b36;
-          
-          @media (prefers-color-scheme: dark) {
-            color: #e0e0e0;
-          }
-        }
-      }
-    }
-    
-    .generate-button {
-      margin-top: 12px;
-      --border-radius: 6px;
-      height: 40px;
-    }
-  }
-  
-  // Table container
-  .table-container {
-    overflow-x: auto;
-    padding: 0 20px 20px;
-  }
-  
-  // Roster table styles
-  .roster-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 700px;
-    
-    th, td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid #f1f1f1;
-      
-      @media (prefers-color-scheme: dark) {
-        border-bottom: 1px solid #2a2a2a;
-      }
-    }
-    
-    th {
-      font-size: 13px;
-      font-weight: 600;
-      color: #637381;
-      background: #f9fafb;
-      border-top: 1px solid #f1f1f1;
-      
-      @media (prefers-color-scheme: dark) {
-        background: #252525;
-        color: #a0aec0;
-        border-top: 1px solid #2a2a2a;
-      }
-    }
-    
-    td {
-      font-size: 14px;
-      color: #212b36;
-      
-      @media (prefers-color-scheme: dark) {
-        color: #e0e0e0;
-      }
-    }
-    
-    .employee-column {
-      text-align: left;
-      min-width: 200px;
-    }
-    
-    .employee-cell {
-      text-align: left;
-    }
-    
-    .employee-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .employee-avatar {
-      width: 30px;
-      height: 30px;
-      background-color: var(--ion-color-primary);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: 500;
-    }
-    
-    .employee-name {
-      font-weight: 500;
-    }
-    
-    .has-shift {
-      background-color: rgba(var(--ion-color-primary-rgb), 0.1);
-      font-weight: 600;
-      color: var(--ion-color-primary);
-    }
-    
-    tr:last-child td {
-      border-bottom: none;
-    }
-  }
-
-  // Add these styles to your existing SCSS
-.employee-cell {
-  .employee-dept {
-    display: block;
-    font-size: 0.8rem;
-    color: var(--ion-color-medium);
-    margin-top: 4px;
+  @media (prefers-color-scheme: dark) {
+    --background: #121212;
   }
 }
 
-.shift-cell {
-  padding: 4px;
-  min-height: 50px;
+.loading-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+}
+
+.page-header {
+  text-align: center;
+  padding: 1rem;
+  
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0;
+  }
+}
+
+.controls-section {
+  padding: 0 1rem 1rem;
+  
+  ion-button {
+    margin-bottom: 1rem;
+  }
+}
+
+.export-options {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.5rem;
+  
+  ion-button {
+    flex: 1;
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+.roster-grid-container {
+  padding: 0 1rem;
+  margin-bottom: 2rem;
+}
+
+.grid-header, .grid-row {
+  display: grid;
+  grid-template-columns: 2fr repeat(7, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.grid-header {
+  font-weight: bold;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  
+  .day-header {
+    text-align: center;
+    
+    .day-date {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.grid-row {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+}
+
+.employee-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  
+  .employee-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--ion-color-primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+  }
+  
+  .employee-name {
+    font-weight: 500;
+  }
+}
+
+.day-cell {
+  padding: 0.5rem;
+  border-radius: 4px;
+  min-height: 4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  text-align: center;
   
-  .shift-type {
-    font-weight: 500;
-    color: var(--ion-color-primary);
+  .shift-info {
+    .shift-type {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .shift-time {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
   }
   
-  .shift-dept {
-    font-size: 0.75rem;
+  .no-shift-label {
     color: var(--ion-color-medium);
-  }
-  
-  .shift-reason {
-    font-size: 0.8rem;
-    color: var(--ion-color-medium);
-    font-style: italic;
+    opacity: 0.5;
   }
 }
 
-.has-shift {
-  background-color: rgba(var(--ion-color-primary-rgb), 0.1);
-  border-left: 2px solid var(--ion-color-primary);
-}
-
-.no-shift {
-  background-color: rgba(var(--ion-color-medium-rgb), 0.05);
+@media (max-width: 768px) {
+  .roster-grid-container {
+    overflow-x: auto;
+    
+    .grid-header, .grid-row {
+      min-width: 800px;
+    }
+  }
 }

@@ -63,7 +63,7 @@ export class ShiftsPage {
   }
 
   fetchDepartments() {
-    const companyId = 7; // Use company ID
+    const companyId = 19; // Use company ID
     this.http.get<Department[]>(`http://127.0.0.1:8000/api/departments/?company=${companyId}`).subscribe(data => {
       this.departments = data;
       
@@ -76,10 +76,9 @@ export class ShiftsPage {
       this.applyFilters();  // Reapply filters once departments are fetched
     });
   }
-  
 
   fetchShifts() {
-    const companyId = 7; // Use company ID
+    const companyId = 19; // Use company ID
     this.http.get<Shift[]>(`http://127.0.0.1:8000/api/shifts/?company=${companyId}`).subscribe(data => {
       this.shifts = data;
       this.applyFilters();  // Apply filters after shifts are fetched
@@ -111,7 +110,6 @@ export class ShiftsPage {
         assignedEmployees: [] // You can fetch assigned employees here if needed
       }));
   }
-  
 
   getShiftName(shiftType: string): string {
     switch (shiftType) {
@@ -124,30 +122,35 @@ export class ShiftsPage {
 
   getDayName(dayCode: string): string {
     const dayMap: { [key: string]: string } = {
-      'Mon': 'Monday',
-      'Tue': 'Tuesday',
-      'Wed': 'Wednesday',
-      'Thu': 'Thursday',
-      'Fri': 'Friday',
-      'Sat': 'Saturday',
-      'Sun': 'Sunday'
+      'mon': 'Monday',
+      'tue': 'Tuesday',
+      'wed': 'Wednesday',
+      'thu': 'Thursday',
+      'fri': 'Friday',
+      'sat': 'Saturday',
+      'sun': 'Sunday',
+      'monday': 'Monday',
+      'tuesday': 'Tuesday',
+      'wednesday': 'Wednesday',
+      'thursday': 'Thursday',
+      'friday': 'Friday',
+      'saturday': 'Saturday',
+      'sunday': 'Sunday'
     };
-    return dayMap[dayCode] || dayCode;
+    return dayMap[dayCode.toLowerCase()] || dayCode;
   }
 
-<<<<<<< HEAD
-=======
   getDayCode(dayName: string): string {
     const dayMap: { [key: string]: string } = {
-      'Monday': 'Mon',
-      'Tuesday': 'Tue',
-      'Wednesday': 'Wed',
-      'Thursday': 'Thu',
-      'Friday': 'Fri',
-      'Saturday': 'Sat',
-      'Sunday': 'Sun'
+      'monday': 'mon',
+      'tuesday': 'tue',
+      'wednesday': 'wed',
+      'thursday': 'thu',
+      'friday': 'fri',
+      'saturday': 'sat',
+      'sunday': 'sun'
     };
-    return dayMap[dayName] || dayName;
+    return dayMap[dayName.toLowerCase()] || dayName.toLowerCase();
   }
 
   getShiftType(name: string): string {
@@ -163,7 +166,6 @@ export class ShiftsPage {
     return department ? department.name : 'Unknown';
   }
 
->>>>>>> 56d5b35c9b69a8f829b6376dee755d959021b17c
   onFilterChange() {
     this.applyFilters();
   }

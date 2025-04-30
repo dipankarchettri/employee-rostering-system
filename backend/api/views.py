@@ -116,7 +116,7 @@ class RosterViewSet(viewsets.ModelViewSet):
     serializer_class = RosterSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['company', 'employee', 'shift']
-
+    
     @action(detail=False, methods=['get'], url_path='generate-weekly-roster')
     def generate_weekly_roster(self, request):
         # validate company id exists
@@ -140,14 +140,23 @@ class RosterViewSet(viewsets.ModelViewSet):
         start_date = timezone.now().date()
         end_date = start_date + timedelta(days=6)
 
+        # Delete all existing rosters in this date range first
+        Roster.objects.filter(
+            company=company,
+            date__range=[start_date, end_date]
+        ).delete()
+
+        # Reset all shifts in this date range to unassigned
+        Shift.objects.filter(
+            company=company,
+            start_time__date__range=[start_date, end_date]
+        ).update(assigned=False)
+
         # get all shifts for the date range (using DateTimeField)
         shifts = Shift.objects.filter(
             company=company,
             start_time__date__range=[start_date, end_date]
         ).order_by('start_time')
-
-        # reset all shifts to unassigned status before generating
-        shifts.update(assigned=False)
 
         # get all employees for the company
         employees = Employee.objects.filter(company=company).prefetch_related(
@@ -162,15 +171,8 @@ class RosterViewSet(viewsets.ModelViewSet):
             start__lte=timezone.make_aware(datetime.combine(end_date, time.max))
         )
 
-        # check for existing roster assignments
-        existing_rosters = Roster.objects.filter(
-            company=company,
-            date__range=[start_date, end_date]
-        ).select_related('employee', 'shift')
-
         # initialize tracking dictionaries
         employee_unavailabilities = defaultdict(list)
-        employee_assignments = defaultdict(lambda: defaultdict(list))
         department_employees = defaultdict(list)
         employee_departments = defaultdict(list)
         department_needs = defaultdict(int)
@@ -179,15 +181,6 @@ class RosterViewSet(viewsets.ModelViewSet):
         # map unavailabilities to employees
         for unav in unavailabilities:
             employee_unavailabilities[unav.employee_id].append(unav)
-
-        # track existing assignments
-        for roster in existing_rosters:
-            if roster.employee_id:
-                employee_assignments[roster.employee_id][roster.date].append({
-                    'shift_id': roster.shift.id,
-                    'start_time': roster.shift.start_time.time(),
-                    'end_time': roster.shift.end_time.time()
-                })
 
         # map employees to departments and vice versa
         for emp in employees:
@@ -200,8 +193,7 @@ class RosterViewSet(viewsets.ModelViewSet):
 
         # count unassigned shifts per department
         for shift in shifts:
-            if not existing_rosters.filter(shift=shift).exists():
-                department_needs[shift.department_id] += 1
+            department_needs[shift.department_id] += 1
 
         # prepare lists for results
         assigned_rosters = []
@@ -209,10 +201,6 @@ class RosterViewSet(viewsets.ModelViewSet):
 
         # process each shift
         for shift in shifts:
-            # skip if already assigned in this generation run
-            if shift.assigned:
-                continue
-
             shift_date = shift.start_time.date()
             shift_start = shift.start_time
             shift_end = shift.end_time
@@ -224,10 +212,7 @@ class RosterViewSet(viewsets.ModelViewSet):
             # check each employee's availability
             for emp_data in potential_employees:
                 emp_id = emp_data['id']
-                # skip if already assigned this day
-                if shift_date in employee_assignments.get(emp_id, {}):
-                    continue
-
+                
                 # check against unavailabilities
                 is_available = True
                 for unav in employee_unavailabilities.get(emp_id, []):
@@ -277,9 +262,8 @@ class RosterViewSet(viewsets.ModelViewSet):
                     'is_conflict': False
                 })
             else:
-
                 unassigned_rosters.append({
-                    'id': None,  # No DB record
+                    'id': None,
                     'employee': None,
                     'shift': {
                         'id': shift.id,
@@ -292,15 +276,11 @@ class RosterViewSet(viewsets.ModelViewSet):
                     'is_conflict': True
                 })
 
-
         return Response({
             'assigned': assigned_rosters,
             'unassigned': unassigned_rosters,
             'department_needs': dict(department_needs),
-            'employee_assignments': {
-                emp_id: sum(len(shifts) for shifts in dates.values())
-                for emp_id, dates in employee_assignments.items()
-            }
+            'employee_assignments': dict(employee_shift_counts)
         })
 
     @action(detail=False, methods=['get'])
@@ -312,16 +292,40 @@ class RosterViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        try:
+            # Verify company exists
+            Company.objects.get(id=company_id)
+        except Company.DoesNotExist:
+            return Response(
+                {'error': 'Company not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
         start_date = timezone.now().date()
         end_date = start_date + timedelta(days=6)
 
         rosters = Roster.objects.filter(
             company_id=company_id,
             date__range=[start_date, end_date]
-        ).select_related('employee', 'shift')
+        ).select_related('employee', 'shift', 'shift__department')
+
+        if not rosters.exists():
+            return Response({
+                'message': 'No rosters found for this week',
+                'date_range': {
+                    'start_date': start_date,
+                    'end_date': end_date
+                }
+            }, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(rosters, many=True)
-        return Response(serializer.data)
+        return Response({
+            'rosters': serializer.data,
+            'date_range': {
+                'start_date': start_date,
+                'end_date': end_date
+            }
+        })
 
     @action(detail=True, methods=['post'])
     def assign_manually(self, request, pk=None):
@@ -358,3 +362,118 @@ class RosterViewSet(viewsets.ModelViewSet):
         roster.shift.save()
 
         return Response(self.get_serializer(roster).data)
+
+
+class CompanyDashboardView(APIView):
+    def get(self, request, company_id):
+        try:
+            company = Company.objects.get(id=company_id)
+        except Company.DoesNotExist:
+            return Response(
+                {'error': 'Company not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get date range for current week
+        today = timezone.now().date()
+        start_date = today
+        end_date = today + timedelta(days=6)
+
+        # Get all necessary data in optimized queries
+        employees = Employee.objects.filter(company=company)
+        departments = Department.objects.filter(company=company).annotate(employee_count=Count('employees'))
+        rosters = Roster.objects.filter(
+            company=company,
+            date__range=[start_date, end_date]
+        ).select_related('employee', 'shift', 'shift__department')
+        shifts = Shift.objects.filter(
+            company=company,
+            start_time__date__range=[start_date, end_date]
+        )
+        notifications = Notification.objects.filter(
+            company=company,
+            created_at__gte=timezone.now() - timedelta(days=7)
+        )
+        unavailabilities = Unavailability.objects.filter(
+            company=company,
+            end__gte=timezone.now()
+        ).select_related('employee')
+
+        # Calculate statistics
+        total_employees = employees.count()
+        shifts_this_week = shifts.count()
+        pending_assignments = shifts.filter(assigned=False).count()
+        shift_coverage = 0 if shifts_this_week == 0 else \
+            round((shifts_this_week - pending_assignments) / shifts_this_week * 100)
+
+        # Process departments with coverage
+        department_data = []
+        for dept in departments:
+            dept_shifts = [r for r in rosters if r.shift.department_id == dept.id]
+            assigned = len([r for r in dept_shifts if r.employee_id])
+            coverage = 0 if len(dept_shifts) == 0 else \
+                round(assigned / len(dept_shifts) * 100)
+            
+            department_data.append({
+                'id': dept.id,
+                'name': dept.name,
+                'employee_count': dept.employee_count,
+                'shift_count': len(dept_shifts),
+                'coverage': coverage
+            })
+
+        # Process week summary
+        week_summary = []
+        for i in range(7):
+            day_date = start_date + timedelta(days=i)
+            day_name = day_date.strftime('%a')
+            day_rosters = [r for r in rosters if r.date == day_date]
+            assigned = len([r for r in day_rosters if r.employee_id])
+            coverage = 0 if len(day_rosters) == 0 else \
+                round(assigned / len(day_rosters) * 100)
+            
+            week_summary.append({
+                'day': day_name,
+                'date': day_date,
+                'coverage': coverage
+            })
+
+        # Process unavailabilities
+        unavailabilities_data = []
+        for unav in unavailabilities:
+            unavailabilities_data.append({
+                'id': unav.id,
+                'employee': {
+                    'id': unav.employee.id,
+                    'name': unav.employee.name,
+                    'avatar': f"assets/avatars/user{unav.employee.id % 3 + 1}.jpg"
+                },
+                'start': unav.start,
+                'end': unav.end,
+                'type': unav.get_type_display(),
+                'reason': unav.reason
+            })
+
+        # Prepare response
+        response_data = {
+            'company': {
+                'id': company.id,
+                'name': company.name
+            },
+            'stats': {
+                'total_employees': total_employees,
+                'shifts_this_week': shifts_this_week,
+                'pending_assignments': pending_assignments,
+                'shift_coverage': shift_coverage
+            },
+            'departments': department_data,
+            'week_summary': week_summary,
+            'notifications': NotificationSerializer(notifications, many=True).data,
+            'unavailabilities': unavailabilities_data,
+            'date_range': {
+                'start_date': start_date,
+                'end_date': end_date
+            }
+        }
+
+        return Response(response_data)

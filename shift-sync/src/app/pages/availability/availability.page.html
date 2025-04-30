@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Availability</ion-title>
+    <ion-title>Unavailability</ion-title>
     <ion-buttons slot="end">
       <ion-button>
         <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
@@ -18,79 +18,53 @@
 <ion-content class="roster-content">
   <!-- Header Section -->
   <div class="page-header">
-    <h1>Employee Availability</h1>
-    <p>Manage and view employee schedule preferences</p>
+    <h1>Employee Unavailability</h1>
+    <p>Manage and view employee unavailability details</p>
   </div>
 
   <!-- Main Card -->
   <div class="main-card">
     <div class="card-header">
-      <h2>Availability Manager</h2>
-      <div class="export-buttons">
-        <ion-button size="small" fill="outline" (click)="exportAvailability('pdf')">
-          <ion-icon name="document-outline"></ion-icon>
-          Export PDF
-        </ion-button>
-        <ion-button size="small" fill="outline" (click)="exportAvailability('csv')">
-          <ion-icon name="document-text-outline"></ion-icon>
-          Export CSV
-        </ion-button>
+      <h2>Unavailability Manager</h2>
+    </div>
+
+    <!-- Employee Selection Panel -->
+    <div class="control-panel employee-panel">
+      <h3>Select Employee</h3>
+      <div class="employee-selection">
+        <ion-item>
+          <ion-label position="stacked">Employee</ion-label>
+          <ion-select interface="popover" [(ngModel)]="selectedEmployee" (ionChange)="onEmployeeSelected()" placeholder="Select employee">
+            <ion-select-option *ngFor="let employee of employees" [value]="employee">
+              {{employee.name}}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
       </div>
     </div>
 
-    <div class="controls-row">
-      <!-- Employee Selection Panel -->
-      <div class="control-panel employee-panel">
-        <h3>Select Employee</h3>
-        <div class="employee-selection">
-          <ion-item>
-            <ion-label position="stacked">Employee</ion-label>
-            <ion-select interface="popover" [(ngModel)]="selectedEmployee" (ionChange)="onEmployeeSelected()" placeholder="Select employee">
-              <ion-select-option *ngFor="let employee of employees" [value]="employee">
-                {{employee.name}}
-              </ion-select-option>
-            </ion-select>
-          </ion-item>
-        </div>
-      </div>
-
-      <!-- Date Selection Panel -->
-      <div class="control-panel date-panel">
-        <h3>View Availability</h3>
-        <div class="date-field">
-          <label>Select Date</label>
-          <ion-button fill="outline" expand="block" class="date-button">
-            <ion-icon name="calendar-outline" slot="start"></ion-icon>
-            <span>See Availability</span>
-          </ion-button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Availability Table -->
+    <!-- Unavailability Table -->
     <div class="table-container">
       <table class="roster-table">
         <thead>
           <tr>
-            <th>Time</th>
-            <th *ngFor="let day of weekdayLabels">{{day}}</th>
+            <th>Employee</th>
+            <th>Type</th>
+            <th>Reason</th>
+            <th>Start</th>
+            <th>End</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let timeSlot of timeSlots">
-            <td class="time-cell">{{timeSlot}}</td>
-            <td *ngFor="let day of weekdays" class="checkbox-cell">
-              <ion-checkbox [disabled]="!selectedEmployee" [(ngModel)]="availabilityMatrix[timeSlot][day]"></ion-checkbox>
-            </td>
+          <tr *ngFor="let unavailability of availabilities">
+            <td>{{ getEmployeeName(unavailability.employee) }}</td>
+            <td>{{ unavailability.type }}</td>
+            <td>{{ unavailability.reason }}</td>
+            <td>{{ formatDate(unavailability.start) }}</td>
+            <td>{{ formatDate(unavailability.end) }}</td>
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <div class="actions-container" *ngIf="selectedEmployee">
-      <ion-button expand="block" (click)="saveAvailability()" class="save-button">
-        Save Availability
-      </ion-button>
     </div>
   </div>
 </ion-content>

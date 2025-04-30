@@ -1,76 +1,121 @@
-<div class="ion-page" id="main-content">
-  <ion-header class="ion-no-border">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Employees</ion-title>
-      <ion-buttons slot="end">
-        <ion-button>
-          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Employees</ion-title>
+    <ion-buttons slot="end">
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-  <ion-content class="dashboard-content">
-    <!-- Welcome Section -->
-    <div class="welcome-section">
-      <h1>Employee Management</h1>
-      <p class="subtitle">View, add and manage your employees</p>
+<ion-content class="dashboard-content">
+  
+  <div class="welcome-section">
+    <h1>Employee Management</h1>
+  </div>
+
+  <div class="department-card">
+    <div class="card-header">
+      <h2>Manage Employees</h2>
+      <ion-button (click)="openAddEmployeeModal()">
+        <ion-icon slot="start" name="add"></ion-icon>
+        + Add Employee
+      </ion-button>
     </div>
 
-    <!-- Main Content -->
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h2>Manage Employees</h2>
-        <button class="add-button" (click)="addNewEmployee()">Add New</button>
-      </div>
-      
-      <!-- Filter Controls -->
+    <div class="department-card">
       <div class="filter-container">
-        <select class="filter-dropdown" [(ngModel)]="selectedDepartment" (change)="filterEmployees()">
+        <select class="filter-dropdown" [(ngModel)]="selectedDepartment" (change)="onFilterChange()">
           <option value="">All Departments</option>
-          <option *ngFor="let dept of departments" [value]="dept.name">{{ dept.name }}</option> <!-- Use dept.name -->
+          <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
         </select>
 
-        <select class="filter-dropdown" [(ngModel)]="selectedType" (change)="filterEmployees()">
-          <option value="">All Employee Types</option>
-          <option *ngFor="let type of employeeTypes" [value]="type">{{ type }}</option>
+        <select class="filter-dropdown" [(ngModel)]="selectedType" (change)="onFilterChange()">
+          <option value="">All Types</option>
+          <option value="permanent">Permanent</option>
+          <option value="casual">Casual</option>
         </select>
       </div>
-      
-      <!-- Employee Table -->
-      <table class="employee-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Contact</th>
-            <th>Departments</th>
-            <th>Employee Type</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let employee of filteredEmployees">
-            <td>{{ employee.name }}</td>
-            <td>{{ employee.contact_info || 'N/A' }}</td>
-            <td>
-              <ng-container *ngIf="employee.departments?.length > 0; else noDept">
-                {{ getDepartmentNames(employee.departments).join(', ') }}
-              </ng-container>
-              <ng-template #noDept>No Departments</ng-template>
-            </td>
-            <td>{{ employee.employment_type }}</td>
-            <td>
-              <div class="action-buttons">
-                <button class="action-button edit-icon" (click)="editEmployee(employee)"></button>
-                <button class="action-button delete-icon" (click)="deleteEmployee(employee)"></button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
-  </ion-content>
-</div>
+
+    <table class="employee-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Departments</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of filteredEmployees">
+          <td>{{ employee.name }}</td>
+          <td>{{ employee.contact_info || 'N/A' }}</td>
+          <td>{{ employee.departments?.join(', ') || 'None' }}</td>
+          <td>{{ employee.employment_type | titlecase }}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-button edit-icon" (click)="openEditEmployeeModal(employee)"></button>
+              <button class="action-button delete-icon" (click)="confirmDelete(employee)"></button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!filteredEmployees.length">
+          <td colspan="6" class="no-employees">No employees found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add/Edit Employee Modal -->
+  <div class="modal-backdrop" *ngIf="showEmployeeModal" (click)="closeEmployeeModal()">
+    <div class="department-modal" (click)="$event.stopPropagation()">
+      <h3>{{ editingEmployee ? 'Edit Employee' : 'Add New Employee' }}</h3>
+      <button class="modal-close" (click)="closeEmployeeModal()">&times;</button>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" [(ngModel)]="currentEmployee.name" placeholder="Enter employee name">
+      </div>
+
+      <div class="form-group">
+        <label>Contact Information</label>
+        <input type="text" [(ngModel)]="currentEmployee.contact_info" placeholder="Phone or email">
+      </div>
+
+      <div class="form-group">
+        <label>Employment Type</label>
+        <select class="filter-dropdown" [(ngModel)]="currentEmployee.employment_type">
+          <option value="">Select Type</option>
+          <option value="permanent">Permanent</option>
+          <option value="casual">Casual</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Departments</label>
+        <div class="department-checkboxes">
+          <div *ngFor="let dept of departments" class="checkbox-item">
+            <input 
+              type="checkbox" 
+              [id]="'dept-' + dept.id" 
+              [value]="dept.id" 
+              [checked]="currentEmployee.departments?.includes(dept.id.toString())"
+              (change)="onDepartmentChange($event, dept.id)">
+            <label [for]="'dept-' + dept.id">{{ dept.name }}</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-button modal-cancel" (click)="closeEmployeeModal()">Cancel</button>
+        <button class="modal-button modal-save" (click)="saveEmployee()">
+          {{ editingEmployee ? 'Update' : 'Save' }} Employee
+        </button>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
