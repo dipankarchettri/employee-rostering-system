@@ -101,7 +101,7 @@ ion-button {
 .filter-container {
   display: flex;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 1px;
 
   .filter-dropdown {
     background: #2f3033;
@@ -229,7 +229,7 @@ ion-button {
 /* Modal Title */
 .department-modal h3 {
   margin-top: 0;
-  margin-bottom: 12px; /* Reduced bottom margin */
+  margin-bottom: 30px; /* Reduced bottom margin */
   font-size: 1.2rem; /* Slightly smaller font size */
   font-weight: 600;
 }
@@ -248,7 +248,7 @@ ion-button {
 
 /* Form Groups */
 .form-group {
-  margin-top: 30px;
+  
   margin-bottom: 12px; /* Reduced margin-bottom for compactness */
 
   label {
