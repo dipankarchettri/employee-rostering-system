@@ -31,7 +31,8 @@ pip install -r requirements.txt
 - **Set up the .env file:**
   - Create a .env file in the backend/backend direcotry
   - Edit .env and fill in the database details: 
-  ```DB_NAME=roster 
+  ```
+  DB_NAME=roster 
   DB_USER=your_user
   DB_PASSWORD=your_password
   DB_HOST=localhost 

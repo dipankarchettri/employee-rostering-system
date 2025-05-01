@@ -11,7 +11,6 @@
 .welcome-section {
   padding: 16px 0;
   margin-bottom: 16px;
-<<<<<<< HEAD
   
   h1 {
     margin: 0 0 16px 0;
@@ -37,44 +36,6 @@
 .department-card {
   background: var(--ion-card-background);
   border-radius: 12px;
-=======
-}
-
-.welcome-section h1 {
-  margin: 0 0 8px 0;
-  font-size: 1.8rem;
-}
-
-.welcome-section .subtitle {
-  margin: 0;
-  color: #aaa;
-  font-size: 1rem;
-}
-
-.department-card {
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.14);
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 16px;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.card-header h2 {
-  margin: 0;
-  font-size: 1.25rem;
-}
-
-.container {
->>>>>>> e9599b3ab94484b0a47983b33d4a10f771eb5c6e
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.14);
   width: 100%;
@@ -197,7 +158,6 @@
   }
 }
 
-<<<<<<< HEAD
 .modal-close {
   position: absolute;
   top: 16px;
@@ -208,13 +168,6 @@
   font-size: 1.6rem;
   cursor: pointer;
   padding: 4px;
-=======
-.add-section h2 {
-  margin-top: 0;
-  margin-bottom: 30px;
-  font-size: 1.2rem;
-  font-weight: 600;
->>>>>>> e9599b3ab94484b0a47983b33d4a10f771eb5c6e
 }
 
 /* Form Elements */
