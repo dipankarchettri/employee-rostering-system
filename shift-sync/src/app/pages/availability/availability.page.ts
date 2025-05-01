@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import {
-  IonApp,
   IonContent,
   IonHeader,
   IonToolbar,
@@ -27,12 +26,22 @@ import {
   notificationsOutline,
   calendarOutline
 } from 'ionicons/icons';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { forkJoin } from 'rxjs';
 
-// Define the Employee interface
 interface Employee {
   id: number;
   name: string;
+}
+
+interface Unavailability {
+  id: number;
+  employee: number;
+  type: string;
+  reason: string;
+  start: string;
+  end: string;
+  company: number;
 }
 
 @Component({
@@ -44,8 +53,8 @@ interface Employee {
     CommonModule,
     FormsModule,
     RouterModule,
+    HttpClientModule,
     MainMenuComponent,
-    IonApp,
     IonContent,
     IonHeader,
     IonToolbar,
@@ -62,29 +71,12 @@ interface Employee {
   ]
 })
 export class AvailabilityPage implements OnInit {
-  // Weekday labels and keys
-  weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  
-  // Time slots for the availability matrix
-  timeSlots = ['Morning', 'Afternoon', 'Evening'];
-  
-  // Selected employee
-  selectedEmployee: Employee | null = null;
-  
-  // Employees and availabilities
   employees: Employee[] = [];
-  availabilities: any[] = []; // full API response
-  
-  // Availability matrix data structure
-  availabilityMatrix: {
-    [timeSlot: string]: {
-      [day: string]: boolean;
-    };
-  } = {};
+  availabilities: Unavailability[] = [];
+  selectedEmployee: Employee | null = null;
+  isLoading = true;
 
   constructor(private http: HttpClient) {
-    // Register the icons
     addIcons({
       mailOutline,
       documentOutline,
@@ -92,80 +84,55 @@ export class AvailabilityPage implements OnInit {
       notificationsOutline,
       calendarOutline
     });
-    
-    // Initialize the availability matrix
-    this.initializeAvailabilityMatrix();
   }
 
   ngOnInit() {
-    this.fetchAvailabilities();
+    this.fetchData();
   }
 
-  // Fetch availabilities from API
-  fetchAvailabilities() {
-    const companyId = 7; // or make it dynamic
-    this.http.get<any[]>(`http://127.0.0.1:8000/api/availabilities/?company=${companyId}`)
-      .subscribe(data => {
-        this.availabilities = data;
-        this.employees = this.extractUniqueEmployees(data);
-      });
-  }
-
-  // Helper method to extract unique employees from API response
-  extractUniqueEmployees(data: any[]): Employee[] {
-    const employeeMap = new Map<number, Employee>();
-    data.forEach(entry => {
-      if (!employeeMap.has(entry.employee)) {
-        employeeMap.set(entry.employee, {
-          id: entry.employee,
-          name: entry.employee_name
-        });
+  fetchData() {
+    const companyId = 19;
+    
+    // Fetch both employees and unavailabilities simultaneously
+    forkJoin({
+      employees: this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=${companyId}`),
+      unavailabilities: this.http.get<Unavailability[]>(`http://127.0.0.1:8000/api/unavailabilities/?company=${companyId}`)
+    }).subscribe({
+      next: ({employees, unavailabilities}) => {
+        this.employees = employees;
+        this.availabilities = unavailabilities;
+        
+        if (this.employees.length > 0) {
+          this.selectedEmployee = this.employees[0];
+        }
+        
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching data:', err);
+        this.isLoading = false;
       }
     });
-    return Array.from(employeeMap.values());
   }
 
-  // Initialize availability matrix
-  initializeAvailabilityMatrix() {
-    this.timeSlots.forEach(timeSlot => {
-      this.availabilityMatrix[timeSlot] = {};
-      this.weekdays.forEach(day => {
-        this.availabilityMatrix[timeSlot][day] = false; // Default to false (unchecked)
-      });
+  getEmployeeName(employeeId: number): string {
+    const employee = this.employees.find(emp => emp.id === employeeId);
+    return employee ? employee.name : 'Unknown';
+  }
+
+  formatDate(date: string): string {
+    const newDate = new Date(date);
+    return newDate.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
     });
   }
 
-  // When an employee is selected, update the availability matrix
   onEmployeeSelected() {
-    if (this.selectedEmployee) {
-      this.updateAvailabilityMatrix();
-    }
-  }
-
-  // Update availability matrix based on selected employee's availability data
-  updateAvailabilityMatrix() {
-    this.timeSlots.forEach(timeSlot => {
-      this.weekdays.forEach(day => {
-        const availability = this.availabilities.find(
-          avail => avail.employee === this.selectedEmployee?.id &&
-                  avail.shift_type.toLowerCase() === timeSlot.toLowerCase() &&
-                  avail.day_of_week.toLowerCase() === day.toLowerCase()
-        );
-        this.availabilityMatrix[timeSlot][day] = availability ? availability.is_available : false;
-      });
-    });
-  }
-
-  // Save availability data (just logs for now)
-  saveAvailability() {
-    console.log('Saving availability for:', this.selectedEmployee?.name);
-    console.log('Availability data:', this.availabilityMatrix);
-    // Implementation for saving availability data
-  }
-
-  // Export availability data
-  exportAvailability(format: string) {
-    console.log(`Exporting availability in ${format} format`);
-    // Implementation for export logic
+    // Filter logic can be added here if needed
   }
 }

@@ -139,7 +139,7 @@
     --padding-start: 0;
     --inner-padding-end: 0;
     --border-color: var(--border-color);
-    --highlight-color-focused: var(--primary-color);
+    --highlight-color-focused: var(--ion-color-primary-shade);
     margin-top: 8px;
   }
   
@@ -184,8 +184,8 @@
   
   .date-button {
     --background: var(--card-background);
-    --color: var(--text-color);
-    --border-color: var(--border-color);
+    --color: var(--ion-color-primary);
+    --border-color: var(--ion-color-primary);
     --border-width: 1px;
     --border-style: solid;
     height: 44px;
@@ -200,8 +200,8 @@
   }
   
   .export-buttons ion-button {
-    --color: var(--text-secondary);
-    --border-color: var(--border-color);
+    --color: var(--ion-color-primary);
+    --border-color: var(--ion-color-primary);
     font-size: 13px;
   }
   
@@ -229,7 +229,7 @@
   }
   
   .stat-item {
-    background: rgba(var(--ion-text-color-rgb), 0.03);
+    background: var(--ion-color-primary);
     border-radius: var(--ion-border-radius);
     padding: 16px;
     flex: 1;

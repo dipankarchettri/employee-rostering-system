@@ -1,23 +1,21 @@
 import { Component } from '@angular/core';
-import { IonicModule, AlertController } from '@ionic/angular';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MenuController } from '@ionic/angular';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { IonicModule } from '@ionic/angular';
 
-// Define a simple Department interface based on template usage
 interface Department {
-  id?: number; // Optional ID
+  id?: number;
   name: string;
   description: string;
   employees: number;
+  company: number;
 }
 
 interface Employee {
   id?: number;
   name: string;
   departments: string[];
-  // Add other employee properties as needed
 }
 
 @Component({
@@ -25,112 +23,126 @@ interface Employee {
   templateUrl: './departments.page.html',
   styleUrls: ['./departments.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HttpClientModule]
+  imports: [IonicModule, CommonModule, FormsModule]
 })
 export class DepartmentsPage {
   departments: Department[] = [];
   employees: Employee[] = [];
+  filteredDepartments: Department[] = [];
   searchTerm = '';
-  addModalOpen = false;
-  newDepartment = { name: '', description: '', employees: 0 };
-  showAddSection = false; // Added missing property
+  
+  showDepartmentModal = false;
+  editingDepartment = false;
+  currentDepartment: Department = {
+    name: '',
+    description: '',
+    employees: 0,
+    company: 1
+  };
 
   constructor(private http: HttpClient) {
-    this.loadDepartments();
     this.loadEmployees();
   }
 
   loadDepartments() {
-    const companyId = 7; // Use your dynamic company ID logic here
-
-    if (!companyId) {
-      console.error('Company ID not found. User might not be logged in.');
-      return;
-    }
-
-    this.http.get<Department[]>(`http://localhost:8000/api/departments/?company=${companyId}`)
+    const companyId = 1;
+    this.http.get<Department[]>(`http://127.0.0.1:8000/api/departments/?company=${companyId}`)
       .subscribe({
-        next: (data: Department[]) => {
+        next: (data) => {
           this.departments = data.map(d => ({
             ...d,
-            employees: 0 // Initialize the employee count
+            employees: this.countEmployeesInDepartment(d.name)
           }));
-
-          // Now count the employees for each department
-          this.departments.forEach(department => {
-            // Reset employee count before counting
-            department.employees = 0;
-            this.employees.forEach(employee => {
-              // Check if the employee belongs to the current department
-              if (employee.departments.includes(department.name)) {
-                department.employees++;
-              }
-            });
-          });
+          this.filteredDepartments = [...this.departments];
         },
-        error: (err: any) => {
+        error: (err) => {
           console.error('Failed to load departments:', err);
         }
       });
   }
 
   loadEmployees() {
-    const companyId = 7; // Use your dynamic company ID logic here
-
-    if (!companyId) {
-      console.error('Company ID not found. User might not be logged in.');
-      return;
-    }
-
-    this.http.get<Employee[]>(`http://localhost:8000/api/employees/?company=${companyId}`)
+    const companyId = 1;
+    this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=${companyId}`)
       .subscribe({
-        next: (data: Employee[]) => {
+        next: (data) => {
           this.employees = data;
-          // After loading employees, recalculate the department counts
           this.loadDepartments();
         },
-        error: (err: any) => {
+        error: (err) => {
           console.error('Failed to load employees:', err);
         }
       });
   }
 
-  filteredDepartments() {
-    if (!this.searchTerm) return this.departments;
+  countEmployeesInDepartment(departmentName: string): number {
+    return this.employees.filter(emp => 
+      emp.departments?.includes(departmentName)
+    ).length;
+  }
+
+  onSearchChange() {
+    if (!this.searchTerm) {
+      this.filteredDepartments = [...this.departments];
+      return;
+    }
+    
     const term = this.searchTerm.toLowerCase();
-    return this.departments.filter(dep =>
+    this.filteredDepartments = this.departments.filter(dep =>
       dep.name.toLowerCase().includes(term) ||
-      dep.description?.toLowerCase().includes(term)
+      (dep.description && dep.description.toLowerCase().includes(term))
     );
   }
 
-  toggleAddSection() {
-    this.showAddSection = !this.showAddSection;
+  openAddDepartmentModal() {
+    this.currentDepartment = {
+      name: '',
+      description: '',
+      employees: 0,
+      company: 1
+    };
+    this.editingDepartment = false;
+    this.showDepartmentModal = true;
   }
 
-  cancelAdd() {
-    this.showAddSection = false;
-    this.newDepartment = { name: '', description: '', employees: 0 };
+  openEditDepartmentModal(department: Department) {
+    this.currentDepartment = { ...department };
+    this.editingDepartment = true;
+    this.showDepartmentModal = true;
+  }
+
+  closeDepartmentModal() {
+    this.showDepartmentModal = false;
   }
 
   saveDepartment() {
-    if (this.newDepartment.name.trim()) {
-      this.departments.push({
-        name: this.newDepartment.name,
-        description: this.newDepartment.description,
-        employees: this.newDepartment.employees
-      });
-      this.cancelAdd();
-    }
+    const apiCall = this.editingDepartment && this.currentDepartment.id ?
+      this.http.put(`http://127.0.0.1:8000/api/departments/${this.currentDepartment.id}/`, this.currentDepartment) :
+      this.http.post('http://127.0.0.1:8000/api/departments/', this.currentDepartment);
+
+    apiCall.subscribe({
+      next: () => {
+        this.loadDepartments();
+        this.closeDepartmentModal();
+      },
+      error: (err) => {
+        console.error('Error saving department:', err);
+      }
+    });
   }
 
-  editDepartment(dep: Department) {
-    alert('Edit department: ' + dep.name);
-  }
-
-  deleteDepartment(dep: Department) {
-    if (confirm(`Delete department "${dep.name}"?`)) {
-      this.departments = this.departments.filter(d => d !== dep);
+  confirmDelete(department: Department) {
+    if (confirm(`Delete department "${department.name}"?`)) {
+      this.http.delete(`http://127.0.0.1:8000/api/departments/${department.id}/`)
+        .subscribe({
+          next: () => {
+            this.departments = this.departments.filter(d => d.id !== department.id);
+            this.filteredDepartments = this.filteredDepartments.filter(d => d.id !== department.id);
+          },
+          error: (err) => {
+            console.error('Error deleting department:', err);
+          }
+        });
     }
   }
 }

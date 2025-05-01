@@ -51,7 +51,6 @@ export const routes: Routes = [
 ];
 
 
-// Keep this if you need the NgModule for other features
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

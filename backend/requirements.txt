@@ -19,3 +19,4 @@ typing_extensions
 tzdata==2025.2
 uritemplate
 wheel==0.45.1
+django-cors-headers

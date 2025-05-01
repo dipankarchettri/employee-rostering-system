@@ -547,3 +547,167 @@ ion-row:nth-child(2) {
       align-items: flex-start;
     }
   }
+
+  /* Dashboard specific styles */
+.dashboard-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  &.quick-actions-card {
+    // Fixed height based on content (4 buttons)
+    height: auto;
+    
+    .quick-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      
+      ion-button {
+        margin: 0;
+        height: 48px;
+      }
+    }
+  }
+  
+  &.unavailabilities-card {
+    // Takes remaining space with scrollable content
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-right: 400px;
+    
+    .unavailabilities-container {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+
+      
+      .unavailabilities-list {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        padding: 0 16px 16px;
+        
+        .unavailability-item {
+          padding: 12px 0;
+          border-bottom: 1px solid var(--ion-color-light-shade);
+          
+          &:last-child {
+            border-bottom: none;
+          }
+          
+          .unavailability-details {
+            h5 {
+              margin: 0 0 4px 0;
+              font-size: 14px;
+              font-weight: 500;
+            }
+            
+            p {
+              margin: 0;
+              font-size: 12px;
+              color: var(--ion-color-medium);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Ensure the row takes only needed space */
+ion-row {
+  align-items: stretch;
+  
+  ion-col {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  .current-time {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    margin-right: auto;
+    padding-left: 16px;
+  }
+}
+
+.week-summary {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+  
+  .day-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border-radius: 8px;
+    width: calc(100% / 7);
+    
+    .day-name {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+    
+    .day-date {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+      margin: 4px 0;
+    }
+    
+    .day-value {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    
+    &.current-day {
+      background-color: var(--ion-color-primary);
+      color: white;
+      
+      .day-date, .day-value {
+        color: white;
+      }
+    }
+    
+    &.active {
+      border: 2px solid var(--ion-color-primary);
+    }
+  }
+}
+
+
+.welcome-section {
+  padding: 16px; 
+  margin-bottom: 16px;
+  padding-left: 50px;
+
+  .welcome-content {
+    max-width: 100%; 
+    
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--ion-color-medium);
+      font-size: 1rem;
+    }
+  }
+}
