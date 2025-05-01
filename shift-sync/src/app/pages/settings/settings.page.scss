@@ -20,7 +20,7 @@
 body, .dashboard-content {
   background: var(--ion-background-color);
   color: var(--ion-text-color);
-  min-height: 100vh;
+  max-height: 100vh;
   margin: 0;
   font-family: var(--ion-font-family);
 }
@@ -76,16 +76,22 @@ ion-menu-button, ion-button {
 }
 
 .content-container {
-  max-width: 1400px;
+  padding: 0;
   margin: 0 auto;
 }
 
 .settings-segment {
-  max-width: 1345px;
   background: var(--ion-card-background);
   border-radius: 12px;
-  border-bottom: 1px solid var(--ion-border-color);
-  margin-left: 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+  overflow: hidden;
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+  overflow: auto;
+  border: none;
   
   ion-segment-button {
     --color-checked: var(--ion-color-primary);
@@ -115,6 +121,13 @@ ion-menu-button, ion-button {
 .content-section {
   padding: 0;
   margin: 0 auto;
+  background: var(--ion-card-background);
+  border-radius: 12px;
+  margin-bottom: 24px;  position: relative;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--ion-shadow-color);
+  padding: 0;
+  margin: 0 auto;  
 }
 
 /* Card styling */
@@ -146,27 +159,33 @@ ion-menu-button, ion-button {
 
 /* Company Information Section */
 .settings-section {
-  background: var(--ion-card-background);
-  border-radius: 12px;
+  --background: var(--ion-card-background);
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px var(--ion-shadow-color);
-  overflow: hidden;
-  border: none;
+  box-shadow: 0 2px 8px var(--ion-shadow-color) !important; 
+  background: var(--ion-card-background) !important;
+
+  ion-card-content {
+    --background: var(--ion-card-background);
+    background: var(--ion-card-background);
+  }
+
+  
+
+  ion-card-header {
+    --background: var(--ion-card-background);
+    background: var(--ion-card-background);
+  }
+
+  .section-header{
+    --background: var(--ion-card-background)3;
+    background: var(--ion-card-background);
+  }
+  
+
 }
 
 /* Override for settings sections when they have the dashboard-card class */
-.settings-section.dashboard-card {
-  padding: 0;
-  background: var(--ion-card-background);
-  border-radius: 12px;
-  overflow: hidden;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px var(--ion-shadow-color);
-  
-  ion-card-content {
-    padding: 0 16px 16px;
-  }
-}
+
 
 .section-header {
   padding: 16px 16px 12px;
@@ -176,8 +195,8 @@ ion-menu-button, ion-button {
   ion-card-title {
     font-size: 1.25rem;
     font-weight: 500;
+    padding-bottom: 20px;
     color: var(--ion-text-color);
-    margin: 0 0 8px;
     color: var(--ion-text-color) !important;
   }
 
@@ -236,25 +255,28 @@ ion-card-content {
 
 .form-input, .custom-input {
   width: 100%;
-  background: var(--ion-input-background);
+  background: #2f3033;
   border: 1px solid var(--ion-form-border);
   border-radius: 6px;
   --padding-start: 16px;
   --padding-end: 16px;
-  --padding-top: 12px;
-  --padding-bottom: 12px;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
   --placeholder-color: rgba(255, 255, 255, 0.5);
   --color: var(--ion-text-color);
-  color: var(--ion-text-color);
+  color: var(--ion-text-color);  
+  appearance: none;
+  
   
   &:hover, &.ion-focused {
     border-color: var(--ion-color-primary);
+    
   }
 }
 
 .form-select {
-  width: 100%;
-  background: var(--ion-input-background);
+  width: 93%;
+  background: #2f3033;
   border: 1px solid var(--ion-form-border);
   border-radius: 6px;
   --padding-start: 16px;
@@ -312,9 +334,7 @@ ion-card-content {
     border-bottom: none;
   }
   
-  &:hover {
-    background: rgba(255, 255, 255, 0.02);
-  }
+  
 }
 
 .setting-row {
@@ -344,9 +364,7 @@ ion-toggle {
     border-bottom: none;
   }
   
-  &:hover {
-    background: rgba(255, 255, 255, 0.02);
-  }
+  
 }
 
 .integration-row {
@@ -559,7 +577,6 @@ ion-toggle {
   }
 }
 
-/* Action buttons from employee page */
 .action-buttons {
   display: flex;
   gap: 8px;
@@ -788,13 +805,13 @@ ion-select:focus {
 
 /* Fix dropdown underlines and focus states */
 ion-select, 
-.custom-select,
 .filter-dropdown {
   --highlight-color-focused: var(--ion-color-primary) !important;
   --highlight-color-valid: var(--ion-border-color) !important;
   --highlight-color-invalid: var(--ion-border-color) !important;
   --highlight-height: 0 !important; /* Remove underlines */
   outline: none !important;
+  
   
   &:focus {
     border-color: var(--ion-color-primary) !important;
@@ -841,11 +858,127 @@ ion-alert.success-alert .alert-message,
   background-color: var(--ion-input-background)!important;
 }
 
-/* Fix any validation icons */
 .validation-icon,
 .status-icon {
   color: var(--ion-color-primary) !important;
 }
 
-
-
+.content-section {
+  padding: 16px;
+  }
+  .settings-section {
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section-header {
+    padding: 20px 20px 12px;
+  
+    ion-card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0 0 8px;
+    }
+  
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+  }
+  
+  .schedule-form, .policy-form {
+    padding: 0 20px 20px;
+  }
+  
+  .schedule-item {
+    margin-bottom: 24px;
+  }
+  
+  .schedule-label {
+    display: block;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  
+  .value-display {
+    text-align: right;
+    font-size: 14px;
+    color: #007bff;
+    margin-bottom: 4px;
+  }
+  
+  .schedule-range {
+    --bar-height: 4px;
+    --bar-background: #e6e6e6;
+    --bar-background-active: #007bff;
+    --knob-background: #007bff;
+    --knob-size: 16px;
+  }
+  
+  .dropdowns-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .dropdown-label {
+    display: block;
+    font-size: 14px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+  
+  .custom-select {
+    width: 100%;
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 6px;
+  }
+  
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  
+    &:last-child {
+      margin-bottom: 24px;
+    }
+  }
+  
+  .toggle-label {
+    font-size: 14px;
+    color: #1a1a1a;
+  }
+  
+  .primary-button {
+    --background: #007bff;
+    --color: white;
+    --border-radius: 6px;
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    margin: 0;
+    text-transform: none;
+    font-weight: 500;
+  
+    &.full-width {
+      width: 100%;
+    }
+  }
+  
+  ion-toggle {
+    --background: #e6e6e6;
+    --background-checked: #007bff;
+    --handle-background: white;
+    --handle-background-checked: white;
+  }

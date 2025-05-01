@@ -146,9 +146,9 @@
         <!-- Other Sections -->
         <div *ngIf="currentSegment === 'scheduling'" class="content-section">
           <!-- Work Schedule Settings card -->
-          <ion-card class="settings-section dashboard-card">
-            <div class="card-header">
-              <h2>Work Schedule Settings</h2>
+          <ion-card class="settings-section">
+            <div class="section-header">
+              <ion-card-title> Work Schedule Settings </ion-card-title>
             </div>
             <ion-card-content>
               <div class="settings-form">
@@ -195,7 +195,7 @@
                       value="8"
                       placeholder="8 hours"
                       interface="popover"
-                      class="custom-select">
+                      class="form-select">
                       <ion-select-option value="8">8 hours</ion-select-option>
                       <ion-select-option value="4">4 hours</ion-select-option>
                       <ion-select-option value="6">6 hours</ion-select-option>
@@ -211,7 +211,7 @@
                       value="monday"
                       placeholder="Monday"
                       interface="popover"
-                      class="custom-select">
+                      class="form-select">
                       <ion-select-option value="monday">Monday</ion-select-option>
                       <ion-select-option value="sunday">Sunday</ion-select-option>
                       <ion-select-option value="saturday">Saturday</ion-select-option>
@@ -229,9 +229,9 @@
           </ion-card>
 
           <!-- Regional Settings card -->
-          <ion-card class="settings-section dashboard-card">
-            <div class="card-header">
-              <h2>Regional Settings</h2>
+          <ion-card class="settings-section">
+            <div class="section-header">
+              <ion-card-title>Regional Settings</ion-card-title>
             </div>
             <ion-card-content>
               <div class="settings-form">
@@ -243,7 +243,7 @@
                       value="English"
                       placeholder="English" 
                       interface="popover"
-                      class="custom-select">
+                      class="form-select">
                       <ion-select-option value="English">English</ion-select-option>
                       <ion-select-option value="Spanish">Spanish</ion-select-option>
                       <ion-select-option value="French">French</ion-select-option>
@@ -259,7 +259,7 @@
                       value="MM/DD/YYYY"
                       placeholder="MM/DD/YYYY"
                       interface="popover"
-                      class="custom-select">
+                      class="form-select">
                       <ion-select-option value="MM/DD/YYYY">MM/DD/YYYY</ion-select-option>
                       <ion-select-option value="DD/MM/YYYY">DD/MM/YYYY</ion-select-option>
                       <ion-select-option value="YYYY-MM-DD">YYYY-MM-DD</ion-select-option>
@@ -275,7 +275,7 @@
                       value="12-hour"
                       placeholder="12-hour (AM/PM)"
                       interface="popover"
-                      class="custom-select">
+                      class="form-select">
                       <ion-select-option value="12-hour">12-hour (AM/PM)</ion-select-option>
                       <ion-select-option value="24-hour">24-hour</ion-select-option>
               </ion-select>
@@ -612,126 +612,5 @@
   </div>
 </ion-app>
 
-<style>
-  /* Add these styles to your SCSS file */
-  .content-section {
-    padding: 16px;
-  }
 
-  .settings-section {
-    background: white;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-
-  .section-header {
-    padding: 20px 20px 12px;
-
-    ion-card-title {
-      font-size: 18px;
-      font-weight: 600;
-      color: #1a1a1a;
-      margin: 0 0 8px;
-    }
-
-    .subtitle {
-      font-size: 14px;
-      color: #666;
-      margin: 0;
-    }
-  }
-
-  .schedule-form, .policy-form {
-    padding: 0 20px 20px;
-  }
-
-  .schedule-item {
-    margin-bottom: 24px;
-  }
-
-  .schedule-label {
-    display: block;
-    font-size: 14px;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-  }
-
-  .value-display {
-    text-align: right;
-    font-size: 14px;
-    color: #007bff;
-    margin-bottom: 4px;
-  }
-
-  .schedule-range {
-    --bar-height: 4px;
-    --bar-background: #e6e6e6;
-    --bar-background-active: #007bff;
-    --knob-background: #007bff;
-    --knob-size: 16px;
-  }
-
-  .dropdowns-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 24px;
-  }
-
-  .dropdown-label {
-    display: block;
-    font-size: 14px;
-    color: #1a1a1a;
-    margin-bottom: 8px;
-  }
-
-  .custom-select {
-    width: 100%;
-    --padding-start: 12px;
-    --padding-end: 12px;
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    border: 1px solid #e6e6e6;
-    border-radius: 6px;
-  }
-
-  .toggle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #f0f0f0;
-
-    &:last-child {
-      margin-bottom: 24px;
-    }
-  }
-
-  .toggle-label {
-    font-size: 14px;
-    color: #1a1a1a;
-  }
-
-  .primary-button {
-    --background: #007bff;
-    --color: white;
-    --border-radius: 6px;
-    --padding-top: 12px;
-    --padding-bottom: 12px;
-    margin: 0;
-    text-transform: none;
-    font-weight: 500;
-
-    &.full-width {
-      width: 100%;
-    }
-  }
-
-  ion-toggle {
-    --background: #e6e6e6;
-    --background-checked: #007bff;
-    --handle-background: white;
-    --handle-background-checked: white;
-  }
-</style>
+ 
