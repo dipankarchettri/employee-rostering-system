@@ -2,7 +2,17 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { 
+  IonBackButton,
+  IonButton,
+  IonButtons,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonIcon
+} from '@ionic/angular/standalone';
+import { Location } from '@angular/common';
 
 interface Employee {
   id?: number;
@@ -23,7 +33,18 @@ interface Department {
   templateUrl: './employees.page.html',
   styleUrls: ['./employees.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonBackButton,
+    IonButton,
+    IonButtons,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonIcon
+  ]
 })
 export class EmployeesPage {
   employees: Employee[] = [];
@@ -40,12 +61,20 @@ export class EmployeesPage {
     contact_info: '',
     employment_type: null,
     departments: [],
-    company: 19,
+    company: 1,
     id: 0
   };
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private location: Location
+  ) {
     this.loadData();
+  }
+
+  // Add back navigation method
+  goBack() {
+    this.location.back();
   }
 
   loadData() {
@@ -54,7 +83,7 @@ export class EmployeesPage {
   }
 
   loadDepartments() {
-    this.http.get<Department[]>(`http://127.0.0.1:8000/api/departments/?company=19`)
+    this.http.get<Department[]>(`http://127.0.0.1:8000/api/departments/?company=1`)
       .subscribe({
         next: (data) => {
           this.departments = data;
@@ -66,7 +95,7 @@ export class EmployeesPage {
   }
 
   loadEmployees() {
-    this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=19`)
+    this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=1`)
       .subscribe({
         next: (data) => {
           this.employees = data;
@@ -94,7 +123,7 @@ export class EmployeesPage {
       contact_info: '',
       employment_type: null,
       departments: [],
-      company: 19,
+      company: 1,
       id: 0
     };
     this.editingEmployee = false;

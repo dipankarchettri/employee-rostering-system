@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 import {
   IonApp,
   IonContent,
@@ -12,6 +13,7 @@ import {
   IonMenuButton,
   IonIcon,
   IonButton,
+  IonBackButton, // Added
   IonItem,
   IonLabel,
   IonSelect,
@@ -55,6 +57,7 @@ interface ReportItem {
     IonToolbar,
     IonTitle,
     IonButtons,
+    IonBackButton, // Added
     IonMenuButton,
     IonIcon,
     IonButton,
@@ -115,8 +118,7 @@ export class ReportsPage implements OnInit {
     }
   ];
 
-  constructor() {
-    // Register the icons
+  constructor(private location: Location) { // Modified
     addIcons({
       mailOutline,
       documentOutline,
@@ -124,6 +126,11 @@ export class ReportsPage implements OnInit {
       notificationsOutline,
       calendarOutline
     });
+  }
+
+  // Add back navigation method
+  goBack() {
+    this.location.back();
   }
 
   ngOnInit() {

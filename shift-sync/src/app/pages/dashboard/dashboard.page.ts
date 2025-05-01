@@ -58,7 +58,7 @@ interface DashboardData {
 export class DashboardPage implements OnInit {
   dashboardData: DashboardData | null = null;
   isLoading = true;
-  companyId = 19; // Set your company ID
+  companyId = 1; // Set your company ID
   userName = 'Admin';
   currentDate = new Date();
 
