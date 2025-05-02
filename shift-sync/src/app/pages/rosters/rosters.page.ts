@@ -266,7 +266,9 @@ export class RostersPage implements OnInit {
   }
 
   exportRoster(format: string) {
-    console.log(`Exporting roster as ${format}`);
-    // Implement actual export logic
+    if (format === 'pdf') {
+      const companyId = 19; // Or get from your service
+      window.open(`http://127.0.0.1:8000/api/rosters/export-pdf/?company=${companyId}`, '_blank');
+    }
   }
 }

@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
     <ion-title>Unavailability</ion-title>
     <ion-buttons slot="end">
@@ -15,56 +15,112 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="roster-content">
-  <!-- Header Section -->
-  <div class="page-header">
+<ion-content class="dashboard-content">
+  <div class="welcome-section">
     <h1>Employee Unavailability</h1>
     <p>Manage and view employee unavailability details</p>
   </div>
 
-  <!-- Main Card -->
-  <div class="main-card">
+  <div class="department-card">
     <div class="card-header">
       <h2>Unavailability Manager</h2>
+      <ion-button (click)="openAddUnavailabilityModal()">
+        <ion-icon slot="start" name="add"></ion-icon>
+        + Add Unavailability
+      </ion-button>
     </div>
 
-    <!-- Employee Selection Panel -->
-    <div class="control-panel employee-panel">
-      <h3>Select Employee</h3>
-      <div class="employee-selection">
-        <ion-item>
-          <ion-label position="stacked">Employee</ion-label>
-          <ion-select interface="popover" [(ngModel)]="selectedEmployee" (ionChange)="onEmployeeSelected()" placeholder="Select employee">
-            <ion-select-option *ngFor="let employee of employees" [value]="employee">
-              {{employee.name}}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
+    <div class="filter-container">
+      <ion-item>
+        <ion-label position="stacked">Employee</ion-label>
+        <ion-select 
+          interface="popover" 
+          [(ngModel)]="selectedEmployee" 
+          (ionChange)="onEmployeeSelected()" 
+          placeholder="Select employee">
+          <ion-select-option *ngFor="let employee of employees" [value]="employee">
+            {{employee.name}}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <table class="employee-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Type</th>
+          <th>Reason</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let unavailability of filteredAvailabilities">
+          <td>{{ getEmployeeName(unavailability.employee) }}</td>
+          <td>{{ unavailability.type }}</td>
+          <td>{{ unavailability.reason }}</td>
+          <td>{{ formatDate(unavailability.start) }}</td>
+          <td>{{ formatDate(unavailability.end) }}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="action-button edit-icon" (click)="openEditUnavailabilityModal(unavailability)"></button>
+              <button class="action-button delete-icon" (click)="confirmDelete(unavailability)"></button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="!filteredAvailabilities.length">
+          <td colspan="6" class="no-employees">No unavailability records found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Add/Edit Unavailability Modal -->
+  <div class="modal-backdrop" *ngIf="showUnavailabilityModal" (click)="closeUnavailabilityModal()">
+    <div class="department-modal" (click)="$event.stopPropagation()">
+      <h3>{{ editingUnavailability ? 'Edit Unavailability' : 'Add New Unavailability' }}</h3>
+      <button class="modal-close" (click)="closeUnavailabilityModal()">&times;</button>
+
+      <div class="form-group">
+        <label>Employee</label>
+        <select class="filter-dropdown" [(ngModel)]="currentUnavailability.employee">
+          <option *ngFor="let employee of employees" [value]="employee.id">{{ employee.name }}</option>
+        </select>
       </div>
-    </div>
 
-    <!-- Unavailability Table -->
-    <div class="table-container">
-      <table class="roster-table">
-        <thead>
-          <tr>
-            <th>Employee</th>
-            <th>Type</th>
-            <th>Reason</th>
-            <th>Start</th>
-            <th>End</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let unavailability of availabilities">
-            <td>{{ getEmployeeName(unavailability.employee) }}</td>
-            <td>{{ unavailability.type }}</td>
-            <td>{{ unavailability.reason }}</td>
-            <td>{{ formatDate(unavailability.start) }}</td>
-            <td>{{ formatDate(unavailability.end) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="form-group">
+        <label>Type</label>
+        <select class="filter-dropdown" [(ngModel)]="currentUnavailability.type">
+          <option value="vacation">Vacation</option>
+          <option value="sick">Sick Leave</option>
+          <option value="personal">Personal</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Reason</label>
+        <input type="text" [(ngModel)]="currentUnavailability.reason" placeholder="Enter reason">
+      </div>
+
+      <div class="form-group">
+        <label>Start Date & Time</label>
+        <input type="datetime-local" [(ngModel)]="currentUnavailability.start">
+      </div>
+
+      <div class="form-group">
+        <label>End Date & Time</label>
+        <input type="datetime-local" [(ngModel)]="currentUnavailability.end">
+      </div>
+
+      <div class="modal-actions">
+        <button class="modal-button modal-cancel" (click)="closeUnavailabilityModal()">Cancel</button>
+        <button class="modal-button modal-save" (click)="saveUnavailability()">
+          {{ editingUnavailability ? 'Update' : 'Save' }}
+        </button>
+      </div>
     </div>
   </div>
 </ion-content>

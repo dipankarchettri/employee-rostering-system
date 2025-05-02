@@ -4,7 +4,6 @@
       <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
     <ion-title>Reports</ion-title>
-    
   </ion-toolbar>
 </ion-header>
 
@@ -20,17 +19,9 @@
     <div class="card-header">
       <h2>Generate Reports</h2>
       <div class="export-buttons">
-        <ion-button size="small" fill="outline" (click)="exportReport('email')">
-          <ion-icon name="mail-outline"></ion-icon>
-          Email
-        </ion-button>
-        <ion-button size="small" fill="outline" (click)="exportReport('pdf')">
+        <ion-button size="small" fill="outline" (click)="exportReport()">
           <ion-icon name="document-outline"></ion-icon>
-          Export PDF
-        </ion-button>
-        <ion-button size="small" fill="outline" (click)="exportReport('csv')">
-          <ion-icon name="document-text-outline"></ion-icon>
-          Export CSV
+          Export Report
         </ion-button>
       </div>
     </div>
@@ -42,14 +33,14 @@
         <div class="date-inputs">
           <div class="date-field">
             <label>Start Date</label>
-            <ion-button fill="outline" expand="block" class="date-button">
+            <ion-button fill="outline" expand="block" class="date-button" (click)="openDatePicker('start')">
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
               <span>{{startDate | date: 'MMM d, y'}}</span>
             </ion-button>
           </div>
           <div class="date-field">
             <label>End Date</label>
-            <ion-button fill="outline" expand="block" class="date-button">
+            <ion-button fill="outline" expand="block" class="date-button" (click)="openDatePicker('end')">
               <ion-icon name="calendar-outline" slot="start"></ion-icon>
               <span>{{endDate | date: 'MMM d, y'}}</span>
             </ion-button>
@@ -65,18 +56,16 @@
             <ion-label position="stacked">Department</ion-label>
             <ion-select interface="popover" [(ngModel)]="selectedDepartment" placeholder="All Departments">
               <ion-select-option value="all">All Departments</ion-select-option>
-              <ion-select-option value="hr">HR Department</ion-select-option>
-              <ion-select-option value="it">IT Support</ion-select-option>
-              <ion-select-option value="ops">Operations</ion-select-option>
-              <ion-select-option value="cs">Customer Service</ion-select-option>
+              <ion-select-option *ngFor="let dept of departments" [value]="dept.id">{{dept.name}}</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
-            <ion-label position="stacked">Report Type</ion-label>
-            <ion-select interface="popover" [(ngModel)]="selectedReportType" placeholder="Select Report Type">
-              <ion-select-option value="summary">Shift Summary</ion-select-option>
-              <ion-select-option value="employee">Employee Assignment</ion-select-option>
-              <ion-select-option value="coverage">Coverage Analysis</ion-select-option>
+            <ion-label position="stacked">Shift Status</ion-label>
+            <ion-select interface="popover" [(ngModel)]="selectedStatus" placeholder="All Statuses">
+              <ion-select-option value="all">All Statuses</ion-select-option>
+              <ion-select-option value="assigned">Assigned</ion-select-option>
+              <ion-select-option value="completed">Completed</ion-select-option>
+              <ion-select-option value="unassigned">Not Assigned</ion-select-option>
             </ion-select>
           </ion-item>
         </div>
@@ -89,16 +78,20 @@
     <!-- Summary Stats -->
     <div class="summary-stats">
       <div class="stat-item">
-        <div class="stat-value">156</div>
+        <div class="stat-value">{{summaryStats.total_shifts}}</div>
         <div class="stat-label">Total Shifts</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">22</div>
-        <div class="stat-label">Employees Assigned</div>
+        <div class="stat-value">{{summaryStats.assigned_shifts}}</div>
+        <div class="stat-label">Assigned</div>
       </div>
       <div class="stat-item">
-        <div class="stat-value">3</div>
-        <div class="stat-label">Coverage Conflicts</div>
+        <div class="stat-value">{{summaryStats.completed_shifts}}</div>
+        <div class="stat-label">Completed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">{{summaryStats.unassigned_shifts}}</div>
+        <div class="stat-label">Not Assigned</div>
       </div>
     </div>
 
@@ -109,19 +102,19 @@
           <tr>
             <th>Date</th>
             <th>Department</th>
-            <th>Shift Name</th>
-            <th>Employees</th>
+            <th>Shift Type</th>
+            <th>Time</th>
             <th>Status</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let report of reportData">
-            <td>{{report.date | date: 'MMM d'}}</td>
-            <td>{{report.department}}</td>
-            <td>{{report.shiftName}}</td>
-            <td>{{report.employeeCount}}</td>
-            <td [class]="report.status === 'Complete' ? 'status-complete' : 'status-pending'">
-              {{report.status}}
+          <tr *ngFor="let shift of filteredShifts">
+            <td>{{shift.date | date: 'MMM d'}}</td>
+            <td>{{shift.department_name}}</td>
+            <td>{{shift.shift_type_display}}</td>
+            <td>{{shift.start_time | date: 'shortTime'}} - {{shift.end_time | date: 'shortTime'}}</td>
+            <td [class]="getStatusClass(shift)">
+              {{getStatusText(shift)}}
             </td>
           </tr>
         </tbody>

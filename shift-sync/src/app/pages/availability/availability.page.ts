@@ -1,33 +1,26 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import {
-  IonContent,
+import { forkJoin } from 'rxjs';
+
+import { 
+  IonBackButton,
+  IonButton,
+  IonButtons,
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonButtons,
-  IonMenuButton,
+  IonContent,
   IonIcon,
-  IonButton,
-  IonCheckbox,
   IonItem,
   IonLabel,
   IonSelect,
   IonSelectOption
 } from '@ionic/angular/standalone';
-import { MainMenuComponent } from '../../components/main-menu/main-menu.component';
+import { Location } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { 
-  mailOutline, 
-  documentOutline, 
-  documentTextOutline, 
-  notificationsOutline,
-  calendarOutline
-} from 'ionicons/icons';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { notificationsOutline, add } from 'ionicons/icons';
 
 interface Employee {
   id: number;
@@ -35,7 +28,7 @@ interface Employee {
 }
 
 interface Unavailability {
-  id: number;
+  id?: number;
   employee: number;
   type: string;
   reason: string;
@@ -52,18 +45,14 @@ interface Unavailability {
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
-    HttpClientModule,
-    MainMenuComponent,
-    IonContent,
+    IonBackButton,
+    IonButton,
+    IonButtons,
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonButtons,
-    IonMenuButton,
+    IonContent,
     IonIcon,
-    IonButton,
-    IonCheckbox,
     IonItem,
     IonLabel,
     IonSelect,
@@ -73,17 +62,25 @@ interface Unavailability {
 export class AvailabilityPage implements OnInit {
   employees: Employee[] = [];
   availabilities: Unavailability[] = [];
+  filteredAvailabilities: Unavailability[] = [];
   selectedEmployee: Employee | null = null;
-  isLoading = true;
+  
+  showUnavailabilityModal = false;
+  editingUnavailability = false;
+  currentUnavailability: Unavailability = {
+    employee: 0,
+    type: 'vacation',
+    reason: '',
+    start: '',
+    end: '',
+    company: 19
+  };
 
-  constructor(private http: HttpClient) {
-    addIcons({
-      mailOutline,
-      documentOutline,
-      documentTextOutline,
-      notificationsOutline,
-      calendarOutline
-    });
+  constructor(
+    private http: HttpClient,
+    private location: Location
+  ) {
+    addIcons({ notificationsOutline, add });
   }
 
   ngOnInit() {
@@ -92,27 +89,36 @@ export class AvailabilityPage implements OnInit {
 
   fetchData() {
     const companyId = 19;
-    
-    // Fetch both employees and unavailabilities simultaneously
+  
     forkJoin({
       employees: this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=${companyId}`),
       unavailabilities: this.http.get<Unavailability[]>(`http://127.0.0.1:8000/api/unavailabilities/?company=${companyId}`)
     }).subscribe({
-      next: ({employees, unavailabilities}) => {
+      next: (response: { employees: Employee[]; unavailabilities: Unavailability[] }) => {
+        const { employees, unavailabilities } = response;
         this.employees = employees;
         this.availabilities = unavailabilities;
-        
+        this.filteredAvailabilities = [...unavailabilities];
+  
         if (this.employees.length > 0) {
           this.selectedEmployee = this.employees[0];
         }
-        
-        this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error fetching data:', err);
-        this.isLoading = false;
       }
     });
+  }
+  
+
+  onEmployeeSelected() {
+    if (this.selectedEmployee) {
+      this.filteredAvailabilities = this.availabilities.filter(
+        u => u.employee === this.selectedEmployee?.id
+      );
+    } else {
+      this.filteredAvailabilities = [...this.availabilities];
+    }
   }
 
   getEmployeeName(employeeId: number): string {
@@ -120,19 +126,79 @@ export class AvailabilityPage implements OnInit {
     return employee ? employee.name : 'Unknown';
   }
 
-  formatDate(date: string): string {
-    const newDate = new Date(date);
-    return newDate.toLocaleDateString('en-US', {
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
       year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
+      month: 'short',
+      day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
+      minute: '2-digit'
     });
   }
 
-  onEmployeeSelected() {
-    // Filter logic can be added here if needed
+  openAddUnavailabilityModal() {
+    this.currentUnavailability = {
+      employee: this.employees[0]?.id || 0,
+      type: 'vacation',
+      reason: '',
+      start: '',
+      end: '',
+      company: 19
+    };
+    this.editingUnavailability = false;
+    this.showUnavailabilityModal = true;
+  }
+
+  openEditUnavailabilityModal(unavailability: Unavailability) {
+    this.currentUnavailability = { ...unavailability };
+    this.editingUnavailability = true;
+    this.showUnavailabilityModal = true;
+  }
+
+  closeUnavailabilityModal() {
+    this.showUnavailabilityModal = false;
+  }
+
+  saveUnavailability() {
+    if (!this.currentUnavailability.employee || !this.currentUnavailability.start || !this.currentUnavailability.end) {
+      alert('Employee, start date, and end date are required');
+      return;
+    }
+
+    const apiCall = this.editingUnavailability && this.currentUnavailability.id ?
+      this.http.put(`http://127.0.0.1:8000/api/unavailabilities/${this.currentUnavailability.id}/`, this.currentUnavailability) :
+      this.http.post('http://127.0.0.1:8000/api/unavailabilities/', this.currentUnavailability);
+
+    apiCall.subscribe({
+      next: () => {
+        this.fetchData();
+        this.closeUnavailabilityModal();
+      },
+      error: (err) => {
+        console.error('Error saving unavailability:', err);
+      }
+    });
+  }
+
+  confirmDelete(unavailability: Unavailability) {
+    if (!unavailability.id) return;
+    
+    if (confirm(`Delete this unavailability record?`)) {
+      this.http.delete(`http://127.0.0.1:8000/api/unavailabilities/${unavailability.id}/`)
+        .subscribe({
+          next: () => {
+            this.availabilities = this.availabilities.filter(u => u.id !== unavailability.id);
+            this.filteredAvailabilities = this.filteredAvailabilities.filter(u => u.id !== unavailability.id);
+          },
+          error: (err) => {
+            console.error('Error deleting unavailability:', err);
+          }
+        });
+    }
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

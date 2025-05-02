@@ -1,32 +1,33 @@
-from rest_framework.views import APIView
-from rest_framework.decorators import api_view
-from django.db.models import Count
+from datetime import datetime, date, time, timedelta
+from collections import defaultdict
+from io import BytesIO
 
-from rest_framework import viewsets
+from django.core.exceptions import ValidationError
+from django.db.models import Count, Q
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+
+from rest_framework import status, filters, viewsets
+from rest_framework.decorators import api_view, action
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+from reportlab.lib import colors
+from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Table, TableStyle, Paragraph
+from reportlab.pdfgen import canvas
+
 from .models import Company, Department, Employee, Shift, Roster, Notification, Unavailability
 from .serializers import (
     CompanySerializer, DepartmentSerializer, EmployeeSerializer,
-    ShiftSerializer,  RosterSerializer, NotificationSerializer, UnavailabilitySerializer
+    ShiftSerializer, RosterSerializer, NotificationSerializer, UnavailabilitySerializer
 )
-from rest_framework.response import Response
-from rest_framework import viewsets, filters
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status
-from django.core.exceptions import ValidationError
-from rest_framework.decorators import action
-from django.shortcuts import get_object_or_404
-from datetime import datetime, date
 
-from rest_framework.response import Response
-from django.db.models import Q
-
-from datetime import timedelta
-from django.db.models import Count
-from rest_framework.decorators import action
-from django.utils import timezone
-from collections import defaultdict
-from datetime import datetime
-from datetime import time
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -105,6 +106,7 @@ class CompanyLoginView(APIView):
             return Response({'message': 'Login successful', 'company_id': company.id})
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 
 
@@ -229,8 +231,8 @@ class RosterViewSet(viewsets.ModelViewSet):
                 # sort by fewest shifts and department needs
                 available_employees.sort(
                     key=lambda x: (
-                        x['employment_type'] != 'permanent',  # permanent (False) before casual (True)
-                        employee_shift_counts[x['id']],       # fewer shifts is better
+                        x['employment_type'] != 'permanent',  
+                        employee_shift_counts[x['id']],       
                         -max(department_needs[dept_id] for dept_id in employee_departments[x['id']])  # higher dept need
                     )
                 )
@@ -366,6 +368,122 @@ class RosterViewSet(viewsets.ModelViewSet):
 
         return Response(self.get_serializer(roster).data)
 
+    @action(detail=False, methods=['get'], url_path='export-pdf')
+    def export_pdf(self, request):
+        company_id = request.query_params.get('company')
+        if not company_id:
+            return Response(
+                {'error': 'Company ID is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            company = Company.objects.get(id=company_id)
+        except Company.DoesNotExist:
+            return Response(
+                {'error': 'Company not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        rosters = Roster.objects.filter(
+            company_id=company_id
+        ).select_related('employee', 'shift', 'shift__department').order_by('date', 'shift__start_time')
+
+        if not rosters.exists():
+            return Response(
+                {'error': 'No roster data found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        buffer = BytesIO()
+        pdf = canvas.Canvas(buffer, pagesize=landscape(letter))
+        width, height = landscape(letter)
+
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            'Title',
+            parent=styles['Title'],
+            fontSize=20,
+            alignment=TA_CENTER,
+            spaceAfter=12
+        )
+        subtitle_style = ParagraphStyle(
+            'Subtitle',
+            parent=styles['Normal'],
+            fontSize=12,
+            alignment=TA_CENTER,
+            textColor=colors.darkgray
+        )
+
+        top_margin = 300  # Increased top margin
+
+        # === Heading ===
+        heading = Paragraph("📄 Roster Report", title_style)
+        heading.wrapOn(pdf, width - 100, 40)
+        heading.drawOn(pdf, 50, height - top_margin)
+
+        # === Subtitle / Company Info ===
+        subtitle = Paragraph(f"{company.name} - Complete Roster Schedule", subtitle_style)
+        subtitle.wrapOn(pdf, width - 100, 30)
+        subtitle.drawOn(pdf, 50, height - top_margin - 30)
+
+        # === Generated Date ===
+        pdf.setFont("Helvetica", 10)
+        pdf.drawString(50, height - top_margin - 60, f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+        # === Total Count ===
+        pdf.drawString(50, height - top_margin - 75, f"Total Rosters: {rosters.count()}")
+
+        # === Table Data ===
+        data = [[
+            "Employee", "Date", "Day", "Shift Type", "Department",
+            "Start Time", "End Time", "Status"
+        ]]
+
+        for roster in rosters:
+            data.append([
+                roster.employee.name if roster.employee else "Unassigned",
+                roster.date.strftime('%Y-%m-%d'),
+                roster.shift.day_of_week.capitalize() if roster.shift else "",
+                roster.shift.shift_type if roster.shift else "",
+                roster.shift.department.name if roster.shift and roster.shift.department else "",
+                roster.shift.start_time.strftime('%H:%M') if roster.shift else "",
+                roster.shift.end_time.strftime('%H:%M') if roster.shift else "",
+                "Conflict" if roster.is_conflict else "OK"
+            ])
+
+        table = Table(data, repeatRows=1, colWidths=[100, 70, 50, 80, 100, 60, 60, 50])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3A5FCD')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F0F8FF')),
+            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#D3D3D3')),
+            ('FONTSIZE', (0, 1), (-1, -1), 8),
+            ('LEFTPADDING', (0, 0), (-1, -1), 4),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 4),
+        ]))
+
+        table.wrapOn(pdf, width - 100, height - top_margin - 200)
+        table.drawOn(pdf, 50, height - top_margin - 250)
+
+        # === Page number ===
+        pdf.setFont("Helvetica", 8)
+        pdf.drawRightString(width - 50, 30, f"Page {pdf.getPageNumber()}")
+
+        pdf.showPage()
+        pdf.save()
+        buffer.seek(0)
+
+        response = HttpResponse(buffer, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{company.name}_complete_roster.pdf"'
+        return response
+
+
+
 
 class CompanyDashboardView(APIView):
     def get(self, request, company_id):
@@ -413,10 +531,10 @@ class CompanyDashboardView(APIView):
         department_data = []
         for dept in departments:
             dept_shifts = [r for r in rosters if r.shift.department_id == dept.id]
-            assigned = len([r for r in dept_shifts if r.employee_id])
+            assigned = len([r for r in dept_shifts if r.employee is not None])
             coverage = 0 if len(dept_shifts) == 0 else \
                 round(assigned / len(dept_shifts) * 100)
-            
+
             department_data.append({
                 'id': dept.id,
                 'name': dept.name,
@@ -431,10 +549,10 @@ class CompanyDashboardView(APIView):
             day_date = start_date + timedelta(days=i)
             day_name = day_date.strftime('%a')
             day_rosters = [r for r in rosters if r.date == day_date]
-            assigned = len([r for r in day_rosters if r.employee_id])
+            assigned = len([r for r in day_rosters if r.employee is not None])
             coverage = 0 if len(day_rosters) == 0 else \
                 round(assigned / len(day_rosters) * 100)
-            
+
             week_summary.append({
                 'day': day_name,
                 'date': day_date,
@@ -481,24 +599,9 @@ class CompanyDashboardView(APIView):
 
         return Response(response_data)
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.db.models import Count, Q
-from datetime import datetime, timedelta
-from .models import (
-    Company, 
-    Department, 
-    Employee, 
-    Shift, 
-    Roster,
-    Unavailability
-)
-from .serializers import (
-    DepartmentSerializer,
-    ShiftSerializer,
-    RosterSerializer
-)
+
+
+
 
 class ReportView(APIView):
     def get(self, request, company_id):
