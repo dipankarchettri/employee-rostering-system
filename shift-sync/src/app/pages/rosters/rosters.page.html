@@ -40,14 +40,7 @@
         <ion-icon name="document-outline" slot="start"></ion-icon>
         PDF
       </ion-button>
-      <ion-button fill="outline" (click)="exportRoster('csv')">
-        <ion-icon name="document-text-outline" slot="start"></ion-icon>
-        CSV
-      </ion-button>
-      <ion-button fill="outline" (click)="exportRoster('email')">
-        <ion-icon name="mail-outline" slot="start"></ion-icon>
-        Email
-      </ion-button>
+
     </div>
   </div>
 
@@ -57,7 +50,6 @@
       <div class="employee-header">Employee</div>
       <div *ngFor="let day of weekdayLabels; let i = index" class="day-header">
         <div>{{ day.short }}</div>
-        <div class="day-date">{{ getDayDate(i) | date:'d' }}</div>
       </div>
     </div>
 
@@ -81,6 +73,9 @@
               {{ employee.schedule[day.full.toLowerCase()]?.startTime }} - {{ employee.schedule[day.full.toLowerCase()]?.endTime }}
             </div>
           </div>
+          <p class="text-gray-300 text-xs mt-1 italic">
+            {{ employee.schedule[day.full.toLowerCase()]?.dept }}
+          </p>
           <ng-template #noShift>
             <div class="no-shift-label">—</div>
           </ng-template>

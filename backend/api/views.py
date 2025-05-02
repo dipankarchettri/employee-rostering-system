@@ -187,7 +187,8 @@ class RosterViewSet(viewsets.ModelViewSet):
             for dept in emp.departments.all():
                 department_employees[dept.id].append({
                     'id': emp.id,
-                    'name': emp.name
+                    'name': emp.name,
+                    'employment_type': emp.employment_type
                 })
                 employee_departments[emp.id].append(dept.id)
 
@@ -228,10 +229,12 @@ class RosterViewSet(viewsets.ModelViewSet):
                 # sort by fewest shifts and department needs
                 available_employees.sort(
                     key=lambda x: (
-                        employee_shift_counts[x['id']],
-                        -max(department_needs[dept_id] for dept_id in employee_departments[x['id']])
+                        x['employment_type'] != 'permanent',  # permanent (False) before casual (True)
+                        employee_shift_counts[x['id']],       # fewer shifts is better
+                        -max(department_needs[dept_id] for dept_id in employee_departments[x['id']])  # higher dept need
                     )
                 )
+
                 assigned_emp = available_employees[0]
                 employee_shift_counts[assigned_emp['id']] += 1
                 department_needs[shift.department_id] -= 1
@@ -477,3 +480,267 @@ class CompanyDashboardView(APIView):
         }
 
         return Response(response_data)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.db.models import Count, Q
+from datetime import datetime, timedelta
+from .models import (
+    Company, 
+    Department, 
+    Employee, 
+    Shift, 
+    Roster,
+    Unavailability
+)
+from .serializers import (
+    DepartmentSerializer,
+    ShiftSerializer,
+    RosterSerializer
+)
+
+class ReportView(APIView):
+    def get(self, request, company_id):
+        try:
+            company = Company.objects.get(pk=company_id)
+        except Company.DoesNotExist:
+            return Response(
+                {"error": "Company not found"}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get query parameters
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        department_id = request.query_params.get('department', 'all')
+        report_type = request.query_params.get('type', 'summary')
+
+        # Validate and parse dates
+        try:
+            start_date = datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else None
+            end_date = datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else None
+        except ValueError:
+            return Response(
+                {"error": "Invalid date format. Use YYYY-MM-DD"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Set default date range (current week) if not provided
+        if not start_date or not end_date:
+            today = datetime.now().date()
+            start_date = today - timedelta(days=today.weekday())
+            end_date = start_date + timedelta(days=6)
+
+        # Base queryset filtered by company and date range
+        shifts = Shift.objects.filter(
+            company=company,
+            start_time__date__gte=start_date,
+            end_time__date__lte=end_date
+        )
+
+        # Apply department filter if specified
+        if department_id != 'all':
+            shifts = shifts.filter(department_id=department_id)
+
+        # Get all departments for filter dropdown
+        departments = Department.objects.filter(company=company)
+        department_serializer = DepartmentSerializer(departments, many=True)
+
+        # Prepare report data based on report type
+        if report_type == 'summary':
+            report_data = self._generate_summary_report(shifts)
+        elif report_type == 'employee':
+            report_data = self._generate_employee_report(shifts)
+        elif report_type == 'coverage':
+            report_data = self._generate_coverage_report(company, start_date, end_date, department_id)
+        else:
+            return Response(
+                {"error": "Invalid report type"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Calculate summary statistics
+        total_shifts = shifts.count()
+        assigned_shifts = Roster.objects.filter(
+            shift__in=shifts
+        ).values('employee').distinct().count()
+        coverage_conflicts = Unavailability.objects.filter(
+            employee__company=company,
+            start__date__lte=end_date,
+            end__date__gte=start_date
+        ).count()
+
+        response_data = {
+            "company": company.name,
+            "start_date": start_date,
+            "end_date": end_date,
+            "selected_department": department_id,
+            "report_type": report_type,
+            "departments": department_serializer.data,
+            "summary_stats": {
+                "total_shifts": total_shifts,
+                "employees_assigned": assigned_shifts,
+                "coverage_conflicts": coverage_conflicts
+            },
+            "report_data": report_data
+        }
+
+        return Response(response_data)
+
+    def _generate_summary_report(self, shifts):
+        # Group shifts by date and department
+        report_data = []
+        
+        # Get all rosters for these shifts
+        rosters = Roster.objects.filter(
+            shift__in=shifts
+        ).select_related('shift', 'employee', 'shift__department')
+        
+        # Organize by date and department
+        date_groups = {}
+        for roster in rosters:
+            date_str = roster.date.strftime('%Y-%m-%d')
+            if date_str not in date_groups:
+                date_groups[date_str] = {}
+            
+            dept_name = roster.shift.department.name
+            if dept_name not in date_groups[date_str]:
+                date_groups[date_str][dept_name] = {
+                    'shifts': [],
+                    'employee_count': 0
+                }
+            
+            shift_data = {
+                'id': roster.shift.id,
+                'name': roster.shift.get_shift_type_display(),
+                'start_time': roster.shift.start_time.time(),
+                'end_time': roster.shift.end_time.time(),
+                'employees': [roster.employee.name]
+            }
+            
+            # Check if shift already exists in the group
+            existing_shift = next(
+                (s for s in date_groups[date_str][dept_name]['shifts'] 
+                if s['id'] == roster.shift.id
+            ), None)
+            
+            if existing_shift:
+                existing_shift['employees'].append(roster.employee.name)
+            else:
+                date_groups[date_str][dept_name]['shifts'].append(shift_data)
+            
+            date_groups[date_str][dept_name]['employee_count'] += 1
+        
+        # Convert to the format expected by frontend
+        for date_str, depts in date_groups.items():
+            for dept_name, dept_data in depts.items():
+                for shift in dept_data['shifts']:
+                    report_data.append({
+                        'date': date_str,
+                        'department': dept_name,
+                        'shift_name': shift['name'],
+                        'employee_count': len(shift['employees']),
+                        'status': 'Complete' if len(shift['employees']) > 0 else 'Pending'
+                    })
+        
+        return report_data
+
+    def _generate_employee_report(self, shifts):
+        # Get all rosters for these shifts
+        rosters = Roster.objects.filter(
+            shift__in=shifts
+        ).select_related('employee', 'shift', 'shift__department')
+        
+        # Group by employee
+        employee_data = {}
+        for roster in rosters:
+            if roster.employee.id not in employee_data:
+                employee_data[roster.employee.id] = {
+                    'name': roster.employee.name,
+                    'shifts': [],
+                    'total_hours': 0
+                }
+            
+            shift_duration = (roster.shift.end_time - roster.shift.start_time).total_seconds() / 3600
+            employee_data[roster.employee.id]['shifts'].append({
+                'date': roster.date.strftime('%Y-%m-%d'),
+                'department': roster.shift.department.name,
+                'shift_name': roster.shift.get_shift_type_display(),
+                'start_time': roster.shift.start_time.time(),
+                'end_time': roster.shift.end_time.time(),
+                'duration': shift_duration
+            })
+            employee_data[roster.employee.id]['total_hours'] += shift_duration
+        
+        # Convert to frontend format
+        report_data = []
+        for emp_id, emp_data in employee_data.items():
+            for shift in emp_data['shifts']:
+                report_data.append({
+                    'employee': emp_data['name'],
+                    'date': shift['date'],
+                    'department': shift['department'],
+                    'shift_name': shift['shift_name'],
+                    'hours': shift['duration'],
+                    'status': 'Scheduled'
+                })
+        
+        return report_data
+
+    def _generate_coverage_report(self, company, start_date, end_date, department_id):
+        # Get all shifts in date range
+        shifts = Shift.objects.filter(
+            company=company,
+            start_time__date__gte=start_date,
+            end_time__date__lte=end_date
+        )
+        
+        if department_id != 'all':
+            shifts = shifts.filter(department_id=department_id)
+        
+        # Get all rosters for these shifts
+        rosters = Roster.objects.filter(
+            shift__in=shifts
+        ).select_related('shift', 'employee', 'shift__department')
+        
+        # Get all unavailabilities in this period
+        unavailabilities = Unavailability.objects.filter(
+            employee__company=company,
+            start__date__lte=end_date,
+            end__date__gte=start_date
+        )
+        
+        # Calculate coverage gaps
+        report_data = []
+        for shift in shifts:
+            assigned_count = rosters.filter(shift=shift).count()
+            department = shift.department
+            
+            # Find employees in this department
+            dept_employees = department.employees.all()
+            
+            # Find unavailable employees
+            unavailable_employees = unavailabilities.filter(
+                employee__in=dept_employees,
+                start__lte=shift.end_time,
+                end__gte=shift.start_time
+            ).values_list('employee_id', flat=True)
+            
+            available_employees = dept_employees.exclude(
+                id__in=unavailable_employees
+            ).exclude(
+                id__in=rosters.filter(shift=shift).values_list('employee_id', flat=True)
+            )
+            
+            report_data.append({
+                'date': shift.start_time.date().strftime('%Y-%m-%d'),
+                'department': department.name,
+                'shift_name': shift.get_shift_type_display(),
+                'assigned': assigned_count,
+                'required': 1,  # Assuming 1 employee per shift
+                'available': available_employees.count(),
+                'status': 'Understaffed' if assigned_count < 1 else 'Fully Staffed'
+            })
+        
+        return report_data

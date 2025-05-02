@@ -133,7 +133,7 @@
                       <div class="progress-details">
                         <h3>Shifts Assigned</h3>
                         <p>{{ dashboardData.stats.shifts_this_week - dashboardData.stats.pending_assignments }} out of {{ dashboardData.stats.shifts_this_week }} shifts assigned</p>
-                        <ion-button expand="block" class="assign-button" (click)="generateWeeklyRoster()">
+                        <ion-button expand="block" class="assign-button" (click)="openAssignmentModal()">
                           Assign Remaining Shifts
                         </ion-button>
                       </div>
@@ -190,10 +190,10 @@
                     Generate Weekly Roster
                   </ion-button>
                   
-                  <ion-button expand="block" class="action-button" routerLink="/employees/new">
-                    <ion-icon name="person-add" slot="start"></ion-icon>
-                    Add New Employee
-                  </ion-button>
+          <ion-button expand="block" class="action-button" routerLink="/employees">
+            <ion-icon name="person-add" slot="start"></ion-icon>
+            Add New Employee
+          </ion-button>
                   
                   <ion-button expand="block" class="action-button" routerLink="/shift-swaps">
                     <ion-icon name="swap-horizontal" slot="start"></ion-icon>
@@ -267,4 +267,77 @@
       </div>
     </ion-content>
   </div>
+  <!-- Assignment Modal -->
+<ion-modal [isOpen]="showAssignmentModal" (didDismiss)="closeModal()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Assign Remaining Shifts</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="closeModal()">Close</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <!-- Unassigned Shifts List -->
+      <div *ngIf="!selectedShift">
+        <h2>Unassigned Shifts</h2>
+        <ion-list>
+          <ion-item *ngFor="let shift of unassignedShifts" (click)="onShiftSelect(shift)">
+            <ion-label>
+              <h3>{{ getDepartmentName(shift.department) }} - {{ getShiftName(shift.shift_type) }}</h3>
+              <p>{{ getDayName(shift.day_of_week) }}: {{ formatTime(shift.start_time) }} - {{ formatTime(shift.end_time) }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="!isLoadingShifts && unassignedShifts.length === 0">
+            <ion-label class="ion-text-center">All shifts are assigned!</ion-label>
+          </ion-item>
+          <ion-item *ngIf="isLoadingShifts">
+            <ion-spinner slot="start"></ion-spinner>
+            <ion-label>Loading shifts...</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <!-- Employee Selection -->
+      <div *ngIf="selectedShift">
+        <ion-button fill="clear" (click)="selectedShift = null">
+          <ion-icon name="arrow-back" slot="start"></ion-icon>
+          Back to shifts
+        </ion-button>
+
+        <h2>Assign Shift</h2>
+        <p>
+          <strong>{{ getShiftName(selectedShift.shift_type) }}</strong><br>
+          {{ getDayName(selectedShift.day_of_week) }}: {{ formatTime(selectedShift.start_time) }} - {{ formatTime(selectedShift.end_time) }}<br>
+          Department: {{ getDepartmentName(selectedShift.department) }}
+        </p>
+
+        <ion-list>
+          <ion-list-header>Available Employees</ion-list-header>
+          <ion-item *ngFor="let employee of availableEmployees">
+            <ion-radio [value]="employee.id" [(ngModel)]="selectedEmployeeId">
+              {{ employee.name }}
+            </ion-radio>
+          </ion-item>
+          <ion-item *ngIf="!isLoadingEmployees && availableEmployees.length === 0">
+            <ion-label class="ion-text-center">No employees available in this department</ion-label>
+          </ion-item>
+          <ion-item *ngIf="isLoadingEmployees">
+            <ion-spinner slot="start"></ion-spinner>
+            <ion-label>Loading employees...</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-button 
+          expand="block" 
+          (click)="assignShift()" 
+          [disabled]="!selectedEmployeeId || availableEmployees.length === 0"
+          class="ion-margin-top">
+          Assign Shift
+        </ion-button>
+      </div>
+    </ion-content>
+  </ng-template>
+</ion-modal>
 </ion-app>

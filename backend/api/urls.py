@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     CompanyViewSet, DepartmentViewSet, EmployeeViewSet,
     ShiftViewSet, RosterViewSet,
-    NotificationViewSet, CompanySignupView, CompanyLoginView, UnavailabilityViewSet, CompanyDashboardView
+    NotificationViewSet, CompanySignupView, CompanyLoginView, UnavailabilityViewSet, CompanyDashboardView, ReportView
 )
 
 router = DefaultRouter()
@@ -21,5 +21,6 @@ urlpatterns = [
     # Authentication
     path('signup/', CompanySignupView.as_view(), name='company-signup'),
     path('login/', CompanyLoginView.as_view(), name='company-login'),
-     path('dashboard/<int:company_id>/', CompanyDashboardView.as_view(), name='company-dashboard'),
+    path('dashboard/<int:company_id>/', CompanyDashboardView.as_view(), name='company-dashboard'),
+    path('companies/<int:company_id>/reports/', ReportView.as_view(), name='company-reports'),
 ]

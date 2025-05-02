@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { Location } from '@angular/common'
 import {
   IonApp,
   IonContent,
@@ -13,14 +13,14 @@ import {
   IonMenuButton,
   IonIcon,
   IonButton,
-  IonBackButton, // Added
+  IonBackButton,
   IonItem,
   IonLabel,
   IonSelect,
   IonSelectOption,
-  IonDatetimeButton,  // Add this import
-  IonModal,          // Add this import
-  IonDatetime 
+  IonDatetimeButton,
+  IonModal,
+  IonDatetime  
 } from '@ionic/angular/standalone';
 import { MainMenuComponent } from '../../components/main-menu/main-menu.component';
 import { addIcons } from 'ionicons';
@@ -32,15 +32,6 @@ import {
   calendarOutline
 } from 'ionicons/icons';
 
-// Define the Report interface
-interface ReportItem {
-  date: Date;
-  department: string;
-  shiftName: string;
-  employeeCount: number;
-  status: 'Complete' | 'Pending';
-}
-
 @Component({
   selector: 'app-reports',
   templateUrl: './reports.page.html',
@@ -49,7 +40,6 @@ interface ReportItem {
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
     MainMenuComponent,
     IonApp,
     IonContent,
@@ -57,7 +47,7 @@ interface ReportItem {
     IonToolbar,
     IonTitle,
     IonButtons,
-    IonBackButton, // Added
+    IonBackButton,
     IonMenuButton,
     IonIcon,
     IonButton,
@@ -65,12 +55,14 @@ interface ReportItem {
     IonLabel,
     IonSelect,
     IonSelectOption,
-    IonDatetimeButton,  // Add to imports
-    IonModal,          // Add to imports
-    IonDatetime  
-  ]
+    IonDatetimeButton,
+    IonModal,
+    IonDatetime,
+      
+  ],  providers: [Location]
 })
 export class ReportsPage implements OnInit {
+  
   // Date range
   startDate: Date = new Date();
   endDate: Date = new Date();
@@ -79,46 +71,20 @@ export class ReportsPage implements OnInit {
   selectedDepartment: string = 'all';
   selectedReportType: string = 'summary';
   
-  // Sample report data
-  reportData: ReportItem[] = [
-    {
-      date: new Date(2025, 3, 20),
-      department: 'HR Department',
-      shiftName: 'Morning Shift',
-      employeeCount: 3,
-      status: 'Complete'
-    },
-    {
-      date: new Date(2025, 3, 20),
-      department: 'IT Support',
-      shiftName: 'Afternoon Shift',
-      employeeCount: 2,
-      status: 'Complete'
-    },
-    {
-      date: new Date(2025, 3, 21),
-      department: 'Operations',
-      shiftName: 'Morning Shift',
-      employeeCount: 2,
-      status: 'Complete'
-    },
-    {
-      date: new Date(2025, 3, 21),
-      department: 'Customer Service',
-      shiftName: 'Afternoon Shift',
-      employeeCount: 4,
-      status: 'Complete'
-    },
-    {
-      date: new Date(2025, 3, 22),
-      department: 'HR Department',
-      shiftName: 'Morning Shift',
-      employeeCount: 1,
-      status: 'Pending'
-    }
-  ];
+  // Report data
+  reportData: any[] = [];
+  summaryStats = {
+    totalShifts: 0,
+    employeesAssigned: 0,
+    coverageConflicts: 0
+  };
+  departments: any[] = [];
+  isLoading = false;
 
-  constructor(private location: Location) { // Modified
+  constructor(
+    private http: HttpClient,
+    private location: Location
+  ) {
     addIcons({
       mailOutline,
       documentOutline,
@@ -128,15 +94,12 @@ export class ReportsPage implements OnInit {
     });
   }
 
-  // Add back navigation method
-  goBack() {
-    this.location.back();
-  }
-
   ngOnInit() {
     // Initialize with current week
     const today = new Date();
     this.setDefaultDateRange(today);
+    this.loadDepartments();
+    this.generateReport();
   }
 
   setDefaultDateRange(date: Date) {
@@ -154,17 +117,73 @@ export class ReportsPage implements OnInit {
     this.endDate = sunday;
   }
 
-  generateReport() {
-    console.log('Generating report for date range:', this.startDate, 'to', this.endDate);
-    console.log('Filters:', {
-      department: this.selectedDepartment,
-      reportType: this.selectedReportType
+  loadDepartments() {
+    this.http.get('http://127.0.0.1:8000/api/departments/?company=19').subscribe({
+      next: (data: any) => {
+        this.departments = data;
+      },
+      error: (error) => {
+        console.error('Error loading departments:', error);
+      }
     });
-    // Implementation for report generation logic
+  }
+
+  generateReport() {
+    this.isLoading = true;
+    
+    const params = {
+      start_date: this.startDate.toISOString().split('T')[0],
+      end_date: this.endDate.toISOString().split('T')[0],
+      department: this.selectedDepartment,
+      type: this.selectedReportType
+    };
+
+    this.http.get('http://127.0.0.1:8000/api/companies/19/reports/', { params }).subscribe({
+      next: (data: any) => {
+        this.reportData = data.report_data || [];
+        this.summaryStats = {
+          totalShifts: data.summary_stats?.total_shifts || 0,
+          employeesAssigned: data.summary_stats?.employees_assigned || 0,
+          coverageConflicts: data.summary_stats?.coverage_conflicts || 0
+        };
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error generating report:', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   exportReport(format: string) {
-    console.log(`Exporting report in ${format} format`);
-    // Implementation for export logic
+    const params = {
+      start_date: this.startDate.toISOString().split('T')[0],
+      end_date: this.endDate.toISOString().split('T')[0],
+      department: this.selectedDepartment,
+      type: this.selectedReportType
+    };
+
+    this.http.get(`http://127.0.0.1:8000/api/companies/19/reports/export/${format}/`, { 
+      params,
+      responseType: 'blob' 
+    }).subscribe({
+      next: (blob) => {
+        // Handle file download
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `report_${new Date().toISOString().split('T')[0]}.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      },
+      error: (error) => {
+        console.error('Error exporting report:', error);
+      }
+    });
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

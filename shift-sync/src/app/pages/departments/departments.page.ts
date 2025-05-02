@@ -37,7 +37,7 @@ export class DepartmentsPage {
     name: '',
     description: '',
     employees: 0,
-    company: 1
+    company: 19
   };
 
   constructor(private http: HttpClient) {
@@ -45,7 +45,7 @@ export class DepartmentsPage {
   }
 
   loadDepartments() {
-    const companyId = 1;
+    const companyId = 19;
     this.http.get<Department[]>(`http://127.0.0.1:8000/api/departments/?company=${companyId}`)
       .subscribe({
         next: (data) => {
@@ -62,7 +62,7 @@ export class DepartmentsPage {
   }
 
   loadEmployees() {
-    const companyId = 1;
+    const companyId = 19;
     this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=${companyId}`)
       .subscribe({
         next: (data) => {
@@ -99,7 +99,7 @@ export class DepartmentsPage {
       name: '',
       description: '',
       employees: 0,
-      company: 1
+      company: 19
     };
     this.editingDepartment = false;
     this.showDepartmentModal = true;
