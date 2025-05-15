@@ -103,7 +103,7 @@ interface ShiftView {
   ]
 })
 export class ShiftsPage {
-  private readonly companyId = 19;
+  private readonly companyId = 1;
   private readonly baseUrl = 'http://127.0.0.1:8000/api';
 
   departments: Department[] = [];
@@ -175,7 +175,7 @@ export class ShiftsPage {
     this.http.get<Department[]>(`${this.baseUrl}/departments/?company=${this.companyId}`).subscribe({
       next: data => {
         this.departments = data;
-        const colors = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA', '#F8B195'];
+        const colors = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA', '#F8B15'];
         this.departments.forEach((dept, index) => {
           this.departmentColors[dept.id] = colors[index % colors.length];
         });

@@ -164,7 +164,7 @@ export class RostersPage implements OnInit {
   }
 
   loadInitialData() {
-    const companyId = 19;
+    const companyId = 1;
     this.isLoading = true;
   
     Promise.all([
@@ -186,7 +186,7 @@ export class RostersPage implements OnInit {
   }
 
   loadRosterData() {
-    const companyId = 19;
+    const companyId = 1;
     const startDate = this.formatDateForAPI(this.startDate);
     const endDate = this.formatDateForAPI(this.endDate);
 
@@ -267,7 +267,7 @@ export class RostersPage implements OnInit {
 
   exportRoster(format: string) {
     if (format === 'pdf') {
-      const companyId = 19; // Or get from your service
+      const companyId = 1; // Or get from your service
       window.open(`http://127.0.0.1:8000/api/rosters/export-pdf/?company=${companyId}`, '_blank');
     }
   }

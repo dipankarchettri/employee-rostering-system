@@ -95,7 +95,7 @@ interface RosterResponse {
 export class DashboardPage implements OnInit {
   dashboardData: DashboardData | null = null;
   isLoading = true;
-  companyId = 19;
+  companyId = 1;
   currentDate = new Date();
   
   // Assignment modal properties

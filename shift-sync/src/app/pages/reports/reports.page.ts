@@ -108,7 +108,7 @@ export class ReportsPage implements OnInit {
   }
 
   loadDepartments() {
-    this.http.get('http://127.0.0.1:8000/api/departments/?company=19').subscribe({
+    this.http.get('http://127.0.0.1:8000/api/departments/?company=1').subscribe({
       next: (data: any) => {
         this.departments = data;
       },
@@ -122,7 +122,7 @@ export class ReportsPage implements OnInit {
     const params = {
       start_date: this.startDate.toISOString().split('T')[0],
       end_date: this.endDate.toISOString().split('T')[0],
-      company: '19'
+      company: '1'
     };
 
     this.http.get('http://127.0.0.1:8000/api/shifts/', { params }).subscribe({

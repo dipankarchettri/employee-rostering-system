@@ -73,7 +73,7 @@ export class AvailabilityPage implements OnInit {
     reason: '',
     start: '',
     end: '',
-    company: 19
+    company: 1
   };
 
   constructor(
@@ -88,7 +88,7 @@ export class AvailabilityPage implements OnInit {
   }
 
   fetchData() {
-    const companyId = 19;
+    const companyId = 1;
   
     forkJoin({
       employees: this.http.get<Employee[]>(`http://127.0.0.1:8000/api/employees/?company=${companyId}`),
@@ -144,7 +144,7 @@ export class AvailabilityPage implements OnInit {
       reason: '',
       start: '',
       end: '',
-      company: 19
+      company: 1
     };
     this.editingUnavailability = false;
     this.showUnavailabilityModal = true;

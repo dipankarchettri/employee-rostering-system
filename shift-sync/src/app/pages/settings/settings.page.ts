@@ -206,7 +206,7 @@ export class SettingsPage implements OnInit {
       action: 'Login',
       user: 'Admin User',
       date: '2025-04-26 08:45:32',
-      details: 'Admin login from IP: 192.168.1.105'
+      details: 'Admin login from IP: 12.168.1.105'
     },
     {
       action: 'Password Reset',
